@@ -7,6 +7,7 @@ class Task {
         this._dueDate = dueDate;
         this._status = status;
         this._priority = priority;
+        this._completed = false;
     }
 
     get id(){

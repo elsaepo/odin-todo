@@ -1,21 +1,22 @@
+// module that creates projects & gets/sets their properties
+    //adds, removes tasks
 import { Project } from "./project.js";
+
+// module that creates todos & gets/sets their properties
 import { Task } from "./task.js";
 
 let myProject = new Project("myNewProject", "shopping")
 let myTask = new Task("myTaskTitle", "myTaskDescription");
 let myTask2 = new Task("secondTaskTitle", "secondTaskDesc");
-console.log(`my project: ${myProject}`);
-console.log(`my project task list: ${myProject.taskList}`);
-console.log(`my task: ${myTask}`);
-console.log(`my task title: ${myTask.title}`);
 myProject.addTask(myTask);
 myProject.addTask(myTask2);
-console.log(`my project task list: ${myProject.taskList[0]}`);
-
-// module that creates todos & gets/sets their properties
-// module that creates projects & gets/sets their properties
 
 
-// module that adds or removes todos from projects (controls todo management)
+
+    
+
+// what happens when we move a task from one project to another?
+// what happens when we delete a project?
+// what happens when we set a task as completed? is that controller by the task module or an external module that manipulates it?
 
 // dom module(s)
