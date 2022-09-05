@@ -1,7 +1,8 @@
-class Task {
+import { getNewID } from "./idController.js"
 
+class Task {
     constructor(title, description, dueDate, status, priority) {
-        this._id;
+        this._id = getNewID();
         this._title = title;
         this._description = description;
         this._dueDate = dueDate;

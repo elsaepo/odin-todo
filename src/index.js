@@ -1,5 +1,5 @@
 // module that creates projects & gets/sets their properties
-    //adds, removes tasks
+// adds, removes tasks
 import { Project } from "./project.js";
 
 // module that creates todos & gets/sets their properties
@@ -10,7 +10,6 @@ let myTask = new Task("myTaskTitle", "myTaskDescription");
 let myTask2 = new Task("secondTaskTitle", "secondTaskDesc");
 myProject.addTask(myTask);
 myProject.addTask(myTask2);
-
 
 
     
