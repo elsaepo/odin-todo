@@ -41,5 +41,3 @@ class Task {
 }
 
 export { Task };
-
-// title, description, dueDate and priority. You might also want to include notes or even a checklist.

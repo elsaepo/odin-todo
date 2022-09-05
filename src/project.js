@@ -29,9 +29,7 @@ class Project {
         return this._taskList;
     }
     removeTask = (taskObject) => {
-        //search taskList for taskObject, using ID
-        //if it exists, remove it
-        //return tasklist
+        this._taskList = this._taskList.filter(task => task !== taskObject);
     }
 }
 
