@@ -18,26 +18,30 @@ sidebar.id = "sidebar";
 const navContainer = document.createElement("div");
 navContainer.classList.add("nav-container");
 const navArray = [
-    { title: "All", icon: "a", link: "all" },
-    { title: "Today", icon: "b", link: "today" },
-    { title: "Week", icon: "c", link: "week" },
-    { title: "Important", icon: "d", link: "important" },
-    { title: "Completed", icon: "e", link: "completed" }
+    { title: "All", iconClasses: ["fa-solid", "fa-calendar"], link: "all" },
+    { title: "Today", iconClasses: ["fa-solid", "fa-calendar-day"], link: "today" },
+    { title: "Week", iconClasses: ["fa-solid", "fa-calendar-week"], link: "week" },
+    { title: "Important", iconClasses: ["fa-solid", "fa-circle-exclamation"], link: "important" },
+    { title: "Completed", iconClasses: ["fa-solid", "fa-calendar-check"], link: "completed" }
 ];
 navArray.forEach(obj => {
     const navButton = document.createElement("div");
     navButton.id = obj.link;
     navButton.classList.add("nav-button")
-    const navIcon = document.createElement("p");
-    navIcon.textContent = obj.icon;
+    const navIcon = document.createElement("i");
+    obj.iconClasses.forEach(iconClass => navIcon.classList.add(iconClass));
     const navText = document.createElement("h3");
     navText.textContent = obj.title;
     navButton.appendChild(navIcon);
     navButton.appendChild(navText);
     navContainer.appendChild(navButton);
 })
+const horizontalRule = document.createElement("hr");
 
 sidebar.appendChild(navContainer);
+sidebar.appendChild(horizontalRule);
+const newNav = navContainer.cloneNode(true);
+sidebar.appendChild(newNav);
 body.appendChild(sidebar);
 
 
