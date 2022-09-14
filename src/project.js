@@ -1,21 +1,25 @@
 class Project {
-    constructor(name, label){
-        this._name = name;
+    constructor(title, label){
+        this._title = title;
         this._label = label;
+        this._iconClasses = ["fa-solid", "fa-folder"];
         this._taskList = [];
     }
 
-    get name(){
-        return this._name;
+    get title(){
+        return this._title;
     }
-    set name(newName){
-        this._name = newName;
+    set title(newTitle){
+        this._title = newTitle;
     }
     get label(){
         return this._label;
     }
     set label(newLabel){
         this._label = newLabel;
+    }
+    get iconClasses(){
+        return this._iconClasses;
     }
     get taskList(){
         return this._taskList;

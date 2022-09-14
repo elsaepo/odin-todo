@@ -1,5 +1,4 @@
 import "./style.css";
-console.log("loaded domcreator")
 const content = document.querySelector("#content");
 
 const header = document.createElement("div");
@@ -24,26 +23,42 @@ const navArray = [
     { title: "Important", iconClasses: ["fa-solid", "fa-circle-exclamation"], link: "important" },
     { title: "Completed", iconClasses: ["fa-solid", "fa-calendar-check"], link: "completed" }
 ];
-navArray.forEach(obj => {
+const drawSidebarLink = function(linkObj){
     const navButton = document.createElement("div");
-    navButton.id = obj.link;
+    navButton.id = linkObj.link;
     navButton.classList.add("nav-button")
     const navIcon = document.createElement("i");
-    obj.iconClasses.forEach(iconClass => navIcon.classList.add(iconClass));
+    linkObj.iconClasses.forEach(iconClass => navIcon.classList.add(iconClass));
     const navText = document.createElement("h3");
-    navText.textContent = obj.title;
+    navText.textContent = linkObj.title;
     navButton.appendChild(navIcon);
     navButton.appendChild(navText);
-    navContainer.appendChild(navButton);
-})
+    return navButton;
+}
+navArray.forEach(obj => {
+    let thisButton = drawSidebarLink(obj);
+    navContainer.appendChild(thisButton);
+});
+
 const horizontalRule = document.createElement("hr");
 
 sidebar.appendChild(navContainer);
 sidebar.appendChild(horizontalRule);
-const newNav = navContainer.cloneNode(true);
-sidebar.appendChild(newNav);
-body.appendChild(sidebar);
 
+const projectContainer = document.createElement("div");
+projectContainer.classList.add("nav-container");
+//const projectArray = [];
+const drawProjectNav = function(project){
+    let thisProjectButton = drawSidebarLink(project);
+    projectContainer.appendChild(thisProjectButton);
+}
+
+sidebar.appendChild(projectContainer);
+
+
+body.appendChild(sidebar);
 
 content.appendChild(header);
 content.appendChild(body);
+
+export { drawProjectNav };

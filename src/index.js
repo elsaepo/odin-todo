@@ -5,18 +5,20 @@ import { Project } from "./project.js";
 // module that creates todos & gets/sets their properties
 import { Task } from "./task.js";
 import "./domCreator.js";
+import { drawProjectNav } from "./domCreator.js";
 
 
-let myProject = new Project("myNewProject", "shopping")
+let defaultProject = new Project("Default Project", "");
 let myTask = new Task("myTaskTitle", "myTaskDescription");
 let myTask2 = new Task("secondTaskTitle", "secondTaskDesc");
 let myTask3 = new Task("thirdTaskTitle", "thirdTaskDesc");
-myProject.addTask(myTask);
-myProject.addTask(myTask2);
-myProject.addTask(myTask3);
+defaultProject.addTask(myTask);
+defaultProject.addTask(myTask2);
+defaultProject.addTask(myTask3);
 
-console.log(`task list: ${myProject.taskList}`);
-    
+console.log(`task list: ${defaultProject.taskList}`);
+
+drawProjectNav(defaultProject);    
 
 // what happens when we move a task from one project to another?
 // what happens when we delete a project?
