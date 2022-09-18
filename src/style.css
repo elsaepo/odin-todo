@@ -113,6 +113,42 @@ body {
     opacity: 1;
 }
 
+.nav-adding-project {
+    border: 2px solid rgb(70, 70, 70);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 12px;
+    gap: 12px;
+    overflow: hidden;
+    transition: display 0.2s ease;
+}
+
+.nav-hidden {
+    transition: display 0.2s ease;
+    display: none;
+}
+
+.nav-adding-project div {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 12px;
+    font-size: 1.2rem;
+}
+
+.nav-adding-project label {
+    width: 60px;
+    font-weight: 600;
+}
+
+.nav-adding-project input {
+    flex-grow: 1;
+    width: 100px;
+    font-size: 1.2rem;
+}
+
 #sidebar hr {
     width: 80%;
     border: none;

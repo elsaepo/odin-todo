@@ -44,11 +44,15 @@ class Project {
     removeTask = (taskObject) => {
         this._taskList = this._taskList.filter(task => task !== taskObject);
     }
+    deleteProject = function () {
+        let projectIndex = projectList.findIndex(project => this === project);
+        projectList.splice(projectIndex, 1);
+    }
 }
 
-const deleteProjectByID = function (id) {
+const getProjectByID = function (id) {
     let projectIndex = projectList.findIndex(project => Number(id) === Number(project.id));
-    projectList.splice(projectIndex, 1);
+    return projectList[projectIndex];
 }
 
-export { Project, projectList, deleteProjectByID };
+export { Project, getProjectByID };

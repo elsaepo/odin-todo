@@ -1,21 +1,24 @@
-import { Project, projectList, deleteProjectByID } from "./project.js";
+import { Project, getProjectByID } from "./project.js";
 import { Task } from "./task.js";
 import "./style.css";
 import { eventEmitter, drawProjectNav, navContainer, projectContainer, addProjectButton } from "./domCreator.js";
 
 // Event listener for adding new project & drawing it to DOM
-addProjectButton.addEventListener("mousedown", function(){
-    const newProjectTitle = prompt("what is the title");
-    const newProjectDescr = prompt("what is the desc");
-    const newProject = new Project(newProjectTitle, newProjectDescr);
-    projectList.push(newProject);
-    drawProjectNav(newProject);
-})
+// addProjectButton.addEventListener("mousedown", function () {
+//     const newProjectTitle = prompt("what is the title");
+//     const newProjectDescr = prompt("what is the desc");
+//     const newProject = new Project(newProjectTitle, newProjectDescr);
+//     drawProjectNav(newProject);
+// })
 
 // Event listeners for selecting projects & displaying/removing them from DOM
-eventEmitter.on("deleteButton", (projectButton)=>{
+eventEmitter.on("deleteButton", (projectButton) => {
     projectButton.remove();
-    deleteProjectByID(projectButton.id);
+    getProjectByID(projectButton.id).deleteProject();
+});
+
+eventEmitter.on("projectButton", (projectButton) => {
+    drawProjectContent(projectButton.id);
 });
 
 let defaultProject = new Project("Default Project", "This is a default project description");
