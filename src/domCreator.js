@@ -8,7 +8,7 @@ const content = document.querySelector("#content");
 const drawSidebarLink = function (linkObj) {
     const navButton = document.createElement("div");
     navButton.id = linkObj.link || linkObj.id;
-    navButton.classList.add("nav-button")
+    navButton.classList.add("nav-button");
     const navIcon = document.createElement("i");
     linkObj.iconClasses.forEach(iconClass => navIcon.classList.add(iconClass));
     const navText = document.createElement("h3");
@@ -20,12 +20,15 @@ const drawSidebarLink = function (linkObj) {
 
 const drawProjectNav = function (project) {
     const thisProjectButton = drawSidebarLink(project);
+    thisProjectButton.addEventListener("mousedown", function() {
+        eventEmitter.emit("projectButton", project);
+    })
     const projectDeleteButton = document.createElement("div");
     projectDeleteButton.classList.add("nav-project-delete");
     const deleteIcon = document.createElement("i");
     deleteIcon.classList.add("fa-solid", "fa-xmark");
     projectDeleteButton.appendChild(deleteIcon);
-    projectDeleteButton.addEventListener("mousedown", function(){
+    projectDeleteButton.addEventListener("mousedown", function () {
         eventEmitter.emit("deleteProject", thisProjectButton)
     })
     thisProjectButton.appendChild(projectDeleteButton);
@@ -33,12 +36,17 @@ const drawProjectNav = function (project) {
     return thisProjectButton;
 }
 
-const drawProjectContent = function (project) {
-
+const drawProjectInfo = function (project) {
+    taskListTitle.textContent = project.title;
+    taskListLabel.textContent = project.label;
 }
 
 const drawTask = function (task) {
-    
+
+}
+
+const drawTaskList = function (taskList) {
+
 }
 
 
@@ -50,6 +58,7 @@ titleText.classList.add("title-text");
 titleText.textContent = "things to do.";
 header.appendChild(titleText);
 
+// Creating DOM body
 const body = document.createElement("div");
 body.id = "body-container";
 
@@ -92,7 +101,7 @@ const projectNameInputContainer = document.createElement("div");
 const projectNameInputLabel = document.createElement("label");
 projectNameInputLabel.for = "title";
 projectNameInputLabel.textContent = "Title:"
-const projectNameInputText = document.createElement ("input");
+const projectNameInputText = document.createElement("input");
 projectNameInputText.id = "project-title"
 projectNameInputText.name = "title"
 projectNameInputText.type = "text";
@@ -104,7 +113,7 @@ const projectLabelInputContainer = document.createElement("div");
 const projectLabelInputLabel = document.createElement("label");
 projectLabelInputLabel.for = "label";
 projectLabelInputLabel.textContent = "Label:"
-const projectLabelInputText = document.createElement ("input");
+const projectLabelInputText = document.createElement("input");
 projectLabelInputText.id = "project-label"
 projectLabelInputText.name = "label"
 projectLabelInputText.type = "text";
@@ -124,20 +133,20 @@ addProjectInputContainer.classList.add("nav-adding-project");
 
 addProjectButtonContainer.insertBefore(addProjectInputContainer, addProjectButtonContainer.firstChild);
 
-const toggleAddProjectContainer = function(){
+const toggleAddProjectContainer = function () {
     addProjectInputContainer.classList.toggle("nav-hidden");
     addProjectButton.firstChild.classList.toggle("fa-plus");
     addProjectButton.firstChild.classList.toggle("fa-minus");
 }
 
-addProjectInputContainer.addEventListener("submit", function(event){
+addProjectInputContainer.addEventListener("submit", function (event) {
     event.preventDefault();
     const projectForm = document.forms["add-project-form"];
     const formData = new FormData(projectForm);
     const projectTitle = formData.get("title");
     const projectLabel = formData.get("label");
     let validProject = true;
-    if(validProject){
+    if (validProject) {
         eventEmitter.emit("newProject", projectTitle, projectLabel);
         toggleAddProjectContainer();
         projectForm.reset();
@@ -150,11 +159,32 @@ sidebar.appendChild(horizontalRule);
 sidebar.appendChild(projectContainer);
 sidebar.appendChild(addProjectButtonContainer);
 
+// Creating DOM main
+const main = document.createElement("main");
+main.id = "main";
+
+// Creating DOM Task List
+const taskListHeader = document.createElement("div");
+taskListHeader.classList.add("task-container-header");
+const taskListTitle = document.createElement("h2");
+taskListTitle.textContent = "Project Name";
+const taskListLabel = document.createElement("h4");
+taskListLabel.textContent = "Label";
+taskListHeader.appendChild(taskListTitle);
+taskListHeader.appendChild(taskListLabel);
+
+const taskList = document.createElement("div");
+taskList.classList.add("task-container");
+
+main.appendChild(taskListHeader);
+main.appendChild(taskList);
+
 body.appendChild(sidebar);
+body.appendChild(main);
 content.appendChild(header);
 content.appendChild(body);
 
 
 
 
-export default { eventEmitter, drawProjectNav, navContainer, projectContainer, addProjectButton };
+export default { eventEmitter, drawProjectNav, drawProjectInfo, drawTaskList, drawTask, navContainer, projectContainer, addProjectButton };

@@ -18,12 +18,13 @@ domCreator.eventEmitter.on("deleteProject", (projectButton) => {
 });
 
 domCreator.eventEmitter.on("newProject", (projectName, projectLabel) => {
-    let newProject = new Project(projectName, projectLabel);
+    const newProject = new Project(projectName, projectLabel);
     domCreator.drawProjectNav(newProject);
 });
 
-domCreator.eventEmitter.on("projectButton", (projectButton) => {
-    domCreator.drawProjectContent(projectButton.id);
+domCreator.eventEmitter.on("projectButton", (project) => {
+    domCreator.drawProjectInfo(project);
+    domCreator.drawTaskList(project.taskList);
 });
 
 let defaultProject = new Project("Default Project", "This is a default project description");
