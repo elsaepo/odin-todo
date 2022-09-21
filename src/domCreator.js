@@ -37,18 +37,38 @@ const drawProjectNav = function (project) {
 }
 
 const drawProjectInfo = function (project) {
-    taskListTitle.textContent = project.title;
-    taskListLabel.textContent = project.label;
-}
-
-const drawTask = function (task) {
-
+    taskContainerTitle.textContent = project.title;
+    taskContainerLabel.textContent = project.label;
 }
 
 const drawTaskList = function (taskList) {
-
+    console.log(taskList)
+    while (taskContainer.firstChild) {
+        taskContainer.firstChild.remove();
+    }
+    taskList.forEach(task => {
+        taskContainer.appendChild(drawTask(task));
+    })
+    main.appendChild(taskContainer);
 }
 
+const drawTask = function (task) {
+    const taskBox = document.createElement("div");
+    taskBox.classList.add("task");
+    const taskTitle = document.createElement("div");
+    taskTitle.textContent = task.title;
+    const taskDescription = document.createElement("div");
+    taskDescription.textContent = task.description;
+    const taskDate = document.createElement("div");
+    taskDate.textContent = task.dueDate;
+    const taskPriority = document.createElement("div");
+    taskPriority.textContent = task.priority;
+    taskBox.appendChild(taskTitle);
+    taskBox.appendChild(taskDescription);
+    taskBox.appendChild(taskDate);
+    taskBox.appendChild(taskPriority);
+    return taskBox;
+}
 
 // Creating DOM header
 const header = document.createElement("div");
@@ -164,20 +184,20 @@ const main = document.createElement("main");
 main.id = "main";
 
 // Creating DOM Task List
-const taskListHeader = document.createElement("div");
-taskListHeader.classList.add("task-container-header");
-const taskListTitle = document.createElement("h2");
-taskListTitle.textContent = "Project Name";
-const taskListLabel = document.createElement("h4");
-taskListLabel.textContent = "Label";
-taskListHeader.appendChild(taskListTitle);
-taskListHeader.appendChild(taskListLabel);
+const taskContainerHeader = document.createElement("div");
+taskContainerHeader.classList.add("task-container-header");
+const taskContainerTitle = document.createElement("h2");
+taskContainerTitle.textContent = "Project Name";
+const taskContainerLabel = document.createElement("h4");
+taskContainerLabel.textContent = "Label";
+taskContainerHeader.appendChild(taskContainerTitle);
+taskContainerHeader.appendChild(taskContainerLabel);
 
-const taskList = document.createElement("div");
-taskList.classList.add("task-container");
+const taskContainer = document.createElement("div");
+taskContainer.classList.add("task-container");
 
-main.appendChild(taskListHeader);
-main.appendChild(taskList);
+main.appendChild(taskContainerHeader);
+main.appendChild(taskContainer);
 
 body.appendChild(sidebar);
 body.appendChild(main);
