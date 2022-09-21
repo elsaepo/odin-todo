@@ -1,7 +1,7 @@
 import { Project, getProjectByID } from "./project.js";
 import { Task } from "./task.js";
 import "./style.css";
-import { eventEmitter, drawProjectNav, navContainer, projectContainer, addProjectButton } from "./domCreator.js";
+import domCreator from "./domCreator.js";
 
 // Event listener for adding new project & drawing it to DOM
 // addProjectButton.addEventListener("mousedown", function () {
@@ -12,13 +12,18 @@ import { eventEmitter, drawProjectNav, navContainer, projectContainer, addProjec
 // })
 
 // Event listeners for selecting projects & displaying/removing them from DOM
-eventEmitter.on("deleteButton", (projectButton) => {
+domCreator.eventEmitter.on("deleteProject", (projectButton) => {
     projectButton.remove();
     getProjectByID(projectButton.id).deleteProject();
 });
 
-eventEmitter.on("projectButton", (projectButton) => {
-    drawProjectContent(projectButton.id);
+domCreator.eventEmitter.on("newProject", (projectName, projectLabel) => {
+    let newProject = new Project(projectName, projectLabel);
+    domCreator.drawProjectNav(newProject);
+});
+
+domCreator.eventEmitter.on("projectButton", (projectButton) => {
+    domCreator.drawProjectContent(projectButton.id);
 });
 
 let defaultProject = new Project("Default Project", "This is a default project description");
@@ -34,6 +39,6 @@ defaultProject.addTask(myTask3);
 console.log(`task list: ${defaultProject.taskList}`);
 
 
-drawProjectNav(defaultProject);
-drawProjectNav(defaultProject2);
-drawProjectNav(defaultProject3);
+domCreator.drawProjectNav(defaultProject);
+domCreator.drawProjectNav(defaultProject2);
+domCreator.drawProjectNav(defaultProject3);

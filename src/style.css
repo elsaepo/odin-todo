@@ -52,15 +52,6 @@ body {
     padding: 32px;
 }
 
-.nav-add-project-container {
-    padding: 0 32px;
-    opacity: 0.4;
-}
-
-.nav-add-project-container:hover {
-    opacity: 1;
-}
-
 .nav-button {
     height: 42px;
     display: flex;
@@ -113,21 +104,39 @@ body {
     opacity: 1;
 }
 
+.nav-add-project-container {
+    padding: 0 32px;
+}
+
+#add-project {
+    opacity: 0.4
+}
+
+#add-project:hover {
+    opacity: 1;
+}
+
 .nav-adding-project {
     border: 2px solid rgb(70, 70, 70);
     border-radius: 12px;
     display: flex;
+    height: 150px;
+    opacity: 1;
     justify-content: center;
     flex-direction: column;
     padding: 12px;
     gap: 12px;
     overflow: hidden;
-    transition: display 0.2s ease;
+    transition: display 0.2s ease, height 0.1s ease;
 }
 
 .nav-hidden {
-    transition: display 0.2s ease;
-    display: none;
+    height: 0;
+    padding: 0;
+    gap: 0;
+    border: 0;
+    opacity: 0;
+    transition: opacity 0.2s ease, height .1s ease;
 }
 
 .nav-adding-project div {
@@ -147,6 +156,25 @@ body {
     flex-grow: 1;
     width: 100px;
     font-size: 1.2rem;
+}
+
+.nav-adding-project button {
+    width: 100%;
+    border: 2px solid black;
+    border-radius: 12px;
+    background-color: rgb(158, 206, 194);
+    height: 32px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.nav-adding-project button:hover {
+    cursor: pointer;
+    background-color: rgb(140, 228, 206);
+}
+
+.nav-adding-project button:active {
+    background-color: white;
 }
 
 #sidebar hr {
