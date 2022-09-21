@@ -86,6 +86,7 @@ addProjectButtonContainer.appendChild(addProjectButton);
 // Add Project container
 const addProjectInputContainer = document.createElement("form");
 addProjectInputContainer.id = "add-project-form";
+addProjectInputContainer.classList.add("nav-hidden");
 
 const projectNameInputContainer = document.createElement("div");
 const projectNameInputLabel = document.createElement("label");
@@ -95,6 +96,8 @@ const projectNameInputText = document.createElement ("input");
 projectNameInputText.id = "project-title"
 projectNameInputText.name = "title"
 projectNameInputText.type = "text";
+projectNameInputText.maxLength = 15;
+projectNameInputText.required = true;
 projectNameInputContainer.appendChild(projectNameInputLabel);
 projectNameInputContainer.appendChild(projectNameInputText);
 const projectLabelInputContainer = document.createElement("div");
@@ -105,6 +108,7 @@ const projectLabelInputText = document.createElement ("input");
 projectLabelInputText.id = "project-label"
 projectLabelInputText.name = "label"
 projectLabelInputText.type = "text";
+projectLabelInputText.maxLength = 80;
 projectLabelInputContainer.appendChild(projectLabelInputLabel);
 projectLabelInputContainer.appendChild(projectLabelInputText);
 const projectSubmitInputContainer = document.createElement("div");
