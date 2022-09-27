@@ -1,7 +1,7 @@
 import { getNewID } from "./idController.js"
 
 class Task {
-    constructor(title, description, dueDate, status, priority) {
+    constructor(title, description, dueDate, status, priority, parentProject) {
         this._id = getNewID();
         this._title = title;
         this._description = description;
@@ -9,6 +9,7 @@ class Task {
         this._status = status;
         this._priority = priority;
         this._completed = false;
+        this._parentProject;
     }
 
     get id(){
@@ -37,6 +38,18 @@ class Task {
     }
     set priority(newPriority){
         this._priority = newPriority;
+    }
+    get completed(){
+        return this._completed;
+    }
+    set completed(newCompleted){
+        this._completed = newCompleted;
+    }
+    get parentProject(){
+        return this._parentProject;
+    }
+    set parentProject(newParentProject){
+        this._parentProject = newParentProject;
     }
 }
 

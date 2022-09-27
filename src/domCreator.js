@@ -29,7 +29,7 @@ const drawProjectNav = function (project) {
     deleteIcon.classList.add("fa-solid", "fa-xmark");
     projectDeleteButton.appendChild(deleteIcon);
     projectDeleteButton.addEventListener("mousedown", function () {
-        eventEmitter.emit("deleteProject", thisProjectButton)
+        eventEmitter.emit("deleteProject", thisProjectButton);
     })
     thisProjectButton.appendChild(projectDeleteButton);
     projectContainer.appendChild(thisProjectButton);
@@ -42,19 +42,30 @@ const drawProjectInfo = function (project) {
 }
 
 const drawTaskList = function (taskList) {
-    console.log(taskList)
     while (taskContainer.firstChild) {
         taskContainer.firstChild.remove();
-    }
+    };
     taskList.forEach(task => {
         taskContainer.appendChild(drawTask(task));
-    })
+    });
     main.appendChild(taskContainer);
 }
 
 const drawTask = function (task) {
     const taskBox = document.createElement("div");
     taskBox.classList.add("task");
+    const taskCompleteBox = document.createElement("div");
+    taskCompleteBox.classList.add("task-complete-box");
+    taskBox.appendChild(taskCompleteBox);
+    if(task.completed){
+        taskCompleteBox.classList.add("task-completed");
+        taskCompleteBox.parentElement.classList.add("task-box-completed");
+    };
+    taskCompleteBox.addEventListener("mousedown", function(){
+        eventEmitter.emit("taskComplete", task);
+        taskCompleteBox.classList.toggle("task-completed");
+        taskCompleteBox.parentElement.classList.toggle("task-box-completed");
+    });
     const taskTitle = document.createElement("div");
     taskTitle.textContent = task.title;
     const taskDescription = document.createElement("div");
@@ -63,10 +74,24 @@ const drawTask = function (task) {
     taskDate.textContent = task.dueDate;
     const taskPriority = document.createElement("div");
     taskPriority.textContent = task.priority;
+    const taskEditBox = document.createElement("i");
+    taskEditBox.classList.add("fa-solid", "fa-pen-to-square", "task-edit");
+    const taskDeleteBox = document.createElement("i");
+    taskDeleteBox.classList.add("fa-solid", "fa-trash", "task-delete");
+    taskDeleteBox.addEventListener("mousedown", function(){
+        taskDeleteScreen.classList.remove("task-delete-hidden");
+        taskDeleteYes.addEventListener("mousedown", function(){
+            eventEmitter.emit("taskDelete", task);
+            taskDeleteScreen.classList.add("task-delete-hidden");
+            taskDeleteBox.parentElement.remove();
+        })
+    })
     taskBox.appendChild(taskTitle);
     taskBox.appendChild(taskDescription);
     taskBox.appendChild(taskDate);
     taskBox.appendChild(taskPriority);
+    taskBox.appendChild(taskEditBox);
+    taskBox.appendChild(taskDeleteBox);
     return taskBox;
 }
 
@@ -193,16 +218,65 @@ taskContainerLabel.textContent = "Label";
 taskContainerHeader.appendChild(taskContainerTitle);
 taskContainerHeader.appendChild(taskContainerLabel);
 
+const taskSorter = document.createElement("div");
+taskSorter.classList.add("task-sorter");
+const sortArray = [
+    "",
+    "Task",
+    "Description",
+    "Due Date",
+    "Priority",
+    "",
+    ""
+]
+sortArray.forEach(sorter => {
+    const header = document.createElement("h5");
+    header.textContent = sorter;
+    taskSorter.appendChild(header);
+})
+
 const taskContainer = document.createElement("div");
 taskContainer.classList.add("task-container");
 
+// Creating Popups
+const taskDeleteScreen = document.createElement("div");
+taskDeleteScreen.classList.add("task-delete-screen", "task-delete-hidden");
+const taskDeleteFade = document.createElement("div");
+taskDeleteFade.classList.add("task-delete-fade")
+const taskDeleteContainer = document.createElement("div");
+taskDeleteContainer.classList.add("task-delete-container");
+taskDeleteScreen.appendChild(taskDeleteFade);
+taskDeleteScreen.appendChild(taskDeleteContainer);
+const taskDeletePrompt = document.createElement("p");
+taskDeletePrompt.classList.add("task-delete-prompt")
+taskDeletePrompt.textContent = "Are you sure you want to delete this task?";
+const taskDeleteYes = document.createElement("button");
+taskDeleteYes.classList.add("task-delete-button", "task-delete-button-yes");
+taskDeleteYes.textContent = "DELETE";
+taskDeleteYes.addEventListener("mousedown", function(){
+//    eventEmitter.emit("taskDelete", "placeholder")
+})
+const taskDeleteCancel = document.createElement("button");
+taskDeleteCancel.classList.add("task-delete-button", "task-delete-button-cancel");
+taskDeleteCancel.textContent = "CANCEL";
+taskDeleteCancel.addEventListener("mousedown", function(){
+    taskDeleteScreen.classList.add("task-delete-hidden");
+})
+
+taskDeleteContainer.appendChild(taskDeletePrompt);
+taskDeleteContainer.appendChild(taskDeleteYes);
+taskDeleteContainer.appendChild(taskDeleteCancel);
+
 main.appendChild(taskContainerHeader);
+main.appendChild(taskSorter);
 main.appendChild(taskContainer);
 
 body.appendChild(sidebar);
 body.appendChild(main);
+body.appendChild(taskDeleteScreen);
 content.appendChild(header);
 content.appendChild(body);
+
 
 
 

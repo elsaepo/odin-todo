@@ -1,5 +1,7 @@
 import { getNewID } from "./idController.js"
 
+let currentProjectID = 1;
+
 const projectList = [];
 
 class Project {
@@ -34,6 +36,7 @@ class Project {
         return this._taskList;
     }
     addTask = (taskObject, index) => {
+        taskObject.parentProject = this;
         if (index) {
             this._taskList.splice(index, 0, taskObject);
         } else {
@@ -55,4 +58,12 @@ const getProjectByID = function (id) {
     return projectList[projectIndex];
 }
 
-export { Project, getProjectByID };
+const getCurrentProject = function(){
+    return currentProjectID;
+}
+
+const setCurrentProject = function(id){
+    currentProjectID = id;
+}
+
+export { Project, getProjectByID, getCurrentProject, setCurrentProject };
