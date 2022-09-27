@@ -28,7 +28,8 @@ const drawProjectNav = function (project) {
     const deleteIcon = document.createElement("i");
     deleteIcon.classList.add("fa-solid", "fa-xmark");
     projectDeleteButton.appendChild(deleteIcon);
-    projectDeleteButton.addEventListener("mousedown", function () {
+    projectDeleteButton.addEventListener("mousedown", function (event) {
+        event.stopPropagation();
         eventEmitter.emit("deleteProject", thisProjectButton);
     })
     thisProjectButton.appendChild(projectDeleteButton);

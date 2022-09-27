@@ -6,17 +6,16 @@ import domCreator from "./domCreator.js";
 // Event emitter listeners for selecting projects & displaying/removing them from DOM
 domCreator.eventEmitter.on("deleteProject", (projectButton) => {
     // if the current project is displayed, remove it and replace with uncategorised
-    projectButton.remove();
+    
     const thisProject = getProjectByID(projectButton.id);
     if (getCurrentProject() === thisProject.id) {
         // NOTE NOTE: this isn't working properly????
-        console.log(getCurrentProject());
-        console.log(thisProject.id);
-        setCurrentProject(1)
+        setCurrentProject(1);
         domCreator.drawProjectInfo(getProjectByID(1));
         domCreator.drawTaskList(getProjectByID(1).taskList);
     }
     thisProject.deleteProject();
+    projectButton.remove();
 });
 
 domCreator.eventEmitter.on("newProject", (projectName, projectLabel) => {
