@@ -81,12 +81,17 @@ const drawTask = function (task) {
     taskDeleteBox.classList.add("fa-solid", "fa-trash", "task-delete");
     taskDeleteBox.addEventListener("mousedown", function(){
         taskDeleteScreen.classList.remove("task-delete-hidden");
-        taskDeleteYes.addEventListener("mousedown", function(){
-            eventEmitter.emit("taskDelete", task);
-            taskDeleteScreen.classList.add("task-delete-hidden");
-            taskDeleteBox.parentElement.remove();
-        })
+        taskDeleteYes.addEventListener("mousedown", deleteTaskSubmit)
     })
+    taskDeleteCancel.addEventListener("mousedown", function(){
+        taskDeleteYes.removeEventListener("mousedown", deleteTaskSubmit);
+        taskDeleteScreen.classList.add("task-delete-hidden");
+    })
+    const deleteTaskSubmit = function(event){
+        eventEmitter.emit("taskDelete", task);
+        taskDeleteScreen.classList.add("task-delete-hidden");
+        taskDeleteBox.parentElement.remove();
+    }
     taskBox.appendChild(taskTitle);
     taskBox.appendChild(taskDescription);
     taskBox.appendChild(taskDate);
@@ -242,8 +247,11 @@ taskContainer.classList.add("task-container");
 // Creating Popups
 const taskDeleteScreen = document.createElement("div");
 taskDeleteScreen.classList.add("task-delete-screen", "task-delete-hidden");
+taskDeleteScreen.addEventListener("mousedown", function(){
+    taskDeleteScreen.classList.add("task-delete-hidden");
+})
 const taskDeleteFade = document.createElement("div");
-taskDeleteFade.classList.add("task-delete-fade")
+taskDeleteFade.classList.add("task-delete-fade");
 const taskDeleteContainer = document.createElement("div");
 taskDeleteContainer.classList.add("task-delete-container");
 taskDeleteScreen.appendChild(taskDeleteFade);
@@ -254,15 +262,9 @@ taskDeletePrompt.textContent = "Are you sure you want to delete this task?";
 const taskDeleteYes = document.createElement("button");
 taskDeleteYes.classList.add("task-delete-button", "task-delete-button-yes");
 taskDeleteYes.textContent = "DELETE";
-taskDeleteYes.addEventListener("mousedown", function(){
-//    eventEmitter.emit("taskDelete", "placeholder")
-})
 const taskDeleteCancel = document.createElement("button");
 taskDeleteCancel.classList.add("task-delete-button", "task-delete-button-cancel");
 taskDeleteCancel.textContent = "CANCEL";
-taskDeleteCancel.addEventListener("mousedown", function(){
-    taskDeleteScreen.classList.add("task-delete-hidden");
-})
 
 taskDeleteContainer.appendChild(taskDeletePrompt);
 taskDeleteContainer.appendChild(taskDeleteYes);
