@@ -28,12 +28,22 @@ const drawProjectNav = function (project) {
     const deleteIcon = document.createElement("i");
     deleteIcon.classList.add("fa-solid", "fa-xmark");
     projectDeleteButton.appendChild(deleteIcon);
-    projectDeleteButton.addEventListener("mousedown", function (event) {
-        event.stopPropagation();
-        eventEmitter.emit("deleteProject", thisProjectButton);
-    })
     thisProjectButton.appendChild(projectDeleteButton);
     projectContainer.appendChild(thisProjectButton);
+    projectDeleteButton.addEventListener("mousedown", function(event){
+        event.stopPropagation();
+        projectDeleteScreen.classList.remove("task-delete-hidden");
+        projectDeleteYes.addEventListener("mousedown", deleteProjectSubmit)
+    })
+    projectDeleteCancel.addEventListener("mousedown", function(){
+        projectDeleteYes.removeEventListener("mousedown", deleteProjectSubmit);
+        projectDeleteScreen.classList.add("task-delete-hidden");
+    })
+    const deleteProjectSubmit = function(){
+        projectDeleteScreen.classList.add("task-delete-hidden");
+        eventEmitter.emit("deleteProject", thisProjectButton);
+        projectDeleteButton.parentElement.remove();
+    }
     return thisProjectButton;
 }
 
@@ -244,12 +254,9 @@ sortArray.forEach(sorter => {
 const taskContainer = document.createElement("div");
 taskContainer.classList.add("task-container");
 
-// Creating Popups
+// Task delete popup
 const taskDeleteScreen = document.createElement("div");
 taskDeleteScreen.classList.add("task-delete-screen", "task-delete-hidden");
-taskDeleteScreen.addEventListener("mousedown", function(){
-    taskDeleteScreen.classList.add("task-delete-hidden");
-})
 const taskDeleteFade = document.createElement("div");
 taskDeleteFade.classList.add("task-delete-fade");
 const taskDeleteContainer = document.createElement("div");
@@ -265,10 +272,26 @@ taskDeleteYes.textContent = "DELETE";
 const taskDeleteCancel = document.createElement("button");
 taskDeleteCancel.classList.add("task-delete-button", "task-delete-button-cancel");
 taskDeleteCancel.textContent = "CANCEL";
-
 taskDeleteContainer.appendChild(taskDeletePrompt);
 taskDeleteContainer.appendChild(taskDeleteYes);
 taskDeleteContainer.appendChild(taskDeleteCancel);
+
+// Project delete popup
+const projectDeleteScreen = taskDeleteScreen.cloneNode();
+const projectDeleteFade = taskDeleteFade.cloneNode();
+const projectDeleteContainer = document.createElement("div");
+projectDeleteContainer.classList.add("task-delete-container", "project-delete-container");
+projectDeleteScreen.appendChild(projectDeleteFade);
+projectDeleteScreen.appendChild(projectDeleteContainer);
+const projectDeletePrompt = taskDeletePrompt.cloneNode();
+projectDeletePrompt.textContent = "Are you sure you want to delete this project? This will also delete any associated tasks!";
+const projectDeleteYes = taskDeleteYes.cloneNode();
+projectDeleteYes.textContent = "DELETE";
+const projectDeleteCancel = taskDeleteCancel.cloneNode();
+projectDeleteCancel.textContent = "CANCEL";
+projectDeleteContainer.appendChild(projectDeletePrompt);
+projectDeleteContainer.appendChild(projectDeleteYes);
+projectDeleteContainer.appendChild(projectDeleteCancel);
 
 main.appendChild(taskContainerHeader);
 main.appendChild(taskSorter);
@@ -277,6 +300,7 @@ main.appendChild(taskContainer);
 body.appendChild(sidebar);
 body.appendChild(main);
 body.appendChild(taskDeleteScreen);
+body.appendChild(projectDeleteScreen);
 content.appendChild(header);
 content.appendChild(body);
 

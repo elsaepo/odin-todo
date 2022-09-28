@@ -362,6 +362,10 @@ h5 {
     animation-fill-mode: forwards;
 }
 
+.project-delete-container {
+    height: 150px; 
+}
+
 .task-delete-prompt {
     text-align: center;
     font-weight: 600;
