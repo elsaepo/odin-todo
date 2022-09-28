@@ -23,27 +23,29 @@ const drawProjectNav = function (project) {
     thisProjectButton.addEventListener("mousedown", function() {
         eventEmitter.emit("projectButton", project);
     })
-    const projectDeleteButton = document.createElement("div");
-    projectDeleteButton.classList.add("nav-project-delete");
-    const deleteIcon = document.createElement("i");
-    deleteIcon.classList.add("fa-solid", "fa-xmark");
-    projectDeleteButton.appendChild(deleteIcon);
-    thisProjectButton.appendChild(projectDeleteButton);
-    projectContainer.appendChild(thisProjectButton);
-    projectDeleteButton.addEventListener("mousedown", function(event){
-        event.stopPropagation();
-        projectDeleteScreen.classList.remove("task-delete-hidden");
-        projectDeleteYes.addEventListener("mousedown", deleteProjectSubmit)
-    })
-    projectDeleteCancel.addEventListener("mousedown", function(){
-        projectDeleteYes.removeEventListener("mousedown", deleteProjectSubmit);
-        projectDeleteScreen.classList.add("task-delete-hidden");
-    })
+    if (project.id !== 1){
+        const projectDeleteButton = document.createElement("div");
+        projectDeleteButton.classList.add("nav-project-delete");
+        const deleteIcon = document.createElement("i");
+        deleteIcon.classList.add("fa-solid", "fa-xmark");
+        projectDeleteButton.appendChild(deleteIcon);
+        thisProjectButton.appendChild(projectDeleteButton);
+        projectDeleteButton.addEventListener("mousedown", function(event){
+            event.stopPropagation();
+            projectDeleteScreen.classList.remove("task-delete-hidden");
+            projectDeleteYes.addEventListener("mousedown", deleteProjectSubmit)
+        })
+        projectDeleteCancel.addEventListener("mousedown", function(){
+            projectDeleteYes.removeEventListener("mousedown", deleteProjectSubmit);
+            projectDeleteScreen.classList.add("task-delete-hidden");
+        })
+    }
     const deleteProjectSubmit = function(){
         projectDeleteScreen.classList.add("task-delete-hidden");
-        eventEmitter.emit("deleteProject", thisProjectButton);
-        projectDeleteButton.parentElement.remove();
+        eventEmitter.emit("deleteProject", project);
+        thisProjectButton.remove();
     }
+    projectContainer.appendChild(thisProjectButton);
     return thisProjectButton;
 }
 
@@ -97,7 +99,7 @@ const drawTask = function (task) {
         taskDeleteYes.removeEventListener("mousedown", deleteTaskSubmit);
         taskDeleteScreen.classList.add("task-delete-hidden");
     })
-    const deleteTaskSubmit = function(event){
+    const deleteTaskSubmit = function(){
         eventEmitter.emit("taskDelete", task);
         taskDeleteScreen.classList.add("task-delete-hidden");
         taskDeleteBox.parentElement.remove();
