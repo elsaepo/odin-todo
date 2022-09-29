@@ -33,6 +33,12 @@ domCreator.eventEmitter.on("taskDelete", (task) => {
     task.parentProject.removeTask(task);
 })
 
+domCreator.eventEmitter.on("taskAdd", (taskTitle, taskDesc) => {
+    console.log("receive task info")
+    let newTask = new Task(taskTitle, taskDesc);
+    console.log(newTask)
+})
+
 
 // Default projects for testing purposes
 // title, description, dueDate, status, priority
