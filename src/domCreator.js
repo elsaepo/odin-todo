@@ -49,47 +49,45 @@ const drawProjectNav = function (project) {
     return thisProjectButton;
 }
 
+const taskAddSubmit = function (event) {
+    event.preventDefault();
+    const taskForm = document.forms["add-task-form"];
+    const formData = new FormData(taskForm);
+    const taskTitle = formData.get("title");
+    const taskDesc = formData.get("desc");
+    // const taskDueDate = formData.get("date");
+    // const taskStatus = formData.get("status");
+    // const taskPriority = formData.get("priority");
+    // const taskProject = formData.get("project");
+    const projectID = 1;
+    let validTask = true;
+    if (validTask) {
+        eventEmitter.emit("newTask", projectID, taskTitle, taskDesc);
+        taskForm.reset();
+    }
+    taskAddScreen.classList.add("task-delete-hidden");
+}
+
 const drawProjectInfo = function (project) {
+    addTaskInputContainer.removeEventListener("submit", taskAddSubmit);
     taskContainerTitle.textContent = project.title;
     taskContainerLabel.textContent = project.label;
     taskContainerAddButton.addEventListener("mousedown", function(event){
         taskAddScreen.classList.remove("task-delete-hidden");
-        taskAddYes.removeEventListener("mousedown", taskAddSubmit);
-        taskAddYes.addEventListener("mousedown", taskAddSubmit);
     })
     taskAddCancel.addEventListener("mousedown", function(){
-        taskAddYes.removeEventListener("mousedown", taskAddSubmit);
         taskAddScreen.classList.add("task-delete-hidden");
     })
-    const taskAddSubmit = function (event) {
-        event.preventDefault();
-        const taskForm = document.forms["add-task-form"];
-        const formData = new FormData(taskForm);
-        const taskTitle = formData.get("title");
-        const taskDesc = formData.get("desc");
-        let validProject = true;
-        if (validProject) {
-            eventEmitter.emit("newTask", taskTitle, taskDesc);
-            taskForm.reset();
-            console.log(`emitted task data: ${taskTitle} ${taskDesc}`)
-        }
-        taskAddScreen.classList.add("task-delete-hidden");
-    }
-    addTaskInputContainer.addEventListener("submit", taskAddSubmit, false);
-    // addProjectInputContainer.addEventListener("submit", function (event) {
-    //     event.preventDefault();
-    //     const projectForm = document.forms["add-project-form"];
-    //     const formData = new FormData(projectForm);
-    //     const projectTitle = formData.get("title");
-    //     const projectLabel = formData.get("label");
-    //     let validProject = true;
-    //     if (validProject) {
-    //         eventEmitter.emit("newProject", projectTitle, projectLabel);
-    //         toggleAddProjectContainer();
-    //         projectForm.reset();
-    //     }
-    // }, false);
-    // addProjectButton.addEventListener("mousedown", toggleAddProjectContainer);
+    
+    addTaskInputContainer.addEventListener("submit", taskAddSubmit);
+    // this._id = getNewID();
+    // this._title = title;
+    // this._description = description;
+    // this._dueDate = dueDate;
+    // this._status = status;
+    // this._priority = priority;
+    // this._completed = false;
+    // this._parentProject;
 }
 
 const drawTaskList = function (taskList) {
@@ -352,7 +350,7 @@ const taskAddCancel = taskDeleteCancel.cloneNode();
 taskAddCancel.textContent = "CANCEL";
 
 // Add Task container
-const addTaskInputContainer = document.createElement("form");
+let addTaskInputContainer = document.createElement("form");
 addTaskInputContainer.id = "add-task-form";
 
 const taskNameInputContainer = document.createElement("div");
@@ -411,4 +409,4 @@ content.appendChild(body);
 
 
 
-export default { eventEmitter, drawProjectNav, drawProjectInfo, drawTaskList, drawTask, navContainer, projectContainer, addProjectButton };
+export default { eventEmitter, drawProjectNav, drawProjectInfo, drawTaskList, drawTask, navContainer, projectContainer, taskContainer, addProjectButton };

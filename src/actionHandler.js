@@ -33,10 +33,10 @@ domCreator.eventEmitter.on("taskDelete", (task) => {
     task.parentProject.removeTask(task);
 })
 
-domCreator.eventEmitter.on("taskAdd", (taskTitle, taskDesc) => {
-    console.log("receive task info")
+domCreator.eventEmitter.on("newTask", (projectID, taskTitle, taskDesc) => {
     let newTask = new Task(taskTitle, taskDesc);
-    console.log(newTask)
+    getProjectByID(projectID).addTask(newTask);
+    domCreator.taskContainer.appendChild(domCreator.drawTask(newTask));
 })
 
 
