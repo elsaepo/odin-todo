@@ -20,27 +20,27 @@ const drawSidebarLink = function (linkObj) {
 
 const drawProjectNav = function (project) {
     const thisProjectButton = drawSidebarLink(project);
-    thisProjectButton.addEventListener("mousedown", function() {
+    thisProjectButton.addEventListener("mousedown", function () {
         eventEmitter.emit("projectButton", project);
     })
-    if (project.id !== 1){
+    if (project.id !== 1) {
         const projectDeleteButton = document.createElement("div");
         projectDeleteButton.classList.add("nav-project-delete");
         const deleteIcon = document.createElement("i");
         deleteIcon.classList.add("fa-solid", "fa-xmark");
         projectDeleteButton.appendChild(deleteIcon);
         thisProjectButton.appendChild(projectDeleteButton);
-        projectDeleteButton.addEventListener("mousedown", function(event){
+        projectDeleteButton.addEventListener("mousedown", function (event) {
             event.stopPropagation();
             projectDeleteScreen.classList.remove("task-delete-hidden");
             projectDeleteYes.addEventListener("mousedown", deleteProjectSubmit)
         })
-        projectDeleteCancel.addEventListener("mousedown", function(){
+        projectDeleteCancel.addEventListener("mousedown", function () {
             projectDeleteYes.removeEventListener("mousedown", deleteProjectSubmit);
             projectDeleteScreen.classList.add("task-delete-hidden");
         })
     }
-    const deleteProjectSubmit = function(){
+    const deleteProjectSubmit = function () {
         projectDeleteScreen.classList.add("task-delete-hidden");
         eventEmitter.emit("deleteProject", project);
         thisProjectButton.remove();
@@ -68,18 +68,40 @@ const taskAddSubmit = function (event) {
     taskAddScreen.classList.add("task-delete-hidden");
 }
 
-const drawProjectInfo = function (project) {
-    addTaskInputContainer.removeEventListener("submit", taskAddSubmit);
+const drawProjectHeader = function (project) {
+
+    // this method of removing header could be cleaned up quite a bit
+
+    const currentHeader = document.querySelector(".task-container-header");
+    if (currentHeader) {currentHeader.remove()};
+
+    const taskContainerHeader = document.createElement("div");
+    taskContainerHeader.classList.add("task-container-header");
+    const taskContainerTitle = document.createElement("h2");
     taskContainerTitle.textContent = project.title;
+    const taskContainerLabel = document.createElement("p");
     taskContainerLabel.textContent = project.label;
-    taskContainerAddButton.addEventListener("mousedown", function(event){
-        taskAddScreen.classList.remove("task-delete-hidden");
+    let taskContainerAddButton = document.createElement("button");
+    taskContainerAddButton.classList.add("add-task")
+    taskContainerAddButton.textContent = "+ Task";
+    taskContainerHeader.appendChild(taskContainerTitle);
+    taskContainerHeader.appendChild(taskContainerLabel);
+    taskContainerHeader.appendChild(taskContainerAddButton);
+    main.insertBefore(taskContainerHeader, main.firstChild);
+
+
+    // taskContainerTitle.textContent = project.title;
+    // taskContainerLabel.textContent = project.label;
+    // taskContainerAddButton = taskContainerAddButton.cloneNode();
+
+    // when i click the add button here, only then should it create the DOM elements
+    taskContainerAddButton.addEventListener("mousedown", function (event) {
+        console.log("listne")
+        drawAddTaskContainer(project);
     })
-    taskAddCancel.addEventListener("mousedown", function(){
-        taskAddScreen.classList.add("task-delete-hidden");
-    })
-    
-    addTaskInputContainer.addEventListener("submit", taskAddSubmit);
+
+
+
     // this._id = getNewID();
     // this._title = title;
     // this._description = description;
@@ -88,6 +110,8 @@ const drawProjectInfo = function (project) {
     // this._priority = priority;
     // this._completed = false;
     // this._parentProject;
+
+    return taskContainerHeader;
 }
 
 const drawTaskList = function (taskList) {
@@ -106,11 +130,11 @@ const drawTask = function (task) {
     const taskCompleteBox = document.createElement("div");
     taskCompleteBox.classList.add("task-complete-box");
     taskBox.appendChild(taskCompleteBox);
-    if(task.completed){
+    if (task.completed) {
         taskCompleteBox.classList.add("task-completed");
         taskCompleteBox.parentElement.classList.add("task-box-completed");
     };
-    taskCompleteBox.addEventListener("mousedown", function(){
+    taskCompleteBox.addEventListener("mousedown", function () {
         eventEmitter.emit("taskComplete", task);
         taskCompleteBox.classList.toggle("task-completed");
         taskCompleteBox.parentElement.classList.toggle("task-box-completed");
@@ -127,15 +151,15 @@ const drawTask = function (task) {
     taskEditBox.classList.add("fa-solid", "fa-pen-to-square", "task-edit");
     const taskDeleteBox = document.createElement("i");
     taskDeleteBox.classList.add("fa-solid", "fa-trash", "task-delete");
-    taskDeleteBox.addEventListener("mousedown", function(){
+    taskDeleteBox.addEventListener("mousedown", function () {
         taskDeleteScreen.classList.remove("task-delete-hidden");
         taskDeleteYes.addEventListener("mousedown", deleteTaskSubmit)
     })
-    taskDeleteCancel.addEventListener("mousedown", function(){
+    taskDeleteCancel.addEventListener("mousedown", function () {
         taskDeleteYes.removeEventListener("mousedown", deleteTaskSubmit);
         taskDeleteScreen.classList.add("task-delete-hidden");
     })
-    const deleteTaskSubmit = function(){
+    const deleteTaskSubmit = function () {
         eventEmitter.emit("taskDelete", task);
         taskDeleteScreen.classList.add("task-delete-hidden");
         taskDeleteBox.parentElement.remove();
@@ -263,18 +287,7 @@ const main = document.createElement("main");
 main.id = "main";
 
 // Creating DOM Task List
-const taskContainerHeader = document.createElement("div");
-taskContainerHeader.classList.add("task-container-header");
-const taskContainerTitle = document.createElement("h2");
-taskContainerTitle.textContent = "Project Name";
-const taskContainerLabel = document.createElement("p");
-taskContainerLabel.textContent = "Label";
-const taskContainerAddButton = document.createElement("button");
-taskContainerAddButton.classList.add("add-task")
-taskContainerAddButton.textContent = "+ Task";
-taskContainerHeader.appendChild(taskContainerTitle);
-taskContainerHeader.appendChild(taskContainerLabel);
-taskContainerHeader.appendChild(taskContainerAddButton);
+
 
 const taskSorter = document.createElement("div");
 taskSorter.classList.add("task-sorter");
@@ -335,65 +348,148 @@ projectDeleteContainer.appendChild(projectDeletePrompt);
 projectDeleteContainer.appendChild(projectDeleteYes);
 projectDeleteContainer.appendChild(projectDeleteCancel);
 
-// Task add popup
-const taskAddScreen = taskDeleteScreen.cloneNode();
-const taskAddFade = taskDeleteFade.cloneNode();
-const taskAddContainer = document.createElement("div");
-taskAddContainer.classList.add("task-delete-container", "task-add-container");
-taskAddScreen.appendChild(taskAddFade);
-taskAddScreen.appendChild(taskAddContainer);
-const taskAddPrompt = taskDeletePrompt.cloneNode();
-taskAddPrompt.textContent = "Add a new task";
-const taskAddYes = taskDeleteYes.cloneNode();
-taskAddYes.textContent = "ADD";
-const taskAddCancel = taskDeleteCancel.cloneNode();
-taskAddCancel.textContent = "CANCEL";
+
 
 // Add Task container
-let addTaskInputContainer = document.createElement("form");
-addTaskInputContainer.id = "add-task-form";
+const drawAddTaskContainer = function (project, task) {
+    // Task add popup
+    const taskAddScreen = taskDeleteScreen.cloneNode();
+    const taskAddFade = taskDeleteFade.cloneNode();
+    const taskAddContainer = document.createElement("div");
+    taskAddContainer.classList.add("task-delete-container", "task-add-container");
+    taskAddScreen.appendChild(taskAddFade);
+    taskAddScreen.appendChild(taskAddContainer);
+    const taskAddPrompt = taskDeletePrompt.cloneNode();
+    taskAddPrompt.textContent = "Add a new task";
+    // const taskAddYes = taskDeleteYes.cloneNode();
+    // taskAddYes.textContent = "ADD";
+    const taskAddCancel = taskDeleteCancel.cloneNode();
+    taskAddCancel.textContent = "CANCEL";
 
-const taskNameInputContainer = document.createElement("div");
-const taskNameInputLabel = document.createElement("label");
-taskNameInputLabel.for = "title";
-taskNameInputLabel.textContent = "Title:"
-const taskNameInputText = document.createElement("input");
-taskNameInputText.id = "task-title"
-taskNameInputText.name = "title"
-taskNameInputText.type = "text";
-taskNameInputText.maxLength = 15;
-taskNameInputText.required = true;
-taskNameInputContainer.appendChild(taskNameInputLabel);
-taskNameInputContainer.appendChild(taskNameInputText);
-const taskDescInputContainer = document.createElement("div");
-const taskDescInputLabel = document.createElement("label");
-taskDescInputLabel.for = "desc";
-taskDescInputLabel.textContent = "Description:"
-const taskDescInputText = document.createElement("input");
-taskDescInputText.id = "task-desc"
-taskDescInputText.name = "desc"
-taskDescInputText.type = "text";
-taskDescInputText.maxLength = 80;
-taskDescInputContainer.appendChild(taskDescInputLabel);
-taskDescInputContainer.appendChild(taskDescInputText);
-const taskSubmitInputContainer = document.createElement("div");
-const taskSubmitInputButton = document.createElement("button");
-taskSubmitInputButton.id = "task-submit";
-taskSubmitInputButton.textContent = "ADD NEW TASK";
-taskSubmitInputContainer.appendChild(taskSubmitInputButton);
 
-addTaskInputContainer.appendChild(taskNameInputContainer);
-addTaskInputContainer.appendChild(taskDescInputContainer);
-addTaskInputContainer.appendChild(taskSubmitInputContainer);
-addTaskInputContainer.classList.add("nav-adding-task");
 
-taskAddContainer.appendChild(taskAddPrompt);
-taskAddContainer.appendChild(addTaskInputContainer);
-taskAddContainer.appendChild(taskAddYes);
-taskAddContainer.appendChild(taskAddCancel);
+    let addTaskInputContainer = document.createElement("form");
+    addTaskInputContainer.id = "add-task-form";
+
+    const taskNameInputContainer = document.createElement("div");
+    const taskNameInputLabel = document.createElement("label");
+    taskNameInputLabel.for = "task-title";
+    taskNameInputLabel.textContent = "Title:"
+    const taskNameInputText = document.createElement("input");
+    taskNameInputText.id = "task-title"
+    taskNameInputText.name = "title"
+    taskNameInputText.type = "text";
+    taskNameInputText.maxLength = 15;
+    taskNameInputText.required = true;
+    taskNameInputContainer.appendChild(taskNameInputLabel);
+    taskNameInputContainer.appendChild(taskNameInputText);
+    const taskDescInputContainer = document.createElement("div");
+    const taskDescInputLabel = document.createElement("label");
+    taskDescInputLabel.for = "task-desc";
+    taskDescInputLabel.textContent = "Description:"
+    const taskDescInputText = document.createElement("input");
+    taskDescInputText.id = "task-desc"
+    taskDescInputText.name = "desc"
+    taskDescInputText.type = "text";
+    taskDescInputText.maxLength = 80;
+    taskDescInputContainer.appendChild(taskDescInputLabel);
+    taskDescInputContainer.appendChild(taskDescInputText);
+
+    const taskDateInputContainer = document.createElement("div");
+    const taskDateInputLabel = document.createElement("label");
+    taskDateInputLabel.for = "date";
+    taskDateInputLabel.textContent = "Due Date:";
+    const taskDateInputDate = document.createElement("input");
+    taskDateInputDate.type = "date";
+    taskDateInputDate.id = "task-date";
+    taskDateInputDate.name = "date";
+    taskDateInputContainer.appendChild(taskDateInputLabel);
+    taskDateInputContainer.appendChild(taskDateInputDate);
+
+    const taskStatusInputContainer = document.createElement("div");
+
+    const taskPriorityInputContainer = document.createElement("div");
+    const taskPriorityInputLowContainer = document.createElement("div");
+    const taskPriorityInputLow = document.createElement("input");
+    taskPriorityInputLow.type = "radio";
+    taskPriorityInputLow.id = "task-priority-low";
+    taskPriorityInputLow.name = "task-priority";
+    taskPriorityInputLow.value = "low";
+    taskPriorityInputLow.checked = "true";
+    const taskPriorityInputLowLabel = document.createElement("label");
+    taskPriorityInputLowLabel.for = "task-priority-low";
+    taskPriorityInputLowLabel.textContent = "LOW";
+    taskPriorityInputLowContainer.appendChild(taskPriorityInputLow);
+    taskPriorityInputLowContainer.appendChild(taskPriorityInputLowLabel);
+    const taskPriorityInputMedContainer = document.createElement("div");
+    const taskPriorityInputMed = document.createElement("input");
+    taskPriorityInputMed.type = "radio";
+    taskPriorityInputMed.id = "task-priority-med";
+    taskPriorityInputMed.name = "task-priority";
+    taskPriorityInputMed.value = "med";
+    taskPriorityInputMed.checked = "true";
+    const taskPriorityInputMedLabel = document.createElement("label");
+    taskPriorityInputMedLabel.for = "task-priority-med";
+    taskPriorityInputMedLabel.textContent = "MEDIUM";
+    taskPriorityInputMedContainer.appendChild(taskPriorityInputMed);
+    taskPriorityInputMedContainer.appendChild(taskPriorityInputMedLabel);
+    const taskPriorityInputHighContainer = document.createElement("div");
+    const taskPriorityInputHigh = document.createElement("input");
+    taskPriorityInputHigh.type = "radio";
+    taskPriorityInputHigh.id = "task-priority-high";
+    taskPriorityInputHigh.name = "task-priority";
+    taskPriorityInputHigh.value = "high";
+    taskPriorityInputHigh.checked = "true";
+    const taskPriorityInputHighLabel = document.createElement("label");
+    taskPriorityInputHighLabel.for = "task-priority-high";
+    taskPriorityInputHighLabel.textContent = "HIGH";
+    taskPriorityInputHighContainer.appendChild(taskPriorityInputHigh);
+    taskPriorityInputHighContainer.appendChild(taskPriorityInputHighLabel);
+    taskPriorityInputContainer.appendChild(taskPriorityInputLowContainer);
+    taskPriorityInputContainer.appendChild(taskPriorityInputMedContainer);
+    taskPriorityInputContainer.appendChild(taskPriorityInputHighContainer);
+
+    const taskProjectInputContainer = document.createElement("div");
+    const taskProjectInputLabel = document.createElement("label");
+    taskProjectInputLabel.for = "task-project";
+    taskProjectInputLabel.textContent = "Project:";
+    const taskProjectInputSelect = document.createElement("select");
+    taskProjectInputSelect.name = "project";
+    taskProjectInputSelect.id = "task-project";
+    //
+    // need to create <option value="project1">Project 1</option>
+    // for each project in file, & select current project as default!
+    // hmmm
+
+    const taskSubmitInputContainer = document.createElement("div");
+    const taskSubmitInputButton = document.createElement("button");
+    taskSubmitInputButton.id = "task-submit";
+    taskSubmitInputButton.textContent = "ADD NEW TASK";
+    taskSubmitInputContainer.appendChild(taskSubmitInputButton);
+
+    addTaskInputContainer.appendChild(taskNameInputContainer);
+    addTaskInputContainer.appendChild(taskDescInputContainer);
+    addTaskInputContainer.appendChild(taskDateInputContainer);
+    addTaskInputContainer.appendChild(taskPriorityInputContainer);
+    addTaskInputContainer.appendChild(taskSubmitInputContainer);
+    addTaskInputContainer.classList.add("nav-adding-task");
+
+    taskAddContainer.appendChild(taskAddPrompt);
+    taskAddContainer.appendChild(addTaskInputContainer);
+    // taskAddContainer.appendChild(taskAddYes);
+    taskAddContainer.appendChild(taskAddCancel);
+    addTaskInputContainer.addEventListener("submit", taskAddSubmit);
+    taskAddCancel.addEventListener("mousedown", function () {
+        taskAddScreen.classList.add("task-delete-hidden");
+        taskAddScreen.remove();
+    });
+    taskAddScreen.classList.remove("task-delete-hidden");
+    body.appendChild(taskAddScreen);
+}
+
 
 // Appending to main and body
-main.appendChild(taskContainerHeader);
+// main.appendChild(taskContainerHeader);
 main.appendChild(taskSorter);
 main.appendChild(taskContainer);
 
@@ -401,7 +497,7 @@ body.appendChild(sidebar);
 body.appendChild(main);
 body.appendChild(taskDeleteScreen);
 body.appendChild(projectDeleteScreen);
-body.appendChild(taskAddScreen);
+
 content.appendChild(header);
 content.appendChild(body);
 
@@ -409,4 +505,4 @@ content.appendChild(body);
 
 
 
-export default { eventEmitter, drawProjectNav, drawProjectInfo, drawTaskList, drawTask, navContainer, projectContainer, taskContainer, addProjectButton };
+export default { eventEmitter, drawProjectNav, drawProjectHeader, drawTaskList, drawTask, navContainer, projectContainer, taskContainer, addProjectButton };

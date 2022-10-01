@@ -8,7 +8,7 @@ domCreator.eventEmitter.on("deleteProject", (project) => {
     // if the current project is displayed, remove it and replace with uncategorised
     if (getCurrentProject() === project.id) {
         setCurrentProject(1);
-        domCreator.drawProjectInfo(getProjectByID(1));
+        domCreator.drawProjectHeader(getProjectByID(1));
         domCreator.drawTaskList(getProjectByID(1).taskList);
     }
     project.deleteProject();
@@ -21,7 +21,7 @@ domCreator.eventEmitter.on("newProject", (projectName, projectLabel) => {
 
 domCreator.eventEmitter.on("projectButton", (project) => {
     setCurrentProject(project.id);
-    domCreator.drawProjectInfo(project);
+    domCreator.drawProjectHeader(project);
     domCreator.drawTaskList(project.taskList);
 });
 
@@ -71,5 +71,5 @@ domCreator.drawProjectNav(defaultProject);
 domCreator.drawProjectNav(defaultProject2);
 domCreator.drawProjectNav(defaultProject3);
 
-domCreator.drawProjectInfo(defaultProject);
+domCreator.drawProjectHeader(defaultProject);
 domCreator.drawTaskList(defaultProject.taskList);
