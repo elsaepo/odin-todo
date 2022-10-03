@@ -339,7 +339,7 @@ h5 {
 }
 
 /* Task edit and delete popup containers */
-.task-delete-screen {
+.popup-screen {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -350,11 +350,11 @@ h5 {
     width: 100vw;
 }
 
-.task-delete-hidden {
+.popup-hidden {
     display: none;
 }
 
-.task-delete-fade {
+.popup-fade {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -362,14 +362,13 @@ h5 {
     opacity: 0.5;
 }
 
-.task-delete-container {
+.popup-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
     gap: 16px;
     padding: 16px;
     width: 400px;
-    height: 120px;
     border: 4px solid black;
     background-color: white;
     border-radius: 24px;
@@ -382,40 +381,58 @@ h5 {
     animation-fill-mode: forwards;
 }
 
-.project-delete-container {
-    height: 150px; 
-}
-
-.task-delete-prompt {
+.popup-prompt {
     text-align: center;
     font-weight: 600;
     margin: 0;
     grid-column: 1 / 3;
 }
 
-.task-delete-button {
+.popup-button {
     cursor: pointer;
     border: 2px solid black;
     border-radius: 8px;
     opacity: 0.7;
     font-size: 1.2rem;
     font-weight: 600;
+    height: 40px;
 }
 
-.task-delete-button:hover {
+.popup-button:hover {
     opacity: 1;
 }
 
-.task-delete-button:active {
+.popup-button:active {
     background-color: white;
 }
 
-.task-delete-button-yes {
+.popup-button-delete {
     background-color: rgb(233, 110, 110);
 }
 
-.task-delete-button-cancel {
+.popup-button-add {
+    background-color: rgb(179, 236, 179);
+}
+
+.popup-button-cancel {
     background-color: rgb(199, 199, 199);
+}
+
+.task-add-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.task-add-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task-add-container form div {
+    display: flex;
+    gap: 12px;
+    width: 100%;
 }
 
 @keyframes task-popup-box {

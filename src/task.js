@@ -9,7 +9,7 @@ class Task {
         this._status = status;
         this._priority = priority;
         this._completed = false;
-        this._parentProject;
+        this._parentProject = parentProject;
     }
 
     get id(){

@@ -66,4 +66,8 @@ const setCurrentProject = function(id){
     currentProjectID = id;
 }
 
-export { Project, getProjectByID, getCurrentProject, setCurrentProject };
+const getProjectList = function(){
+    return projectList;
+}
+
+export { Project, getProjectByID, getCurrentProject, setCurrentProject, getProjectList };

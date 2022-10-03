@@ -1,4 +1,10 @@
-import { Project, getProjectByID, getCurrentProject, setCurrentProject } from "./project.js";
+import {
+    Project,
+    getProjectByID,
+    getCurrentProject,
+    setCurrentProject,
+    getProjectList
+} from "./project.js";
 import { Task } from "./task.js";
 import "./style.css";
 import domCreator from "./domCreator.js";
@@ -33,10 +39,17 @@ domCreator.eventEmitter.on("taskDelete", (task) => {
     task.parentProject.removeTask(task);
 })
 
-domCreator.eventEmitter.on("newTask", (projectID, taskTitle, taskDesc) => {
-    let newTask = new Task(taskTitle, taskDesc);
+domCreator.eventEmitter.on("newTask", (projectID, taskTitle, taskDesc, taskDueDate, taskPriority) => {
+    let newTask = new Task(taskTitle, taskDesc, taskDueDate, true, taskPriority);
     getProjectByID(projectID).addTask(newTask);
-    domCreator.taskContainer.appendChild(domCreator.drawTask(newTask));
+    if (projectID === getCurrentProject()) {
+        domCreator.taskContainer.appendChild(domCreator.drawTask(newTask));
+    };
+})
+
+domCreator.eventEmitter.on("taskAddPopup", (project) => {
+    const projectList = getProjectList();
+    domCreator.drawAddTaskContainer(project, projectList);
 })
 
 

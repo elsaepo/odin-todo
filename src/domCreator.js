@@ -32,16 +32,16 @@ const drawProjectNav = function (project) {
         thisProjectButton.appendChild(projectDeleteButton);
         projectDeleteButton.addEventListener("mousedown", function (event) {
             event.stopPropagation();
-            projectDeleteScreen.classList.remove("task-delete-hidden");
+            projectDeleteScreen.classList.remove("popup-hidden");
             projectDeleteYes.addEventListener("mousedown", deleteProjectSubmit)
         })
         projectDeleteCancel.addEventListener("mousedown", function () {
             projectDeleteYes.removeEventListener("mousedown", deleteProjectSubmit);
-            projectDeleteScreen.classList.add("task-delete-hidden");
+            projectDeleteScreen.classList.add("popup-hidden");
         })
     }
     const deleteProjectSubmit = function () {
-        projectDeleteScreen.classList.add("task-delete-hidden");
+        projectDeleteScreen.classList.add("popup-hidden");
         eventEmitter.emit("deleteProject", project);
         thisProjectButton.remove();
     }
@@ -49,31 +49,14 @@ const drawProjectNav = function (project) {
     return thisProjectButton;
 }
 
-const taskAddSubmit = function (event) {
-    event.preventDefault();
-    const taskForm = document.forms["add-task-form"];
-    const formData = new FormData(taskForm);
-    const taskTitle = formData.get("title");
-    const taskDesc = formData.get("desc");
-    // const taskDueDate = formData.get("date");
-    // const taskStatus = formData.get("status");
-    // const taskPriority = formData.get("priority");
-    // const taskProject = formData.get("project");
-    const projectID = 1;
-    let validTask = true;
-    if (validTask) {
-        eventEmitter.emit("newTask", projectID, taskTitle, taskDesc);
-        taskForm.reset();
-    }
-    taskAddScreen.classList.add("task-delete-hidden");
-}
+
 
 const drawProjectHeader = function (project) {
 
     // this method of removing header could be cleaned up quite a bit
 
     const currentHeader = document.querySelector(".task-container-header");
-    if (currentHeader) {currentHeader.remove()};
+    if (currentHeader) { currentHeader.remove() };
 
     const taskContainerHeader = document.createElement("div");
     taskContainerHeader.classList.add("task-container-header");
@@ -96,8 +79,7 @@ const drawProjectHeader = function (project) {
 
     // when i click the add button here, only then should it create the DOM elements
     taskContainerAddButton.addEventListener("mousedown", function (event) {
-        console.log("listne")
-        drawAddTaskContainer(project);
+        eventEmitter.emit("taskAddPopup", project);
     })
 
 
@@ -152,16 +134,16 @@ const drawTask = function (task) {
     const taskDeleteBox = document.createElement("i");
     taskDeleteBox.classList.add("fa-solid", "fa-trash", "task-delete");
     taskDeleteBox.addEventListener("mousedown", function () {
-        taskDeleteScreen.classList.remove("task-delete-hidden");
+        taskDeleteScreen.classList.remove("popup-hidden");
         taskDeleteYes.addEventListener("mousedown", deleteTaskSubmit)
     })
     taskDeleteCancel.addEventListener("mousedown", function () {
         taskDeleteYes.removeEventListener("mousedown", deleteTaskSubmit);
-        taskDeleteScreen.classList.add("task-delete-hidden");
+        taskDeleteScreen.classList.add("popup-hidden");
     })
     const deleteTaskSubmit = function () {
         eventEmitter.emit("taskDelete", task);
-        taskDeleteScreen.classList.add("task-delete-hidden");
+        taskDeleteScreen.classList.add("popup-hidden");
         taskDeleteBox.parentElement.remove();
     }
     taskBox.appendChild(taskTitle);
@@ -311,21 +293,21 @@ taskContainer.classList.add("task-container");
 
 // Task delete popup
 const taskDeleteScreen = document.createElement("div");
-taskDeleteScreen.classList.add("task-delete-screen", "task-delete-hidden");
+taskDeleteScreen.classList.add("popup-screen", "popup-hidden");
 const taskDeleteFade = document.createElement("div");
-taskDeleteFade.classList.add("task-delete-fade");
+taskDeleteFade.classList.add("popup-fade");
 const taskDeleteContainer = document.createElement("div");
-taskDeleteContainer.classList.add("task-delete-container");
+taskDeleteContainer.classList.add("popup-container");
 taskDeleteScreen.appendChild(taskDeleteFade);
 taskDeleteScreen.appendChild(taskDeleteContainer);
 const taskDeletePrompt = document.createElement("p");
-taskDeletePrompt.classList.add("task-delete-prompt")
+taskDeletePrompt.classList.add("popup-prompt")
 taskDeletePrompt.textContent = "Are you sure you want to delete this task?";
 const taskDeleteYes = document.createElement("button");
-taskDeleteYes.classList.add("task-delete-button", "task-delete-button-yes");
+taskDeleteYes.classList.add("popup-button", "popup-button-delete");
 taskDeleteYes.textContent = "DELETE";
 const taskDeleteCancel = document.createElement("button");
-taskDeleteCancel.classList.add("task-delete-button", "task-delete-button-cancel");
+taskDeleteCancel.classList.add("popup-button", "popup-button-cancel");
 taskDeleteCancel.textContent = "CANCEL";
 taskDeleteContainer.appendChild(taskDeletePrompt);
 taskDeleteContainer.appendChild(taskDeleteYes);
@@ -335,7 +317,7 @@ taskDeleteContainer.appendChild(taskDeleteCancel);
 const projectDeleteScreen = taskDeleteScreen.cloneNode();
 const projectDeleteFade = taskDeleteFade.cloneNode();
 const projectDeleteContainer = document.createElement("div");
-projectDeleteContainer.classList.add("task-delete-container", "project-delete-container");
+projectDeleteContainer.classList.add("popup-container", "project-delete-container");
 projectDeleteScreen.appendChild(projectDeleteFade);
 projectDeleteScreen.appendChild(projectDeleteContainer);
 const projectDeletePrompt = taskDeletePrompt.cloneNode();
@@ -351,24 +333,19 @@ projectDeleteContainer.appendChild(projectDeleteCancel);
 
 
 // Add Task container
-const drawAddTaskContainer = function (project, task) {
-    // Task add popup
+const drawAddTaskContainer = function (project, projectList, task) {
     const taskAddScreen = taskDeleteScreen.cloneNode();
     const taskAddFade = taskDeleteFade.cloneNode();
     const taskAddContainer = document.createElement("div");
-    taskAddContainer.classList.add("task-delete-container", "task-add-container");
+    taskAddContainer.classList.add("popup-container", "task-add-container");
     taskAddScreen.appendChild(taskAddFade);
     taskAddScreen.appendChild(taskAddContainer);
     const taskAddPrompt = taskDeletePrompt.cloneNode();
     taskAddPrompt.textContent = "Add a new task";
-    // const taskAddYes = taskDeleteYes.cloneNode();
-    // taskAddYes.textContent = "ADD";
     const taskAddCancel = taskDeleteCancel.cloneNode();
     taskAddCancel.textContent = "CANCEL";
 
-
-
-    let addTaskInputContainer = document.createElement("form");
+    const addTaskInputContainer = document.createElement("form");
     addTaskInputContainer.id = "add-task-form";
 
     const taskNameInputContainer = document.createElement("div");
@@ -454,37 +431,66 @@ const drawAddTaskContainer = function (project, task) {
     taskProjectInputLabel.for = "task-project";
     taskProjectInputLabel.textContent = "Project:";
     const taskProjectInputSelect = document.createElement("select");
-    taskProjectInputSelect.name = "project";
+    taskProjectInputSelect.name = "task-project";
     taskProjectInputSelect.id = "task-project";
-    //
-    // need to create <option value="project1">Project 1</option>
-    // for each project in file, & select current project as default!
-    // hmmm
+
+    projectList.forEach(proj => {
+        const projectOption = document.createElement("option");
+        projectOption.value = proj.id;
+        projectOption.textContent = proj.title;
+        if (proj.id === project.id) { projectOption.selected = "selected" };
+        taskProjectInputSelect.appendChild(projectOption);
+    })
+
+    taskProjectInputContainer.appendChild(taskProjectInputLabel);
+    taskProjectInputContainer.appendChild(taskProjectInputSelect);
 
     const taskSubmitInputContainer = document.createElement("div");
     const taskSubmitInputButton = document.createElement("button");
+    taskSubmitInputButton.classList.add("popup-button", "popup-button-add");
     taskSubmitInputButton.id = "task-submit";
     taskSubmitInputButton.textContent = "ADD NEW TASK";
     taskSubmitInputContainer.appendChild(taskSubmitInputButton);
+    taskSubmitInputContainer.appendChild(taskAddCancel);
 
     addTaskInputContainer.appendChild(taskNameInputContainer);
     addTaskInputContainer.appendChild(taskDescInputContainer);
     addTaskInputContainer.appendChild(taskDateInputContainer);
     addTaskInputContainer.appendChild(taskPriorityInputContainer);
+    addTaskInputContainer.appendChild(taskProjectInputContainer);
     addTaskInputContainer.appendChild(taskSubmitInputContainer);
     addTaskInputContainer.classList.add("nav-adding-task");
 
     taskAddContainer.appendChild(taskAddPrompt);
     taskAddContainer.appendChild(addTaskInputContainer);
-    // taskAddContainer.appendChild(taskAddYes);
-    taskAddContainer.appendChild(taskAddCancel);
+
+    const taskAddSubmit = function (event) {
+        event.preventDefault();
+        const taskForm = document.forms["add-task-form"];
+        const formData = new FormData(taskForm);
+        const taskTitle = formData.get("title");
+        const taskDesc = formData.get("desc");
+        const taskDueDate = formData.get("date");
+        // const taskStatus = formData.get("status");
+        const taskPriority = formData.get("task-priority");
+        const taskProjectID = formData.get("task-project");
+        let validTask = true;
+        if (validTask) {
+            eventEmitter.emit("newTask", Number(taskProjectID), taskTitle, taskDesc, taskDueDate, taskPriority);
+            taskForm.reset();
+        }
+        taskAddScreen.remove();
+    }
+
     addTaskInputContainer.addEventListener("submit", taskAddSubmit);
     taskAddCancel.addEventListener("mousedown", function () {
-        taskAddScreen.classList.add("task-delete-hidden");
+        taskAddScreen.classList.add("popup-hidden");
         taskAddScreen.remove();
     });
-    taskAddScreen.classList.remove("task-delete-hidden");
+    taskAddScreen.classList.remove("popup-hidden");
     body.appendChild(taskAddScreen);
+
+
 }
 
 
@@ -505,4 +511,4 @@ content.appendChild(body);
 
 
 
-export default { eventEmitter, drawProjectNav, drawProjectHeader, drawTaskList, drawTask, navContainer, projectContainer, taskContainer, addProjectButton };
+export default { eventEmitter, drawProjectNav, drawProjectHeader, drawTaskList, drawTask, drawAddTaskContainer, navContainer, projectContainer, taskContainer, addProjectButton };
