@@ -56,7 +56,7 @@ domCreator.eventEmitter.on("taskAddPopup", (project) => {
 // Default projects for testing purposes
 // title, description, dueDate, status, priority
 let defaultProject = new Project("Uncategorised");
-let defaultProject2 = new Project("Todo list", "Study");
+let defaultProject2 = new Project("To-do list", "Study");
 let defaultProject3 = new Project("Driving game", "Work");
 let myTask = new Task("Gym session", "To work on these quads for the upcoming ski weekend", 220823, "uncompleted", "medium");
 let myTask2 = new Task("Call QANTAS", "Figure out where my points are", 220902, "uncompleted", "medium");
