@@ -4,6 +4,8 @@ const eventEmitter = new EventEmitter();
 const content = document.querySelector("#content");
 
 
+
+
 // Functions for drawing elements to window
 const drawSidebarLink = function (linkObj) {
     const navButton = document.createElement("div");
@@ -32,67 +34,34 @@ const drawProjectNav = function (project) {
         thisProjectButton.appendChild(projectDeleteButton);
         projectDeleteButton.addEventListener("mousedown", function (event) {
             event.stopPropagation();
-            projectDeleteScreen.classList.remove("popup-hidden");
-            projectDeleteYes.addEventListener("mousedown", deleteProjectSubmit)
-        })
-        projectDeleteCancel.addEventListener("mousedown", function () {
-            projectDeleteYes.removeEventListener("mousedown", deleteProjectSubmit);
-            projectDeleteScreen.classList.add("popup-hidden");
+            drawDeleteProjectContainer(project, thisProjectButton);
         })
     }
-    const deleteProjectSubmit = function () {
-        projectDeleteScreen.classList.add("popup-hidden");
-        eventEmitter.emit("deleteProject", project);
-        thisProjectButton.remove();
-    }
+
     projectContainer.appendChild(thisProjectButton);
     return thisProjectButton;
 }
 
-
-
 const drawProjectHeader = function (project) {
-
     // this method of removing header could be cleaned up quite a bit
-
     const currentHeader = document.querySelector(".task-container-header");
     if (currentHeader) { currentHeader.remove() };
-
     const taskContainerHeader = document.createElement("div");
     taskContainerHeader.classList.add("task-container-header");
     const taskContainerTitle = document.createElement("h2");
     taskContainerTitle.textContent = project.title;
     const taskContainerLabel = document.createElement("p");
     taskContainerLabel.textContent = project.label;
-    let taskContainerAddButton = document.createElement("button");
+    const taskContainerAddButton = document.createElement("button");
     taskContainerAddButton.classList.add("add-task")
     taskContainerAddButton.textContent = "+ Task";
     taskContainerHeader.appendChild(taskContainerTitle);
     taskContainerHeader.appendChild(taskContainerLabel);
     taskContainerHeader.appendChild(taskContainerAddButton);
     main.insertBefore(taskContainerHeader, main.firstChild);
-
-
-    // taskContainerTitle.textContent = project.title;
-    // taskContainerLabel.textContent = project.label;
-    // taskContainerAddButton = taskContainerAddButton.cloneNode();
-
-    // when i click the add button here, only then should it create the DOM elements
     taskContainerAddButton.addEventListener("mousedown", function (event) {
         eventEmitter.emit("taskAddPopup", project);
     })
-
-
-
-    // this._id = getNewID();
-    // this._title = title;
-    // this._description = description;
-    // this._dueDate = dueDate;
-    // this._status = status;
-    // this._priority = priority;
-    // this._completed = false;
-    // this._parentProject;
-
     return taskContainerHeader;
 }
 
@@ -103,7 +72,6 @@ const drawTaskList = function (taskList) {
     taskList.forEach(task => {
         taskContainer.appendChild(drawTask(task));
     });
-    main.appendChild(taskContainer);
 }
 
 const drawTask = function (task) {
@@ -133,19 +101,10 @@ const drawTask = function (task) {
     taskEditBox.classList.add("fa-solid", "fa-pen-to-square", "task-edit");
     const taskDeleteBox = document.createElement("i");
     taskDeleteBox.classList.add("fa-solid", "fa-trash", "task-delete");
-    taskDeleteBox.addEventListener("mousedown", function () {
-        taskDeleteScreen.classList.remove("popup-hidden");
-        taskDeleteYes.addEventListener("mousedown", deleteTaskSubmit)
-    })
-    taskDeleteCancel.addEventListener("mousedown", function () {
-        taskDeleteYes.removeEventListener("mousedown", deleteTaskSubmit);
-        taskDeleteScreen.classList.add("popup-hidden");
-    })
-    const deleteTaskSubmit = function () {
-        eventEmitter.emit("taskDelete", task);
-        taskDeleteScreen.classList.add("popup-hidden");
-        taskDeleteBox.parentElement.remove();
-    }
+    taskDeleteBox.addEventListener("mousedown", function (event) {
+        drawDeleteTaskContainer(task, event.target.parentElement);
+    });
+
     taskBox.appendChild(taskTitle);
     taskBox.appendChild(taskDescription);
     taskBox.appendChild(taskDate);
@@ -201,7 +160,6 @@ addProjectButtonContainer.appendChild(addProjectButton);
 const addProjectInputContainer = document.createElement("form");
 addProjectInputContainer.id = "add-project-form";
 addProjectInputContainer.classList.add("nav-hidden");
-
 const projectNameInputContainer = document.createElement("div");
 const projectNameInputLabel = document.createElement("label");
 projectNameInputLabel.for = "title";
@@ -230,12 +188,10 @@ const projectSubmitInputButton = document.createElement("button");
 projectSubmitInputButton.id = "project-submit";
 projectSubmitInputButton.textContent = "ADD NEW PROJECT";
 projectSubmitInputContainer.appendChild(projectSubmitInputButton);
-
 addProjectInputContainer.appendChild(projectNameInputContainer);
 addProjectInputContainer.appendChild(projectLabelInputContainer);
 addProjectInputContainer.appendChild(projectSubmitInputContainer);
 addProjectInputContainer.classList.add("nav-adding-project");
-
 addProjectButtonContainer.insertBefore(addProjectInputContainer, addProjectButtonContainer.firstChild);
 
 const toggleAddProjectContainer = function () {
@@ -269,7 +225,6 @@ const main = document.createElement("main");
 main.id = "main";
 
 // Creating DOM Task List
-
 
 const taskSorter = document.createElement("div");
 taskSorter.classList.add("task-sorter");
@@ -316,28 +271,51 @@ const createButton = function (type) {
     return button;
 }
 
-// Task delete popup
-const taskDeleteContainer = document.createElement("div");
-const taskDeleteScreen = createPopup(taskDeleteContainer);
-const taskDeletePrompt = createPopupPrompt("Are you sure you want to delete this task?");
-const taskDeleteYes = createButton("delete");
-const taskDeleteCancel = createButton("cancel");
-taskDeleteContainer.appendChild(taskDeletePrompt);
-taskDeleteContainer.appendChild(taskDeleteYes);
-taskDeleteContainer.appendChild(taskDeleteCancel);
+// Popup container draw functions
+// Task Delete popup
+const drawDeleteTaskContainer = function (task, taskBox) {
+    const taskDeleteContainer = document.createElement("div");
+    const taskDeleteScreen = createPopup(taskDeleteContainer);
+    const taskDeletePrompt = createPopupPrompt("Are you sure you want to delete this task?");
+    const taskDeleteYes = createButton("delete");
+    const taskDeleteCancel = createButton("cancel");
+    taskDeleteYes.addEventListener("mousedown", function(){
+        eventEmitter.emit("taskDelete", task);
+        taskDeleteScreen.remove();
+        taskBox.remove();
+    });
+    taskDeleteCancel.addEventListener("mousedown", function () {
+        taskDeleteScreen.remove();
+    });
+    taskDeleteContainer.appendChild(taskDeletePrompt);
+    taskDeleteContainer.appendChild(taskDeleteYes);
+    taskDeleteContainer.appendChild(taskDeleteCancel);
+    body.appendChild(taskDeleteScreen);
+}
 
-// Project delete popup
-const projectDeleteContainer = document.createElement("div");
-projectDeleteContainer.classList.add("project-delete-container");
-const projectDeleteScreen = createPopup(projectDeleteContainer);
-const projectDeletePrompt = createPopupPrompt("Are you sure you want to delete this project? This will also delete any associated tasks!");
-const projectDeleteYes = createButton("delete");
-const projectDeleteCancel = createButton("cancel");
-projectDeleteContainer.appendChild(projectDeletePrompt);
-projectDeleteContainer.appendChild(projectDeleteYes);
-projectDeleteContainer.appendChild(projectDeleteCancel);
+// Project Delete popup
+const drawDeleteProjectContainer = function (project, projectBox) {
+    const projectDeleteContainer = document.createElement("div");
+    projectDeleteContainer.classList.add("project-delete-container");
+    const projectDeleteScreen = createPopup(projectDeleteContainer);
+    const projectDeletePrompt = createPopupPrompt("Are you sure you want to delete this project? This will also delete any associated tasks!");
+    const projectDeleteYes = createButton("delete");
+    const projectDeleteCancel = createButton("cancel");
+    projectDeleteYes.addEventListener("mousedown", function(){
+        eventEmitter.emit("deleteProject", project);
+        projectDeleteScreen.remove();
+        projectBox.remove();
+    });
+    projectDeleteCancel.addEventListener("mousedown", function () {
+        projectDeleteScreen.remove();
+    });
+    projectDeleteContainer.appendChild(projectDeletePrompt);
+    projectDeleteContainer.appendChild(projectDeleteYes);
+    projectDeleteContainer.appendChild(projectDeleteCancel);
+    body.appendChild(projectDeleteScreen);
+}
 
-// Add Task container
+// Add Task popup
 const drawAddTaskContainer = function (project, projectList, task) {
     const taskAddContainer = document.createElement("div");
     taskAddContainer.classList.add("task-add-container");
@@ -383,7 +361,7 @@ const drawAddTaskContainer = function (project, projectList, task) {
     taskDateInputContainer.appendChild(taskDateInputLabel);
     taskDateInputContainer.appendChild(taskDateInputDate);
 
-    const taskStatusInputContainer = document.createElement("div");
+    // const taskStatusInputContainer = document.createElement("div");
 
     const taskPriorityInputContainer = document.createElement("div");
     const taskPriorityInputLowContainer = document.createElement("div");
@@ -486,28 +464,18 @@ const drawAddTaskContainer = function (project, projectList, task) {
     taskAddCancel.addEventListener("mousedown", function () {
         taskAddScreen.remove();
     });
-    taskAddScreen.classList.remove("popup-hidden");
     body.appendChild(taskAddScreen);
-
-
 }
 
-
 // Appending to main and body
-// main.appendChild(taskContainerHeader);
 main.appendChild(taskSorter);
 main.appendChild(taskContainer);
 
 body.appendChild(sidebar);
 body.appendChild(main);
-body.appendChild(taskDeleteScreen);
-body.appendChild(projectDeleteScreen);
 
 content.appendChild(header);
 content.appendChild(body);
-
-
-
 
 
 export default { eventEmitter, drawProjectNav, drawProjectHeader, drawTaskList, drawTask, drawAddTaskContainer, navContainer, projectContainer, taskContainer, addProjectButton };
