@@ -1,10 +1,8 @@
 import "./style.css";
 import { EventEmitter } from "events";
+const { parseISO } = require("date-fns");
 const eventEmitter = new EventEmitter();
 const content = document.querySelector("#content");
-
-
-
 
 // Functions for drawing elements to window
 const drawSidebarLink = function (linkObj) {
@@ -79,7 +77,6 @@ const drawTaskList = function (taskList, project) {
 const drawTask = function (task, project) {
     const taskBox = document.createElement("div");
     taskBox.classList.add("task");
-
     const taskCompleteBox = document.createElement("div");
     taskCompleteBox.classList.add("task-complete-box");
     taskBox.appendChild(taskCompleteBox);
@@ -461,8 +458,8 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
     taskSubmitInputButton.classList.add("popup-button", "popup-button-add");
     taskSubmitInputButton.id = "task-submit";
     taskSubmitInputButton.textContent = task
-    ? "CONFIRM EDIT"
-    : "ADD NEW TASK";
+        ? "CONFIRM EDIT"
+        : "ADD NEW TASK";
     taskSubmitInputContainer.appendChild(taskSubmitInputButton);
     taskSubmitInputContainer.appendChild(taskAddCancel);
 
@@ -488,13 +485,16 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
         let validTask = true;
         if (validTask) {
             if (task) {
-                eventEmitter.emit("editTask", Number(taskProjectID), taskTitle, taskDesc, taskDueDate, taskPriority, task);
-                taskBox.parentElement.insertBefore(drawTask(task, project), taskBox);
+                const parentProjectChange = (Number(taskProjectID) === task.parentProject.id) ? false : true;
+                eventEmitter.emit("editTask", Number(taskProjectID), taskTitle, taskDesc, parseISO(taskDueDate), taskPriority, task);
+                if (!parentProjectChange) {
+                    taskBox.parentElement.insertBefore(drawTask(task, project), taskBox);
+                };
                 taskBox.remove();
                 taskForm.reset();
                 taskAddScreen.remove();
             } else {
-                eventEmitter.emit("newTask", Number(taskProjectID), taskTitle, taskDesc, taskDueDate, taskPriority);
+                eventEmitter.emit("newTask", Number(taskProjectID), taskTitle, taskDesc, parseISO(taskDueDate), taskPriority);
                 taskForm.reset();
                 taskAddScreen.remove();
             }
@@ -511,12 +511,9 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
 // Appending to main and body
 main.appendChild(taskSorter);
 main.appendChild(taskContainer);
-
 body.appendChild(sidebar);
 body.appendChild(main);
-
 content.appendChild(header);
 content.appendChild(body);
-
 
 export default { eventEmitter, drawProjectNav, drawProjectHeader, drawTaskList, drawTask, drawAddTaskContainer, navContainer, projectContainer, taskContainer, addProjectButton };

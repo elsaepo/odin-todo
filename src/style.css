@@ -216,6 +216,7 @@ h5 {
 
 .task-container-header *:nth-child(2), .add-task {
     border: 2px solid grey;
+    border-radius: 4px;
     font-size: 1.1rem;
     padding: 4px 8px;
 }
@@ -339,6 +340,7 @@ h5 {
     border: 1px solid black;
     border-radius: 2px;
     height: 32px;
+    transform-origin: left;
     transform: scale(0.8);
 }
 

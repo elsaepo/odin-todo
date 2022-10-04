@@ -8,10 +8,11 @@ import {
 import { Task } from "./task.js";
 import "./style.css";
 import domCreator from "./domCreator.js";
+const { format, parseISO } = require("date-fns");
 
-// Event emitter listeners for selecting projects & displaying/removing them from DOM
+// eventEmitter listeners for selecting projects & displaying/removing them from DOM
 domCreator.eventEmitter.on("deleteProject", (project) => {
-    // if the project to delete is displayed, remove it and replace with default
+    // If the project to delete is displayed, remove it and replace with default
     if (getCurrentProject() === project.id) {
         setCurrentProject(1);
         domCreator.drawProjectHeader(getProjectByID(1));
@@ -40,8 +41,9 @@ domCreator.eventEmitter.on("taskDelete", (task) => {
 })
 
 domCreator.eventEmitter.on("newTask", (projectID, taskTitle, taskDesc, taskDueDate, taskPriority) => {
-    let newTask = new Task(taskTitle, taskDesc, taskDueDate, true, taskPriority);
-    let project = getProjectByID(projectID);
+    taskDueDate = format(taskDueDate, "dd.MM.yyyy");
+    const newTask = new Task(taskTitle, taskDesc, taskDueDate, true, taskPriority);    
+    const project = getProjectByID(projectID);
     project.addTask(newTask);
     if (projectID === getCurrentProject()) {
         domCreator.taskContainer.appendChild(domCreator.drawTask(newTask, project));
@@ -49,7 +51,8 @@ domCreator.eventEmitter.on("newTask", (projectID, taskTitle, taskDesc, taskDueDa
 })
 
 domCreator.eventEmitter.on("editTask", (projectID, taskTitle, taskDesc, taskDueDate, taskPriority, task) => {
-    let project = getProjectByID(projectID);
+    taskDueDate = format(taskDueDate, "dd.MM.yyyy");
+    const project = getProjectByID(projectID);
     task.title = taskTitle;
     task.description = taskDesc;
     task.dueDate = taskDueDate;
