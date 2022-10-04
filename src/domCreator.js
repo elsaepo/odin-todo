@@ -43,20 +43,22 @@ const drawProjectNav = function (project) {
 }
 
 const drawProjectHeader = function (project) {
-    // this method of removing header could be cleaned up quite a bit
+    // this method of removing header could be cleaned up quite a bit?
     const currentHeader = document.querySelector(".task-container-header");
     if (currentHeader) { currentHeader.remove() };
     const taskContainerHeader = document.createElement("div");
     taskContainerHeader.classList.add("task-container-header");
     const taskContainerTitle = document.createElement("h2");
     taskContainerTitle.textContent = project.title;
-    const taskContainerLabel = document.createElement("p");
-    taskContainerLabel.textContent = project.label;
+    taskContainerHeader.appendChild(taskContainerTitle);
+    if (project.label) {
+        const taskContainerLabel = document.createElement("p");
+        taskContainerLabel.textContent = project.label;
+        taskContainerHeader.appendChild(taskContainerLabel);
+    }
     const taskContainerAddButton = document.createElement("button");
     taskContainerAddButton.classList.add("add-task")
     taskContainerAddButton.textContent = "+ Task";
-    taskContainerHeader.appendChild(taskContainerTitle);
-    taskContainerHeader.appendChild(taskContainerLabel);
     taskContainerHeader.appendChild(taskContainerAddButton);
     main.insertBefore(taskContainerHeader, main.firstChild);
     taskContainerAddButton.addEventListener("mousedown", function (event) {
@@ -225,7 +227,6 @@ const main = document.createElement("main");
 main.id = "main";
 
 // Creating DOM Task List
-
 const taskSorter = document.createElement("div");
 taskSorter.classList.add("task-sorter");
 const sortArray = [
@@ -279,7 +280,7 @@ const drawDeleteTaskContainer = function (task, taskBox) {
     const taskDeletePrompt = createPopupPrompt("Are you sure you want to delete this task?");
     const taskDeleteYes = createButton("delete");
     const taskDeleteCancel = createButton("cancel");
-    taskDeleteYes.addEventListener("mousedown", function(){
+    taskDeleteYes.addEventListener("mousedown", function () {
         eventEmitter.emit("taskDelete", task);
         taskDeleteScreen.remove();
         taskBox.remove();
@@ -301,7 +302,7 @@ const drawDeleteProjectContainer = function (project, projectBox) {
     const projectDeletePrompt = createPopupPrompt("Are you sure you want to delete this project? This will also delete any associated tasks!");
     const projectDeleteYes = createButton("delete");
     const projectDeleteCancel = createButton("cancel");
-    projectDeleteYes.addEventListener("mousedown", function(){
+    projectDeleteYes.addEventListener("mousedown", function () {
         eventEmitter.emit("deleteProject", project);
         projectDeleteScreen.remove();
         projectBox.remove();
@@ -317,6 +318,13 @@ const drawDeleteProjectContainer = function (project, projectBox) {
 
 // Add Task popup
 const drawAddTaskContainer = function (project, projectList, task) {
+
+    const createInputContainer = function () {
+        const inputContainer = document.createElement("div");
+        inputContainer.classList.add("input-container");
+        return inputContainer;
+    }
+
     const taskAddContainer = document.createElement("div");
     taskAddContainer.classList.add("task-add-container");
     const taskAddScreen = createPopup(taskAddContainer);
@@ -326,7 +334,7 @@ const drawAddTaskContainer = function (project, projectList, task) {
     const addTaskInputContainer = document.createElement("form");
     addTaskInputContainer.id = "add-task-form";
 
-    const taskNameInputContainer = document.createElement("div");
+    const taskNameInputContainer = createInputContainer();
     const taskNameInputLabel = document.createElement("label");
     taskNameInputLabel.for = "task-title";
     taskNameInputLabel.textContent = "Title:"
@@ -334,23 +342,24 @@ const drawAddTaskContainer = function (project, projectList, task) {
     taskNameInputText.id = "task-title"
     taskNameInputText.name = "title"
     taskNameInputText.type = "text";
-    taskNameInputText.maxLength = 15;
+    taskNameInputText.maxLength = 25;
     taskNameInputText.required = true;
     taskNameInputContainer.appendChild(taskNameInputLabel);
     taskNameInputContainer.appendChild(taskNameInputText);
-    const taskDescInputContainer = document.createElement("div");
+
+    const taskDescInputContainer = createInputContainer();
     const taskDescInputLabel = document.createElement("label");
     taskDescInputLabel.for = "task-desc";
     taskDescInputLabel.textContent = "Description:"
-    const taskDescInputText = document.createElement("input");
+    const taskDescInputText = document.createElement("textarea");
     taskDescInputText.id = "task-desc"
     taskDescInputText.name = "desc"
-    taskDescInputText.type = "text";
+    taskDescInputText.rows = 3;
     taskDescInputText.maxLength = 80;
     taskDescInputContainer.appendChild(taskDescInputLabel);
     taskDescInputContainer.appendChild(taskDescInputText);
 
-    const taskDateInputContainer = document.createElement("div");
+    const taskDateInputContainer = createInputContainer();
     const taskDateInputLabel = document.createElement("label");
     taskDateInputLabel.for = "date";
     taskDateInputLabel.textContent = "Due Date:";
@@ -361,57 +370,50 @@ const drawAddTaskContainer = function (project, projectList, task) {
     taskDateInputContainer.appendChild(taskDateInputLabel);
     taskDateInputContainer.appendChild(taskDateInputDate);
 
-    // const taskStatusInputContainer = document.createElement("div");
+    // Not utilising the task status property as of now
+    // const taskStatusInputContainer = createInputContainer();
 
-    const taskPriorityInputContainer = document.createElement("div");
-    const taskPriorityInputLowContainer = document.createElement("div");
-    const taskPriorityInputLow = document.createElement("input");
-    taskPriorityInputLow.type = "radio";
-    taskPriorityInputLow.id = "task-priority-low";
-    taskPriorityInputLow.name = "task-priority";
-    taskPriorityInputLow.value = "low";
-    taskPriorityInputLow.checked = "true";
-    const taskPriorityInputLowLabel = document.createElement("label");
-    taskPriorityInputLowLabel.for = "task-priority-low";
-    taskPriorityInputLowLabel.textContent = "LOW";
-    taskPriorityInputLowContainer.appendChild(taskPriorityInputLow);
-    taskPriorityInputLowContainer.appendChild(taskPriorityInputLowLabel);
-    const taskPriorityInputMedContainer = document.createElement("div");
-    const taskPriorityInputMed = document.createElement("input");
-    taskPriorityInputMed.type = "radio";
-    taskPriorityInputMed.id = "task-priority-med";
-    taskPriorityInputMed.name = "task-priority";
-    taskPriorityInputMed.value = "med";
-    taskPriorityInputMed.checked = "true";
-    const taskPriorityInputMedLabel = document.createElement("label");
-    taskPriorityInputMedLabel.for = "task-priority-med";
-    taskPriorityInputMedLabel.textContent = "MEDIUM";
-    taskPriorityInputMedContainer.appendChild(taskPriorityInputMed);
-    taskPriorityInputMedContainer.appendChild(taskPriorityInputMedLabel);
-    const taskPriorityInputHighContainer = document.createElement("div");
-    const taskPriorityInputHigh = document.createElement("input");
-    taskPriorityInputHigh.type = "radio";
-    taskPriorityInputHigh.id = "task-priority-high";
-    taskPriorityInputHigh.name = "task-priority";
-    taskPriorityInputHigh.value = "high";
-    taskPriorityInputHigh.checked = "true";
-    const taskPriorityInputHighLabel = document.createElement("label");
-    taskPriorityInputHighLabel.for = "task-priority-high";
-    taskPriorityInputHighLabel.textContent = "HIGH";
-    taskPriorityInputHighContainer.appendChild(taskPriorityInputHigh);
-    taskPriorityInputHighContainer.appendChild(taskPriorityInputHighLabel);
-    taskPriorityInputContainer.appendChild(taskPriorityInputLowContainer);
-    taskPriorityInputContainer.appendChild(taskPriorityInputMedContainer);
-    taskPriorityInputContainer.appendChild(taskPriorityInputHighContainer);
+    const createPriorityRadio = function (priority) {
+        const inputPriorityContainer = document.createElement("div");
+        const inputPriority = document.createElement("input");
+        inputPriority.classList.add("input-radio");
+        inputPriority.type = `radio`;
+        inputPriority.id = `task-priority-${priority}`;
+        inputPriority.name = `task-priority`;
+        inputPriority.value = `${priority}`;
+        inputPriority.required = true;
+        if (priority === "medium") {inputPriority.checked = "checked"};
+        const inputPriorityLabel = document.createElement("label");
+        inputPriorityLabel.classList.add("input-radio-label");
+        inputPriorityLabel.setAttribute("for", inputPriority.id);
+        inputPriorityLabel.textContent = `${priority.toUpperCase()}`;
+        inputPriorityContainer.appendChild(inputPriority);
+        inputPriorityContainer.appendChild(inputPriorityLabel);
+        return inputPriorityContainer;
+    }
 
-    const taskProjectInputContainer = document.createElement("div");
+    const taskPriorityInputContainer = createInputContainer();
+    const taskPriorityInputLabel = document.createElement("label");
+    taskPriorityInputLabel.for = "task-priority";
+    taskPriorityInputLabel.textContent = "Priority:";
+    const taskPriorityInputRadios = document.createElement("div");
+    taskPriorityInputRadios.classList.add("input-radio-container");
+    const taskPriorityInputLowContainer = createPriorityRadio("low");
+    const taskPriorityInputMedContainer = createPriorityRadio("medium");
+    const taskPriorityInputHighContainer = createPriorityRadio("high");
+    taskPriorityInputRadios.appendChild(taskPriorityInputLowContainer);
+    taskPriorityInputRadios.appendChild(taskPriorityInputMedContainer);
+    taskPriorityInputRadios.appendChild(taskPriorityInputHighContainer);
+    taskPriorityInputContainer.appendChild(taskPriorityInputLabel);
+    taskPriorityInputContainer.appendChild(taskPriorityInputRadios);
+
+    const taskProjectInputContainer = createInputContainer();
     const taskProjectInputLabel = document.createElement("label");
     taskProjectInputLabel.for = "task-project";
     taskProjectInputLabel.textContent = "Project:";
     const taskProjectInputSelect = document.createElement("select");
     taskProjectInputSelect.name = "task-project";
     taskProjectInputSelect.id = "task-project";
-
     projectList.forEach(proj => {
         const projectOption = document.createElement("option");
         projectOption.value = proj.id;
@@ -424,6 +426,7 @@ const drawAddTaskContainer = function (project, projectList, task) {
     taskProjectInputContainer.appendChild(taskProjectInputSelect);
 
     const taskSubmitInputContainer = document.createElement("div");
+    taskSubmitInputContainer.classList.add("task-add-submit");
     const taskSubmitInputButton = document.createElement("button");
     taskSubmitInputButton.classList.add("popup-button", "popup-button-add");
     taskSubmitInputButton.id = "task-submit";
@@ -437,8 +440,6 @@ const drawAddTaskContainer = function (project, projectList, task) {
     addTaskInputContainer.appendChild(taskPriorityInputContainer);
     addTaskInputContainer.appendChild(taskProjectInputContainer);
     addTaskInputContainer.appendChild(taskSubmitInputContainer);
-    // addTaskInputContainer.classList.add("nav-adding-task");
-
     taskAddContainer.appendChild(taskAddPrompt);
     taskAddContainer.appendChild(addTaskInputContainer);
 
@@ -456,8 +457,8 @@ const drawAddTaskContainer = function (project, projectList, task) {
         if (validTask) {
             eventEmitter.emit("newTask", Number(taskProjectID), taskTitle, taskDesc, taskDueDate, taskPriority);
             taskForm.reset();
-        }
-        taskAddScreen.remove();
+            taskAddScreen.remove();
+        };
     }
 
     addTaskInputContainer.addEventListener("submit", taskAddSubmit);

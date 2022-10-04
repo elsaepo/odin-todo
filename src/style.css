@@ -109,7 +109,7 @@ h5 {
 }
 
 .nav-button:hover .nav-project-delete {
-    display: flex
+    display: flex;
 }
 
 .nav-project-delete:hover {
@@ -414,6 +414,7 @@ h5 {
     background-color: rgb(199, 199, 199);
 }
 
+/* Task Add container & input fields */
 .task-add-container {
     display: flex;
     flex-direction: column;
@@ -425,10 +426,83 @@ h5 {
     gap: 12px;
 }
 
-.task-add-container form div {
-    display: flex;
+.input-container {
+    display: grid;
+    grid-template-columns: 100px 1fr;
     gap: 12px;
     width: 100%;
+}
+
+.input-container > *:first-child {
+    font-weight: 600;
+}
+
+.input-container > *:nth-child(2):not(.input-radio-container) {
+    font-family: "Roboto Mono", monospace;
+}
+
+.input-container textarea {
+    resize: vertical;
+    min-height: 32px;
+    max-height: 160px;
+}
+
+.input-radio-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.input-radio {
+    display: none;
+}
+
+.input-radio-label {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 28px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 2px;
+    position: relative;
+}
+
+.input-radio:checked + label {
+    border: 2px solid black;
+    font-weight: 600;
+}
+
+.input-radio#task-priority-low + label {
+    background-color: rgb(213, 241, 213);
+}
+
+.input-radio#task-priority-medium + label {
+    background-color: rgb(243, 232, 212);
+}
+
+.input-radio#task-priority-high + label {
+    background-color: rgb(241, 215, 215);
+}
+
+.input-radio#task-priority-low:checked + label {
+    background-color: rgb(146, 209, 146);
+}
+
+.input-radio#task-priority-medium:checked + label {
+    background-color: rgb(235, 208, 160);
+}
+
+.input-radio#task-priority-high:checked + label {
+    background-color: rgb(241, 149, 149);
+}
+
+.task-add-submit {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
 }
 
 @keyframes task-popup-box {
