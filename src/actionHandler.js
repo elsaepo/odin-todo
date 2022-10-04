@@ -11,11 +11,11 @@ import domCreator from "./domCreator.js";
 
 // Event emitter listeners for selecting projects & displaying/removing them from DOM
 domCreator.eventEmitter.on("deleteProject", (project) => {
-    // if the current project is displayed, remove it and replace with uncategorised
+    // if the project to delete is displayed, remove it and replace with default
     if (getCurrentProject() === project.id) {
         setCurrentProject(1);
         domCreator.drawProjectHeader(getProjectByID(1));
-        domCreator.drawTaskList(getProjectByID(1).taskList);
+        domCreator.drawTaskList(getProjectByID(1).taskList, project);
     }
     project.deleteProject();
 });
@@ -28,7 +28,7 @@ domCreator.eventEmitter.on("newProject", (projectName, projectLabel) => {
 domCreator.eventEmitter.on("projectButton", (project) => {
     setCurrentProject(project.id);
     domCreator.drawProjectHeader(project);
-    domCreator.drawTaskList(project.taskList);
+    domCreator.drawTaskList(project.taskList, project);
 });
 
 domCreator.eventEmitter.on("taskComplete", (task) => {
@@ -41,15 +41,33 @@ domCreator.eventEmitter.on("taskDelete", (task) => {
 
 domCreator.eventEmitter.on("newTask", (projectID, taskTitle, taskDesc, taskDueDate, taskPriority) => {
     let newTask = new Task(taskTitle, taskDesc, taskDueDate, true, taskPriority);
-    getProjectByID(projectID).addTask(newTask);
+    let project = getProjectByID(projectID);
+    project.addTask(newTask);
     if (projectID === getCurrentProject()) {
-        domCreator.taskContainer.appendChild(domCreator.drawTask(newTask));
+        domCreator.taskContainer.appendChild(domCreator.drawTask(newTask, project));
+    };
+})
+
+domCreator.eventEmitter.on("editTask", (projectID, taskTitle, taskDesc, taskDueDate, taskPriority, task) => {
+    let project = getProjectByID(projectID);
+    task.title = taskTitle;
+    task.description = taskDesc;
+    task.dueDate = taskDueDate;
+    task.priority = taskPriority;
+    if (task.parentProject !== project){
+        task.parentProject.removeTask(task);
+        project.addTask(task);
     };
 })
 
 domCreator.eventEmitter.on("taskAddPopup", (project) => {
     const projectList = getProjectList();
     domCreator.drawAddTaskContainer(project, projectList);
+})
+
+domCreator.eventEmitter.on("taskEditPopup", (task, project, taskBox) => {
+    const projectList = getProjectList();
+    domCreator.drawAddTaskContainer(project, projectList, task, taskBox);
 })
 
 
@@ -85,4 +103,4 @@ domCreator.drawProjectNav(defaultProject2);
 domCreator.drawProjectNav(defaultProject3);
 
 domCreator.drawProjectHeader(defaultProject);
-domCreator.drawTaskList(defaultProject.taskList);
+domCreator.drawTaskList(defaultProject.taskList, defaultProject);

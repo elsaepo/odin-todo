@@ -67,18 +67,19 @@ const drawProjectHeader = function (project) {
     return taskContainerHeader;
 }
 
-const drawTaskList = function (taskList) {
+const drawTaskList = function (taskList, project) {
     while (taskContainer.firstChild) {
         taskContainer.firstChild.remove();
     };
     taskList.forEach(task => {
-        taskContainer.appendChild(drawTask(task));
+        taskContainer.appendChild(drawTask(task, project));
     });
 }
 
-const drawTask = function (task) {
+const drawTask = function (task, project) {
     const taskBox = document.createElement("div");
     taskBox.classList.add("task");
+
     const taskCompleteBox = document.createElement("div");
     taskCompleteBox.classList.add("task-complete-box");
     taskBox.appendChild(taskCompleteBox);
@@ -86,7 +87,8 @@ const drawTask = function (task) {
         taskCompleteBox.classList.add("task-completed");
         taskCompleteBox.parentElement.classList.add("task-box-completed");
     };
-    taskCompleteBox.addEventListener("mousedown", function () {
+    taskCompleteBox.addEventListener("mousedown", function (event) {
+        event.stopPropagation();
         eventEmitter.emit("taskComplete", task);
         taskCompleteBox.classList.toggle("task-completed");
         taskCompleteBox.parentElement.classList.toggle("task-box-completed");
@@ -95,18 +97,28 @@ const drawTask = function (task) {
     taskTitle.textContent = task.title;
     const taskDescription = document.createElement("div");
     taskDescription.textContent = task.description;
+    taskDescription.classList.add("hide-overflow");
     const taskDate = document.createElement("div");
     taskDate.textContent = task.dueDate;
     const taskPriority = document.createElement("div");
-    taskPriority.textContent = task.priority;
+    taskPriority.classList.add("task-priority");
+    taskPriority.classList.add(`task-priority-${task.priority}`)
+    taskPriority.textContent = task.priority.toUpperCase();
     const taskEditBox = document.createElement("i");
     taskEditBox.classList.add("fa-solid", "fa-pen-to-square", "task-edit");
+    taskEditBox.addEventListener("mousedown", function (event) {
+        event.stopPropagation();
+        eventEmitter.emit("taskEditPopup", task, project, event.target.parentElement);
+    })
     const taskDeleteBox = document.createElement("i");
     taskDeleteBox.classList.add("fa-solid", "fa-trash", "task-delete");
     taskDeleteBox.addEventListener("mousedown", function (event) {
+        event.stopPropagation();
         drawDeleteTaskContainer(task, event.target.parentElement);
     });
-
+    taskBox.addEventListener("mousedown", function (event) {
+        taskDescription.classList.toggle("hide-overflow");
+    })
     taskBox.appendChild(taskTitle);
     taskBox.appendChild(taskDescription);
     taskBox.appendChild(taskDate);
@@ -317,7 +329,7 @@ const drawDeleteProjectContainer = function (project, projectBox) {
 }
 
 // Add Task popup
-const drawAddTaskContainer = function (project, projectList, task) {
+const drawAddTaskContainer = function (project, projectList, task, taskBox) {
 
     const createInputContainer = function () {
         const inputContainer = document.createElement("div");
@@ -328,7 +340,10 @@ const drawAddTaskContainer = function (project, projectList, task) {
     const taskAddContainer = document.createElement("div");
     taskAddContainer.classList.add("task-add-container");
     const taskAddScreen = createPopup(taskAddContainer);
-    const taskAddPrompt = createPopupPrompt("Add a new task");
+    // why can't i declare between if/else?
+    const taskAddPrompt = task
+        ? createPopupPrompt("Editing task")
+        : createPopupPrompt("Add a new task");
     const taskAddCancel = createButton("cancel");
 
     const addTaskInputContainer = document.createElement("form");
@@ -342,7 +357,7 @@ const drawAddTaskContainer = function (project, projectList, task) {
     taskNameInputText.id = "task-title"
     taskNameInputText.name = "title"
     taskNameInputText.type = "text";
-    taskNameInputText.maxLength = 25;
+    taskNameInputText.maxLength = 30;
     taskNameInputText.required = true;
     taskNameInputContainer.appendChild(taskNameInputLabel);
     taskNameInputContainer.appendChild(taskNameInputText);
@@ -382,7 +397,13 @@ const drawAddTaskContainer = function (project, projectList, task) {
         inputPriority.name = `task-priority`;
         inputPriority.value = `${priority}`;
         inputPriority.required = true;
-        if (priority === "medium") {inputPriority.checked = "checked"};
+        if (task) {
+            if (task.priority === priority) {
+                inputPriority.checked = "checked";
+            }
+        } else if (priority === "medium") {
+            inputPriority.checked = "checked"
+        };
         const inputPriorityLabel = document.createElement("label");
         inputPriorityLabel.classList.add("input-radio-label");
         inputPriorityLabel.setAttribute("for", inputPriority.id);
@@ -418,19 +439,30 @@ const drawAddTaskContainer = function (project, projectList, task) {
         const projectOption = document.createElement("option");
         projectOption.value = proj.id;
         projectOption.textContent = proj.title;
-        if (proj.id === project.id) { projectOption.selected = "selected" };
+        if (task) {
+            if (task.parentProject === proj) {
+                projectOption.selected = "selected";
+            };
+        } else if (proj.id === project.id) { projectOption.selected = "selected" };
         taskProjectInputSelect.appendChild(projectOption);
-    })
-
+    });
     taskProjectInputContainer.appendChild(taskProjectInputLabel);
     taskProjectInputContainer.appendChild(taskProjectInputSelect);
+
+    if (task) {
+        taskNameInputText.value = task.title;
+        taskDescInputText.value = task.description;
+        taskDateInputDate.value = task.dueDate;
+    }
 
     const taskSubmitInputContainer = document.createElement("div");
     taskSubmitInputContainer.classList.add("task-add-submit");
     const taskSubmitInputButton = document.createElement("button");
     taskSubmitInputButton.classList.add("popup-button", "popup-button-add");
     taskSubmitInputButton.id = "task-submit";
-    taskSubmitInputButton.textContent = "ADD NEW TASK";
+    taskSubmitInputButton.textContent = task
+    ? "CONFIRM EDIT"
+    : "ADD NEW TASK";
     taskSubmitInputContainer.appendChild(taskSubmitInputButton);
     taskSubmitInputContainer.appendChild(taskAddCancel);
 
@@ -455,9 +487,17 @@ const drawAddTaskContainer = function (project, projectList, task) {
         const taskProjectID = formData.get("task-project");
         let validTask = true;
         if (validTask) {
-            eventEmitter.emit("newTask", Number(taskProjectID), taskTitle, taskDesc, taskDueDate, taskPriority);
-            taskForm.reset();
-            taskAddScreen.remove();
+            if (task) {
+                eventEmitter.emit("editTask", Number(taskProjectID), taskTitle, taskDesc, taskDueDate, taskPriority, task);
+                taskBox.parentElement.insertBefore(drawTask(task, project), taskBox);
+                taskBox.remove();
+                taskForm.reset();
+                taskAddScreen.remove();
+            } else {
+                eventEmitter.emit("newTask", Number(taskProjectID), taskTitle, taskDesc, taskDueDate, taskPriority);
+                taskForm.reset();
+                taskAddScreen.remove();
+            }
         };
     }
 

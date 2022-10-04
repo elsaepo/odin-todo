@@ -51,7 +51,7 @@ h5 {
     display: flex;
     width: 100%;
     height: calc(100vh - 100px);
-    background-color:rgb(217, 240, 239);
+    background-color:rgb(230, 245, 244);
 }
 
 #sidebar {
@@ -259,14 +259,20 @@ h5 {
 
 /* Task Boxes */
 .task {
-    height: 40px;
-    background-color: rgb(248, 222, 226);
+    cursor: pointer;
+    min-height: 40px;
+    background-color: rgb(222, 229, 248);
+    border: 1px solid grey;
     border-radius: 12px;
     box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .task:hover {
     background-color: white;
+}
+
+.task > div:not(:first-child) {
+    padding: 12px 0;
 }
 
 .task-complete-box {
@@ -305,7 +311,7 @@ h5 {
 }
 
 .task-box-completed {
-    opacity: 0.7;
+    opacity: 0.6;
 }
 
 .task-completed {
@@ -326,6 +332,16 @@ h5 {
     text-decoration:line-through;
 }
 
+.task-priority {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
+    border-radius: 2px;
+    height: 32px;
+    transform: scale(0.8);
+}
+
 .task-edit, .task-delete {
     color: grey;
     transition: transform 0.1s ease;
@@ -336,6 +352,12 @@ h5 {
     color: black;
     transform: scale(1.4);
     transition: transform 0.1s ease;
+}
+
+.hide-overflow {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 /* Popup containers */
@@ -475,19 +497,22 @@ h5 {
     font-weight: 600;
 }
 
-.input-radio#task-priority-low + label {
-    background-color: rgb(213, 241, 213);
+.input-radio#task-priority-low + label,
+.task-priority-low  {
+    background-color: rgb(206, 240, 206);
 }
 
-.input-radio#task-priority-medium + label {
-    background-color: rgb(243, 232, 212);
+.input-radio#task-priority-medium + label,
+.task-priority-medium  {
+    background-color: rgb(241, 228, 204);
 }
 
-.input-radio#task-priority-high + label {
-    background-color: rgb(241, 215, 215);
+.input-radio#task-priority-high + label,
+.task-priority-high  {
+    background-color: rgb(241, 207, 207);
 }
 
-.input-radio#task-priority-low:checked + label {
+.input-radio#task-priority-low:checked + label{
     background-color: rgb(146, 209, 146);
 }
 
