@@ -1,6 +1,6 @@
 import "./style.css";
 import { EventEmitter } from "events";
-const { parseISO } = require("date-fns");
+const { format } = require("date-fns");
 const eventEmitter = new EventEmitter();
 const content = document.querySelector("#content");
 
@@ -96,7 +96,18 @@ const drawTask = function (task, project) {
     taskDescription.textContent = task.description;
     taskDescription.classList.add("hide-overflow");
     const taskDate = document.createElement("div");
-    taskDate.textContent = task.dueDate;
+    taskDate.classList.add("task-date");
+    if(task.dueDate){
+        let taskDateDay = format(task.dueDate, "do");
+        let taskDateDayNumber = taskDateDay.match(/\d+/);
+        let taskDateDayOrdinal = taskDateDay.match(/[a-z]+/);
+        let taskDateMonth = format(task.dueDate, "LLL");
+        taskDate.innerHTML = `${taskDateDayNumber}<sup>${taskDateDayOrdinal}</sup> ${taskDateMonth}`
+    } else {
+        taskDate.classList.add("task-date-na");
+        taskDate.textContent = "N/A";
+    }
+    
     const taskPriority = document.createElement("div");
     taskPriority.classList.add("task-priority");
     taskPriority.classList.add(`task-priority-${task.priority}`)
@@ -242,7 +253,7 @@ const sortArray = [
     "",
     "Task",
     "Description",
-    "Due Date",
+    "Due",
     "Priority",
     "",
     ""
@@ -449,7 +460,7 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
     if (task) {
         taskNameInputText.value = task.title;
         taskDescInputText.value = task.description;
-        taskDateInputDate.value = task.dueDate;
+        taskDateInputDate.value = format(task.dueDate, "yyyy-MM-dd");
     }
 
     const taskSubmitInputContainer = document.createElement("div");
@@ -478,15 +489,17 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
         const formData = new FormData(taskForm);
         const taskTitle = formData.get("title");
         const taskDesc = formData.get("desc");
-        const taskDueDate = formData.get("date");
-        // const taskStatus = formData.get("status");
+        const taskDueDate = (formData.get("date"))
+            ? new Date(formData.get("date"))
+            : false;
+        // const taskStatus = formData.get("status")
         const taskPriority = formData.get("task-priority");
-        const taskProjectID = formData.get("task-project");
+        const taskProjectID = Number(formData.get("task-project"));
         let validTask = true;
         if (validTask) {
             if (task) {
-                const parentProjectChange = (Number(taskProjectID) === task.parentProject.id) ? false : true;
-                eventEmitter.emit("editTask", Number(taskProjectID), taskTitle, taskDesc, parseISO(taskDueDate), taskPriority, task);
+                const parentProjectChange = (taskProjectID !== task.parentProject.id);
+                eventEmitter.emit("editTask", taskProjectID, taskTitle, taskDesc, taskDueDate, taskPriority, task);
                 if (!parentProjectChange) {
                     taskBox.parentElement.insertBefore(drawTask(task, project), taskBox);
                 };
@@ -494,7 +507,7 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
                 taskForm.reset();
                 taskAddScreen.remove();
             } else {
-                eventEmitter.emit("newTask", Number(taskProjectID), taskTitle, taskDesc, parseISO(taskDueDate), taskPriority);
+                eventEmitter.emit("newTask", taskProjectID, taskTitle, taskDesc, taskDueDate, taskPriority);
                 taskForm.reset();
                 taskAddScreen.remove();
             }
