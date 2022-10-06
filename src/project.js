@@ -70,4 +70,12 @@ const getProjectList = function(){
     return projectList;
 }
 
-export { Project, getProjectByID, getCurrentProject, setCurrentProject, getProjectList };
+const getFullTaskList = function(){
+    let fullTaskList = [];
+    projectList.forEach(proj => {
+        fullTaskList.push(...proj.taskList);
+    })
+    return fullTaskList;
+}
+
+export { Project, getProjectByID, getCurrentProject, setCurrentProject, getProjectList, getFullTaskList };

@@ -15,6 +15,9 @@ const drawSidebarLink = function (linkObj) {
     navText.textContent = linkObj.title;
     navButton.appendChild(navIcon);
     navButton.appendChild(navText);
+    navButton.addEventListener("mousedown", function(event){
+        eventEmitter.emit(`taskList${linkObj.title}`, navText)
+    })
     return navButton;
 }
 
@@ -460,7 +463,7 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
     if (task) {
         taskNameInputText.value = task.title;
         taskDescInputText.value = task.description;
-        taskDateInputDate.value = format(task.dueDate, "yyyy-MM-dd");
+        taskDateInputDate.value = task.dueDate ? format(task.dueDate, "yyyy-MM-dd") : false;
     }
 
     const taskSubmitInputContainer = document.createElement("div");
@@ -500,7 +503,7 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
             if (task) {
                 const parentProjectChange = (taskProjectID !== task.parentProject.id);
                 eventEmitter.emit("editTask", taskProjectID, taskTitle, taskDesc, taskDueDate, taskPriority, task);
-                if (!parentProjectChange) {
+                if (!parentProjectChange || project === undefined) {
                     taskBox.parentElement.insertBefore(drawTask(task, project), taskBox);
                 };
                 taskBox.remove();

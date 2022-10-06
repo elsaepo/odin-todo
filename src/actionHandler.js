@@ -3,7 +3,8 @@ import {
     getProjectByID,
     getCurrentProject,
     setCurrentProject,
-    getProjectList
+    getProjectList,
+    getFullTaskList
 } from "./project.js";
 import { Task } from "./task.js";
 import "./style.css";
@@ -31,6 +32,14 @@ domCreator.eventEmitter.on("projectButton", (project) => {
     domCreator.drawProjectHeader(project);
     domCreator.drawTaskList(project.taskList, project);
 });
+
+domCreator.eventEmitter.on("taskListAll", function(){
+    const project = {
+        title: "All Tasks"
+    }
+    domCreator.drawProjectHeader(project);
+    domCreator.drawTaskList(getFullTaskList());
+})
 
 domCreator.eventEmitter.on("taskComplete", (task) => {
     task.completed = !task.completed;
