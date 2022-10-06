@@ -56,7 +56,6 @@ h5 {
 
 #sidebar {
     background-color: var(--blue-light);
-    width: 350px;
     height: 100%;
 }
 
@@ -65,6 +64,7 @@ h5 {
     flex-direction: column;
     gap: 16px;
     padding: 32px;
+    width: 300px;
 }
 
 .nav-button {
@@ -252,13 +252,41 @@ h5 {
     font-weight: 600;
 }
 
+.task-sort-button {
+    cursor: pointer;
+}
+
+.task-sort-button::after {
+    content: ">";
+    position: absolute;
+    translate: 8px;
+    opacity: 0.4;
+    transform: rotate(0);
+    transition: transform 0.2s ease;
+}
+
+.task-sort-ascending::after,
+.task-sort-descending::after {
+    opacity: 1;
+    transform-origin: center;
+    
+}
+
+.task-sort-ascending::after {
+    transform: rotate(-90deg);
+}
+
+.task-sort-descending::after {
+    transform: rotate(90deg);
+}
+
+/* Task Boxes */
 .task-container {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-/* Task Boxes */
 .task {
     cursor: pointer;
     min-height: 40px;
@@ -331,10 +359,6 @@ h5 {
 .task-completed ~ * {
     color: grey;
     text-decoration:line-through;
-}
-
-.task-date {
-    
 }
 
 .task-date-na {

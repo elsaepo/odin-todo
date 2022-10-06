@@ -1,6 +1,7 @@
 import {
     Project,
     getProjectByID,
+    getTaskByID,
     getCurrentProject,
     setCurrentProject,
     getProjectList,
@@ -85,8 +86,19 @@ domCreator.eventEmitter.on("taskDelete", (task) => {
     task.parentProject.removeTask(task);
 });
 
+domCreator.eventEmitter.on("sortTasks", (sorter, nodes, isDescending) => {
+    let tasksToSort = [];
+    nodes.forEach(node => tasksToSort.push(Number(node.id)));
+    tasksToSort = tasksToSort.map(taskID => getTaskByID(taskID));
+    if (sorter === "□"){
+        tasksToSort = isDescending
+        ? tasksToSort.sort((a, b) => a.completed - b.completed)
+        : tasksToSort.sort((a, b) => b.completed - a.completed)
+    };
+    domCreator.drawTaskList(tasksToSort);
+})
+
 domCreator.eventEmitter.on("newTask", (projectID, taskTitle, taskDesc, taskDueDate, taskPriority) => {
-    // taskDueDate = taskDueDate ? format(taskDueDate, "dd.MM.yyyy") : false;
     const newTask = new Task(taskTitle, taskDesc, taskDueDate, true, taskPriority);
     const project = getProjectByID(projectID);
     project.addTask(newTask);
@@ -96,7 +108,6 @@ domCreator.eventEmitter.on("newTask", (projectID, taskTitle, taskDesc, taskDueDa
 });
 
 domCreator.eventEmitter.on("editTask", (projectID, taskTitle, taskDesc, taskDueDate, taskPriority, task) => {
-    // taskDueDate = format(taskDueDate, "dd.MM.yyyy");
     const project = getProjectByID(projectID);
     task.title = taskTitle;
     task.description = taskDesc;
@@ -124,7 +135,7 @@ domCreator.eventEmitter.on("taskEditPopup", (task, project, taskBox) => {
 let defaultProject = new Project("Uncategorised");
 let defaultProject2 = new Project("To-do list", "Study");
 let defaultProject3 = new Project("Driving game", "Work");
-let myTask = new Task("Gym session", "To work on these quads for the upcoming ski weekend", new Date(), "uncompleted", "high");
+let myTask = new Task("Gym session", "To work on these quads for the upcoming ski weekend", new Date(), "uncompleted", "low");
 let myTask2 = new Task("Call QANTAS", "Figure out where my points are", addDays(new Date(), 1), "uncompleted", "medium");
 let myTask3 = new Task("Make travel insurance claim", "get some money back from the Canada trip shenanigans", false, "uncompleted", "medium");
 let myTask4 = new Task("Make tasks beautiful", "add rounded corners similar to sidebar buttons, drop shadows, nice spacing", addDays(new Date(), 4), "uncompleted", "medium");

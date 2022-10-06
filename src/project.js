@@ -58,6 +58,21 @@ const getProjectByID = function (id) {
     return projectList[projectIndex];
 }
 
+const getTaskByID = function (id) {
+    let parentProject;
+    let taskIndex;
+    projectList.forEach(proj => {
+        let projTaskIndex = proj.taskList.findIndex(task => Number(id) === Number(task.id));
+        if (projTaskIndex >= 0){
+            parentProject = proj;
+            taskIndex = projTaskIndex;
+            return;
+        }
+        
+    })
+    return parentProject.taskList[taskIndex];
+}
+
 const getCurrentProject = function(){
     return currentProjectID;
 }
@@ -78,4 +93,4 @@ const getFullTaskList = function(){
     return fullTaskList;
 }
 
-export { Project, getProjectByID, getCurrentProject, setCurrentProject, getProjectList, getFullTaskList };
+export { Project, getProjectByID, getTaskByID, getCurrentProject, setCurrentProject, getProjectList, getFullTaskList };

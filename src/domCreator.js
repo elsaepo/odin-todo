@@ -15,7 +15,8 @@ const drawSidebarLink = function (linkObj) {
     navText.textContent = linkObj.title;
     navButton.appendChild(navIcon);
     navButton.appendChild(navText);
-    navButton.addEventListener("mousedown", function(event){
+    navButton.addEventListener("mousedown", function (event) {
+        removeSort(false);
         eventEmitter.emit(`taskList${linkObj.title}`, navText)
     })
     return navButton;
@@ -24,8 +25,9 @@ const drawSidebarLink = function (linkObj) {
 const drawProjectNav = function (project) {
     const thisProjectButton = drawSidebarLink(project);
     thisProjectButton.addEventListener("mousedown", function () {
+        removeSort(false);
         eventEmitter.emit("projectButton", project);
-    })
+    });
     if (project.id !== 1) {
         const projectDeleteButton = document.createElement("div");
         projectDeleteButton.classList.add("nav-project-delete");
@@ -37,8 +39,7 @@ const drawProjectNav = function (project) {
             event.stopPropagation();
             drawDeleteProjectContainer(project, thisProjectButton);
         })
-    }
-
+    };
     projectContainer.appendChild(thisProjectButton);
     return thisProjectButton;
 }
@@ -79,6 +80,7 @@ const drawTaskList = function (taskList, project) {
 
 const drawTask = function (task, project) {
     const taskBox = document.createElement("div");
+    taskBox.id = task.id;
     taskBox.classList.add("task");
     const taskCompleteBox = document.createElement("div");
     taskCompleteBox.classList.add("task-complete-box");
@@ -100,7 +102,7 @@ const drawTask = function (task, project) {
     taskDescription.classList.add("hide-overflow");
     const taskDate = document.createElement("div");
     taskDate.classList.add("task-date");
-    if(task.dueDate){
+    if (task.dueDate) {
         let taskDateDay = format(task.dueDate, "do");
         let taskDateDayNumber = taskDateDay.match(/\d+/);
         let taskDateDayOrdinal = taskDateDay.match(/[a-z]+/);
@@ -110,7 +112,7 @@ const drawTask = function (task, project) {
         taskDate.classList.add("task-date-na");
         taskDate.textContent = "N/A";
     }
-    
+
     const taskPriority = document.createElement("div");
     taskPriority.classList.add("task-priority");
     taskPriority.classList.add(`task-priority-${task.priority}`)
@@ -253,16 +255,43 @@ main.id = "main";
 const taskSorter = document.createElement("div");
 taskSorter.classList.add("task-sorter");
 const sortArray = [
-    "",
+    "□",
     "Task",
     "Description",
     "Due",
     "Priority",
     "",
     ""
-]
+];
+
+const removeSort = function (event) {
+    const currentSorters = document.querySelectorAll(".task-sort-descending, .task-sort-ascending");
+    currentSorters.forEach(node => {
+        if (event && node !== event.target || !event) {
+            node.classList.remove("task-sort-descending");
+            node.classList.remove("task-sort-ascending");
+        };
+    })
+};
+
 sortArray.forEach(sorter => {
     const header = document.createElement("h5");
+    if (sorter === "□" || sorter === "Due" || sorter === "Priority") {
+        header.classList.add("task-sort-button");
+        header.addEventListener("mousedown", function (event) {
+            removeSort(event);
+            let isDescending = true;
+            if (!header.classList.contains("task-sort-descending")) {
+                header.classList.remove("task-sort-ascending");
+                header.classList.add("task-sort-descending");
+            } else {
+                header.classList.remove("task-sort-descending");
+                header.classList.add("task-sort-ascending");
+                isDescending = false;
+            };
+            eventEmitter.emit("sortTasks", sorter, taskContainer.childNodes, isDescending);
+        })
+    }
     header.textContent = sorter;
     taskSorter.appendChild(header);
 })
