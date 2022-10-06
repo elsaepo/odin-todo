@@ -9,7 +9,7 @@ import {
 import { Task } from "./task.js";
 import "./style.css";
 import domCreator from "./domCreator.js";
-const { format, parseISO } = require("date-fns");
+const { format, parseISO, addDays, isBefore, isToday, isSameWeek } = require("date-fns");
 
 // eventEmitter listeners for selecting projects & displaying/removing them from DOM
 domCreator.eventEmitter.on("deleteProject", (project) => {
@@ -33,12 +33,48 @@ domCreator.eventEmitter.on("projectButton", (project) => {
     domCreator.drawTaskList(project.taskList, project);
 });
 
-domCreator.eventEmitter.on("taskListAll", function(){
-    const project = {
+domCreator.eventEmitter.on("taskListAll", function () {
+    const projectTitle = {
         title: "All Tasks"
-    }
-    domCreator.drawProjectHeader(project);
+    };
+    domCreator.drawProjectHeader(projectTitle);
     domCreator.drawTaskList(getFullTaskList());
+});
+
+domCreator.eventEmitter.on("taskListToday", function () {
+    const projectTitle = {
+        title: "Tasks due today"
+    };
+    const todayTasks = getFullTaskList().filter(task => isToday(task.dueDate));
+    domCreator.drawProjectHeader(projectTitle);
+    domCreator.drawTaskList(todayTasks);
+});
+
+domCreator.eventEmitter.on("taskListWeek", function () {
+    const projectTitle = {
+        title: "Tasks due this week"
+    };
+    const todayTasks = getFullTaskList().filter(task => isBefore(task.dueDate, addDays(new Date(), 7)));
+    domCreator.drawProjectHeader(projectTitle);
+    domCreator.drawTaskList(todayTasks);
+});
+
+domCreator.eventEmitter.on("taskListImportant", function(){
+    const projectTitle = {
+        title: "High priority tasks"
+    };
+    const highPrioTasks = getFullTaskList().filter(task => task.priority === "high");
+    domCreator.drawProjectHeader(projectTitle);
+    domCreator.drawTaskList(highPrioTasks);
+});
+
+domCreator.eventEmitter.on("taskListCompleted", function(){
+    const projectTitle = {
+        title: "Completed tasks. Go you!"
+    };
+    const completedTasks = getFullTaskList().filter(task => task.completed);
+    domCreator.drawProjectHeader(projectTitle);
+    domCreator.drawTaskList(completedTasks);
 })
 
 domCreator.eventEmitter.on("taskComplete", (task) => {
@@ -66,7 +102,7 @@ domCreator.eventEmitter.on("editTask", (projectID, taskTitle, taskDesc, taskDueD
     task.description = taskDesc;
     task.dueDate = taskDueDate;
     task.priority = taskPriority;
-    if (task.parentProject !== project){
+    if (task.parentProject !== project) {
         task.parentProject.removeTask(task);
         project.addTask(task);
     };
@@ -88,16 +124,16 @@ domCreator.eventEmitter.on("taskEditPopup", (task, project, taskBox) => {
 let defaultProject = new Project("Uncategorised");
 let defaultProject2 = new Project("To-do list", "Study");
 let defaultProject3 = new Project("Driving game", "Work");
-let myTask = new Task("Gym session", "To work on these quads for the upcoming ski weekend", new Date(2022, 8, 23), "uncompleted", "medium");
-let myTask2 = new Task("Call QANTAS", "Figure out where my points are", new Date(2022, 9, 2), "uncompleted", "medium");
-let myTask3 = new Task("Make travel insurance claim", "get some money back from the Canada trip shenanigans", new Date(2022, 9, 2), "uncompleted", "medium");
-let myTask4 = new Task("Make tasks beautiful", "add rounded corners similar to sidebar buttons, drop shadows, nice spacing", false, "uncompleted", "medium");
+let myTask = new Task("Gym session", "To work on these quads for the upcoming ski weekend", new Date(), "uncompleted", "high");
+let myTask2 = new Task("Call QANTAS", "Figure out where my points are", addDays(new Date(), 1), "uncompleted", "medium");
+let myTask3 = new Task("Make travel insurance claim", "get some money back from the Canada trip shenanigans", false, "uncompleted", "medium");
+let myTask4 = new Task("Make tasks beautiful", "add rounded corners similar to sidebar buttons, drop shadows, nice spacing", addDays(new Date(), 4), "uncompleted", "medium");
 let myTask5 = new Task("Add task button", "have to make a way to add tasks somehow aye", false, "uncompleted", "high");
 let myTask6 = new Task("Move tasks between projects", "this is a bit harder - will need to remove current task from current project taskList, then add it to the new project and format appropriately", false, "uncompleted", "medium");
-let myTask7 = new Task("Add footer", "add footer with my name and github link to source code", false, "uncompleted", "low");
-let myTask8 = new Task("Add driving physics", "first things first, make the car feel amazing to drive", new Date(2022, 11, 30), "uncompleted", "medium");
-let myTask9 = new Task("Make Falls Creek road", "To work on these quads for the upcoming ski weekend", new Date(2023, 2, 15), "uncompleted", "medium");
-let myTask10 = new Task("Add smoke particle effects", "To work on these quads for the upcoming ski weekend", new Date(2022, 11, 30), "uncompleted", "low");
+let myTask7 = new Task("Add footer", "add footer with my name and github link to source code", addDays(new Date(), 12), "uncompleted", "low");
+let myTask8 = new Task("Add driving physics", "first things first, make the car feel amazing to drive", addDays(new Date(), 16), "uncompleted", "medium");
+let myTask9 = new Task("Make Falls Creek road", "To work on these quads for the upcoming ski weekend", addDays(new Date(), 54), "uncompleted", "medium");
+let myTask10 = new Task("Add smoke particle effects", "To work on these quads for the upcoming ski weekend", new Date(), "uncompleted", "low");
 myTask.completed = true;
 defaultProject.addTask(myTask);
 defaultProject.addTask(myTask2);
