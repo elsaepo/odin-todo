@@ -60,7 +60,7 @@ domCreator.eventEmitter.on("taskListWeek", function () {
     domCreator.drawTaskList(todayTasks);
 });
 
-domCreator.eventEmitter.on("taskListImportant", function(){
+domCreator.eventEmitter.on("taskListImportant", function () {
     const projectTitle = {
         title: "High priority tasks"
     };
@@ -69,7 +69,7 @@ domCreator.eventEmitter.on("taskListImportant", function(){
     domCreator.drawTaskList(highPrioTasks);
 });
 
-domCreator.eventEmitter.on("taskListCompleted", function(){
+domCreator.eventEmitter.on("taskListCompleted", function () {
     const projectTitle = {
         title: "Completed tasks. Go you!"
     };
@@ -90,11 +90,32 @@ domCreator.eventEmitter.on("sortTasks", (sorter, nodes, isDescending) => {
     let tasksToSort = [];
     nodes.forEach(node => tasksToSort.push(Number(node.id)));
     tasksToSort = tasksToSort.map(taskID => getTaskByID(taskID));
-    if (sorter === "□"){
-        tasksToSort = isDescending
-        ? tasksToSort.sort((a, b) => a.completed - b.completed)
-        : tasksToSort.sort((a, b) => b.completed - a.completed)
+    if (sorter === "□") {
+        tasksToSort = tasksToSort.sort((a, b) => a.completed - b.completed);
     };
+    if (sorter === "Due") {
+        tasksToSort = tasksToSort.sort((a, b) => {
+            if (a.dueDate === b.dueDate) {
+                return 0;
+            } else if (!a.dueDate) {
+                return -1;
+            } else if (!b.dueDate) {
+                return 1;
+            } else {
+                return isBefore(a.dueDate, b.dueDate) ? 1 : -1;
+            };
+        });
+    };
+    if (sorter === "Priority"){
+        tasksToSort = tasksToSort.sort((a, b) => {
+            let aPrio = (a.priority === "high") ? 3
+                : (a.priority === "medium") ? 2 : 1;
+            let bPrio = (b.priority === "high") ? 3
+                : (b.priority === "medium") ? 2 : 1;
+            return aPrio - bPrio;
+        })
+    }
+    if (isDescending){ tasksToSort.reverse() }
     domCreator.drawTaskList(tasksToSort);
 })
 
