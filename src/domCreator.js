@@ -527,10 +527,12 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
         // const taskStatus = formData.get("status")
         const taskPriority = formData.get("task-priority");
         const taskProjectID = Number(formData.get("task-project"));
+        console.log(taskProjectID)
         let validTask = true;
         if (validTask) {
             if (task) {
-                const parentProjectChange = (taskProjectID !== task.parentProject.id);
+                console.log(`${task.parentProjectID} parent`)
+                const parentProjectChange = (taskProjectID !== Number(task.parentProjectID));
                 eventEmitter.emit("editTask", taskProjectID, taskTitle, taskDesc, taskDueDate, taskPriority, task);
                 if (!parentProjectChange || project === undefined) {
                     taskBox.parentElement.insertBefore(drawTask(task, project), taskBox);
@@ -539,6 +541,7 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
                 taskForm.reset();
                 taskAddScreen.remove();
             } else {
+                console.log(`emitting new task ${taskProjectID}`)
                 eventEmitter.emit("newTask", taskProjectID, taskTitle, taskDesc, taskDueDate, taskPriority);
                 taskForm.reset();
                 taskAddScreen.remove();

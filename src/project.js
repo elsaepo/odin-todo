@@ -5,8 +5,8 @@ let currentProjectID = 1;
 const projectList = [];
 
 class Project {
-    constructor(title, label) {
-        this._id = getNewID();
+    constructor(title, label, id) {
+        this._id = id || getNewID();
         this._title = title;
         this._label = label;
         this._iconClasses = ["fa-solid", "fa-folder"];
@@ -36,7 +36,7 @@ class Project {
         return this._taskList;
     }
     addTask = (taskObject, index) => {
-        taskObject.parentProject = this;
+        taskObject.parentProjectID = this.id;
         if (index) {
             this._taskList.splice(index, 0, taskObject);
         } else {

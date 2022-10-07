@@ -5,4 +5,12 @@ const getNewID = () => {
     return currentID;
 }
 
-export { getNewID };
+const getCurrentID = () => {
+    return currentID;
+}
+
+const setCurrentID = (id) => {
+    currentID = id;
+}
+
+export { getNewID, getCurrentID, setCurrentID };
