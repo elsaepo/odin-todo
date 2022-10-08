@@ -380,7 +380,6 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
     const taskAddContainer = document.createElement("div");
     taskAddContainer.classList.add("task-add-container");
     const taskAddScreen = createPopup(taskAddContainer);
-    // why can't i declare between if/else?
     const taskAddPrompt = task
         ? createPopupPrompt("Editing task")
         : createPopupPrompt("Add a new task");
@@ -480,7 +479,7 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
         projectOption.value = proj.id;
         projectOption.textContent = proj.title;
         if (task) {
-            if (task.parentProject === proj) {
+            if (task.parentProjectID === proj.id) {
                 projectOption.selected = "selected";
             };
         } else if (proj.id === project.id) { projectOption.selected = "selected" };
@@ -527,11 +526,9 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
         // const taskStatus = formData.get("status")
         const taskPriority = formData.get("task-priority");
         const taskProjectID = Number(formData.get("task-project"));
-        console.log(taskProjectID)
         let validTask = true;
         if (validTask) {
             if (task) {
-                console.log(`${task.parentProjectID} parent`)
                 const parentProjectChange = (taskProjectID !== Number(task.parentProjectID));
                 eventEmitter.emit("editTask", taskProjectID, taskTitle, taskDesc, taskDueDate, taskPriority, task);
                 if (!parentProjectChange || project === undefined) {
@@ -541,7 +538,6 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
                 taskForm.reset();
                 taskAddScreen.remove();
             } else {
-                console.log(`emitting new task ${taskProjectID}`)
                 eventEmitter.emit("newTask", taskProjectID, taskTitle, taskDesc, taskDueDate, taskPriority);
                 taskForm.reset();
                 taskAddScreen.remove();

@@ -1,20 +1,18 @@
 import { getNewID } from "./idController.js"
 
 class Task {
-    constructor(title, description, dueDate, status, priority, parentProjectID, id) {
-        console.log(id)
-        this._id = id || getNewID();
-        console.log(this._id)
-        this._title = title;
-        this._description = description;
-        this._dueDate = dueDate;
-        this._status = status;
-        this._priority = priority;
-        this._completed = false;
-        this._parentProjectID = parentProjectID;
+    constructor(taskObj) {
+        this._id = taskObj.id || getNewID();
+        this._title = taskObj.title;
+        this._description = taskObj.description;
+        this._dueDate = taskObj.dueDate;
+        this._status = taskObj.status || undefined;
+        this._priority = taskObj.priority;
+        this._completed = taskObj.completed || false;
+        this._parentProjectID = taskObj.parentProjectID;
     }
 
-    get id(){
+    get id() {
         return this._id;
     }
     get title() {
@@ -29,28 +27,28 @@ class Task {
     set description(newDescription) {
         this._description = newDescription;
     }
-    get dueDate(){
+    get dueDate() {
         return this._dueDate;
     }
-    set dueDate(newDueDate){
+    set dueDate(newDueDate) {
         this._dueDate = newDueDate;
     }
-    get priority(){
+    get priority() {
         return this._priority;
     }
-    set priority(newPriority){
+    set priority(newPriority) {
         this._priority = newPriority;
     }
-    get completed(){
+    get completed() {
         return this._completed;
     }
-    set completed(newCompleted){
+    set completed(newCompleted) {
         this._completed = newCompleted;
     }
-    get parentProjectID(){
+    get parentProjectID() {
         return this._parentProjectID;
     }
-    set parentProjectID(newParentProjectID){
+    set parentProjectID(newParentProjectID) {
         this._parentProjectID = newParentProjectID;
     }
 }

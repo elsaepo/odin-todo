@@ -34,6 +34,7 @@ const saveToLocal = function () {
     });
     localStorage.setItem("projectList", JSON.stringify(projList));
     localStorage.setItem("currentID", getCurrentID());
+    localStorage.setItem("currentProjectID", getCurrentProject());
 }
 
 // eventEmitter listeners for selecting projects & displaying/removing them from DOM
@@ -59,6 +60,7 @@ domCreator.eventEmitter.on("projectButton", (project) => {
     setCurrentProject(project.id);
     domCreator.drawProjectHeader(project);
     domCreator.drawTaskList(project.taskList, project);
+    saveToLocal();
 });
 
 domCreator.eventEmitter.on("taskListAll", function () {
@@ -67,6 +69,7 @@ domCreator.eventEmitter.on("taskListAll", function () {
     };
     domCreator.drawProjectHeader(projectTitle);
     domCreator.drawTaskList(getFullTaskList());
+    localStorage.setItem("currentProjectID", "taskListAll");
 });
 
 domCreator.eventEmitter.on("taskListToday", function () {
@@ -76,6 +79,7 @@ domCreator.eventEmitter.on("taskListToday", function () {
     const todayTasks = getFullTaskList().filter(task => isToday(task.dueDate));
     domCreator.drawProjectHeader(projectTitle);
     domCreator.drawTaskList(todayTasks);
+    localStorage.setItem("currentProjectID", "taskListToday");
 });
 
 domCreator.eventEmitter.on("taskListWeek", function () {
@@ -85,6 +89,7 @@ domCreator.eventEmitter.on("taskListWeek", function () {
     const todayTasks = getFullTaskList().filter(task => isBefore(task.dueDate, addDays(new Date(), 7)));
     domCreator.drawProjectHeader(projectTitle);
     domCreator.drawTaskList(todayTasks);
+    localStorage.setItem("currentProjectID", "taskListWeek");
 });
 
 domCreator.eventEmitter.on("taskListImportant", function () {
@@ -94,6 +99,7 @@ domCreator.eventEmitter.on("taskListImportant", function () {
     const highPrioTasks = getFullTaskList().filter(task => task.priority === "high");
     domCreator.drawProjectHeader(projectTitle);
     domCreator.drawTaskList(highPrioTasks);
+    localStorage.setItem("currentProjectID", "taskListImportant");
 });
 
 domCreator.eventEmitter.on("taskListCompleted", function () {
@@ -103,6 +109,7 @@ domCreator.eventEmitter.on("taskListCompleted", function () {
     const completedTasks = getFullTaskList().filter(task => task.completed);
     domCreator.drawProjectHeader(projectTitle);
     domCreator.drawTaskList(completedTasks);
+    localStorage.setItem("currentProjectID", "taskListCompleted");
 });
 
 domCreator.eventEmitter.on("taskComplete", (task) => {
@@ -149,15 +156,16 @@ domCreator.eventEmitter.on("sortTasks", (sorter, nodes, isDescending) => {
 })
 
 domCreator.eventEmitter.on("newTask", (projectID, taskTitle, taskDesc, taskDueDate, taskPriority) => {
-    const newTask = new Task(taskTitle, taskDesc, taskDueDate, true, taskPriority);
+    const newTaskObj = {
+        title: taskTitle,
+        description: taskDesc,
+        dueDate: taskDueDate,
+        priority: taskPriority
+    };
+    const newTask = new Task(newTaskObj);
     const project = getProjectByID(projectID);
-    console.log(project)
     project.addTask(newTask);
-    console.log(project.taskList)
-    console.log(projectID)
-    console.log(getCurrentProject())
     if (projectID === Number(getCurrentProject())) {
-        console.log("DRAWING TASK CONTAINER YUP")
         domCreator.taskContainer.appendChild(domCreator.drawTask(newTask, project));
     };
     saveToLocal();
@@ -169,8 +177,8 @@ domCreator.eventEmitter.on("editTask", (projectID, taskTitle, taskDesc, taskDueD
     task.description = taskDesc;
     task.dueDate = taskDueDate;
     task.priority = taskPriority;
-    if (task.parentProject !== project) {
-        task.parentProject.removeTask(task);
+    if (task.parentProjectID !== project.id) {
+        getProjectByID(task.parentProjectID).removeTask(task);
         project.addTask(task);
     };
     saveToLocal();
@@ -229,19 +237,39 @@ let parsedData = JSON.parse(rawData);
 if (!localStorage.getItem("projectList")) {
     localStorage.setItem("projectList", rawData);
     localStorage.setItem("currentID", 16);
+    localStorage.setItem("currentProjectID", 1);
     setCurrentID(16);
 } else {
     parsedData = JSON.parse(localStorage.getItem("projectList"));
     setCurrentID(Number(localStorage.getItem("currentID")));
+    setCurrentProject(Number(localStorage.getItem("currentProjectID")))
 };
 parsedData.forEach(proj => {
     let newProj = new Project(proj.title, proj.label, proj.id);
     proj.taskList.forEach(task => {
-        let newTask = new Task(task.title, task.description, new Date(task.dueDate), task.status, task.priority, false, Number(task.id));
+        const newTaskObj = {
+            id: Number(task.id),
+            title: task.title,
+            description: task.description,
+            dueDate: new Date(task.dueDate),
+            status: task.status,
+            priority: task.priority,
+            completed: task.completed,
+            parentProjectID: task.parentProjectID
+        }
+        let newTask = new Task(newTaskObj);
+        newTask.completed = task.completed;
         newProj.addTask(newTask);
     });
     domCreator.drawProjectNav(newProj);
     domCreator.drawProjectHeader(newProj);
-    domCreator.drawTaskList(newProj.taskList, newProj);
-    setCurrentProject(proj.id)
 });
+const lastProject = getProjectByID(Number(localStorage.getItem("currentProjectID")))
+if (lastProject) {
+    domCreator.drawProjectHeader(getProjectByID(getCurrentProject()));
+    domCreator.drawTaskList(getProjectByID(getCurrentProject()).taskList, getProjectByID(getCurrentProject()));
+} else {
+    const taskListToDraw = localStorage.getItem("currentProjectID")
+    domCreator.eventEmitter.emit(taskListToDraw);
+};
+
