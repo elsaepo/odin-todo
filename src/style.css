@@ -716,7 +716,7 @@ h5 {
     }
 
     .title-text {
-        font-size: 2rem;
+        font-size: 1.7rem;
     }
 
     #sidebar {
@@ -738,7 +738,7 @@ h5 {
     }
 
     h2 {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
     }
 
     .task-sorter,
@@ -762,5 +762,18 @@ h5 {
     }
     .task-sorter-delete, .task-container-delete {
         display: none;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .title-text {
+        text-align: right;
+        margin-right: 24px;
+        margin-left: 50px;
+        line-height: 1;
+    }
+
+    h2 {
+        font-size: 1.2rem;
     }
 }
