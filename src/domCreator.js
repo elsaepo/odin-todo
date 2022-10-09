@@ -17,7 +17,8 @@ const drawSidebarLink = function (linkObj) {
     navButton.appendChild(navText);
     navButton.addEventListener("mousedown", function (event) {
         removeSort(false);
-        eventEmitter.emit(`taskList${linkObj.title}`, navText)
+        eventEmitter.emit(`taskList${linkObj.title}`, navText);
+        sidebar.classList.add("sidebar-hidden");
     })
     return navButton;
 }
@@ -27,6 +28,7 @@ const drawProjectNav = function (project) {
     thisProjectButton.addEventListener("mousedown", function () {
         removeSort(false);
         eventEmitter.emit("projectButton", project);
+        sidebar.classList.add("sidebar-hidden");
     });
     if (project.id !== 1) {
         const projectDeleteButton = document.createElement("div");
@@ -83,7 +85,7 @@ const drawTask = function (task, project) {
     taskBox.id = task.id;
     taskBox.classList.add("task");
     const taskCompleteBox = document.createElement("div");
-    taskCompleteBox.classList.add("task-complete-box");
+    taskCompleteBox.classList.add("task-container-complete");
     taskBox.appendChild(taskCompleteBox);
     if (task.completed) {
         taskCompleteBox.classList.add("task-completed");
@@ -96,12 +98,14 @@ const drawTask = function (task, project) {
         taskCompleteBox.parentElement.classList.toggle("task-box-completed");
     });
     const taskTitle = document.createElement("div");
+    taskTitle.classList.add("task-container-title");
     taskTitle.textContent = task.title;
     const taskDescription = document.createElement("div");
+    taskDescription.classList.add("task-container-description");
     taskDescription.textContent = task.description;
     taskDescription.classList.add("hide-overflow");
     const taskDate = document.createElement("div");
-    taskDate.classList.add("task-date");
+    taskDate.classList.add("task-container-due");
     if (task.dueDate) {
         let taskDateDay = format(task.dueDate, "do");
         let taskDateDayNumber = taskDateDay.match(/\d+/);
@@ -112,25 +116,27 @@ const drawTask = function (task, project) {
         taskDate.classList.add("task-date-na");
         taskDate.textContent = "N/A";
     }
-
     const taskPriority = document.createElement("div");
-    taskPriority.classList.add("task-priority");
+    taskPriority.classList.add("task-container-priority");
     taskPriority.classList.add(`task-priority-${task.priority}`)
-    taskPriority.textContent = task.priority.toUpperCase();
+    const taskPriorityText = document.createElement("p");
+    taskPriorityText.textContent = task.priority.toUpperCase();
+    taskPriority.appendChild(taskPriorityText);
     const taskEditBox = document.createElement("i");
-    taskEditBox.classList.add("fa-solid", "fa-pen-to-square", "task-edit");
+    taskEditBox.classList.add("fa-solid", "fa-pen-to-square", "task-container-edit");
     taskEditBox.addEventListener("mousedown", function (event) {
         event.stopPropagation();
         eventEmitter.emit("taskEditPopup", task, project, event.target.parentElement);
     })
     const taskDeleteBox = document.createElement("i");
-    taskDeleteBox.classList.add("fa-solid", "fa-trash", "task-delete");
+    taskDeleteBox.classList.add("fa-solid", "fa-trash", "task-container-delete");
     taskDeleteBox.addEventListener("mousedown", function (event) {
         event.stopPropagation();
         drawDeleteTaskContainer(task, event.target.parentElement);
     });
     taskBox.addEventListener("mousedown", function (event) {
         taskDescription.classList.toggle("hide-overflow");
+        taskBox.classList.toggle("task-expanded");
     })
     taskBox.appendChild(taskTitle);
     taskBox.appendChild(taskDescription);
@@ -147,6 +153,16 @@ header.id = "header";
 const titleText = document.createElement("h1");
 titleText.classList.add("title-text");
 titleText.textContent = "things to do.";
+const dropdownButton = document.createElement("div");
+dropdownButton.id = "dropdown";
+const dropdownIcon = document.createElement("i");
+dropdownIcon.classList.add("fa-solid", "fa-bars", "fa-xl");
+dropdownButton.appendChild(dropdownIcon);
+
+dropdownButton.addEventListener("mousedown", function(){
+    sidebar.classList.toggle("sidebar-hidden");
+})
+header.appendChild(dropdownButton);
 header.appendChild(titleText);
 
 // Creating DOM body
@@ -156,6 +172,7 @@ body.id = "body-container";
 // Creating DOM sidebar
 const sidebar = document.createElement("div");
 sidebar.id = "sidebar";
+sidebar.classList.add("sidebar-hidden")
 
 // DOM sidebar navigation
 const navContainer = document.createElement("div");
@@ -222,6 +239,8 @@ addProjectInputContainer.classList.add("nav-adding-project");
 addProjectButtonContainer.insertBefore(addProjectInputContainer, addProjectButtonContainer.firstChild);
 
 const toggleAddProjectContainer = function () {
+
+    sidebar.classList.remove("sidebar-hidden");
     addProjectInputContainer.classList.toggle("nav-hidden");
     addProjectButton.firstChild.classList.toggle("fa-plus");
     addProjectButton.firstChild.classList.toggle("fa-minus");
@@ -255,13 +274,34 @@ main.id = "main";
 const taskSorter = document.createElement("div");
 taskSorter.classList.add("task-sorter");
 const sortArray = [
-    "□",
-    "Task",
-    "Description",
-    "Due",
-    "Priority",
-    "",
-    ""
+    {
+        title: "completed",
+        display: "□"
+    },
+    {
+        title: "task",
+        display: "Task"
+    },
+    {
+        title: "description",
+        display: "Description"
+    },
+    {
+        title: "due",
+        display: "Due"
+    },
+    {
+        title: "priority",
+        display: "Priority"
+    },
+    {
+        title: "edit",
+        display: ""
+    },
+    {
+        title: "delete",
+        display: ""
+    }
 ];
 
 const removeSort = function (event) {
@@ -276,7 +316,8 @@ const removeSort = function (event) {
 
 sortArray.forEach(sorter => {
     const header = document.createElement("h5");
-    if (sorter === "□" || sorter === "Due" || sorter === "Priority") {
+    header.classList.add(`task-sorter-${sorter.title}`);
+    if (sorter.title === "completed" || sorter.title === "due" || sorter.title === "priority") {
         header.classList.add("task-sort-button");
         header.addEventListener("mousedown", function (event) {
             removeSort(event);
@@ -289,10 +330,10 @@ sortArray.forEach(sorter => {
                 header.classList.add("task-sort-ascending");
                 isDescending = false;
             };
-            eventEmitter.emit("sortTasks", sorter, taskContainer.childNodes, isDescending);
+            eventEmitter.emit("sortTasks", sorter.display, taskContainer.childNodes, isDescending);
         })
     }
-    header.textContent = sorter;
+    header.textContent = sorter.display;
     taskSorter.appendChild(header);
 })
 

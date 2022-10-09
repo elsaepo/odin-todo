@@ -3,9 +3,13 @@
 :root {
     --blue-main: rgb(114, 144, 184);
     --blue-light: rgb(215, 225, 238);
+    --header-height: 100px;
+    --header-height-small: 60px;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
@@ -15,7 +19,9 @@ body {
     font-family: Poppins, sans-serif;
 }
 
-h2, h4, h5 {
+h2,
+h4,
+h5 {
     margin: 0;
 }
 
@@ -31,12 +37,32 @@ h5 {
     font-size: 1rem;
 }
 
+#content {
+    width: 100%;
+}
+
 #header {
-    height: 100px;
+    position: sticky;
+    top: 0;
+    height: var(--header-height);
     width: 100vw;
     background-color: var(--blue-main);
     display: flex;
     align-items: center;
+    z-index: 100;
+}
+
+#dropdown {
+    display: none;
+    position: absolute;
+    margin-left: 24px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border: 2px solid white;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
 }
 
 .title-text {
@@ -50,13 +76,17 @@ h5 {
 #body-container {
     display: flex;
     width: 100%;
-    height: calc(100vh - 100px);
-    background-color:rgb(230, 245, 244);
+    height: calc(100vh - var(--ehader-height));
+    background-color: rgb(230, 245, 244);
 }
 
 #sidebar {
     background-color: var(--blue-light);
     height: 100%;
+    width: 320px;
+    flex-shrink: 0;
+    flex-grow: 0;
+    overflow-y: auto;
 }
 
 .nav-container {
@@ -64,7 +94,7 @@ h5 {
     flex-direction: column;
     gap: 16px;
     padding: 32px;
-    width: 300px;
+    width: 100%;
 }
 
 .nav-button {
@@ -200,12 +230,13 @@ h5 {
 
 /* Main elements */
 #main {
-    flex-grow: 1;
     display: flex;
     flex-direction: column;
     height: 100%;
+    width: 100%;
     padding: 32px;
     gap: 16px;
+    overflow-y: auto;
 }
 
 .task-container-header {
@@ -214,7 +245,8 @@ h5 {
     gap: 16px;
 }
 
-.task-container-header *:nth-child(2), .add-task {
+.task-container-header *:nth-child(2),
+.add-task {
     border: 2px solid grey;
     border-radius: 4px;
     font-size: 1.1rem;
@@ -238,7 +270,8 @@ h5 {
     background-color: white;
 }
 
-.task-sorter, .task {
+.task-sorter,
+.task {
     display: grid;
     grid-template-columns: 40px 240px auto 80px 80px 24px 24px;
     align-items: center;
@@ -258,8 +291,8 @@ h5 {
 
 .task-sort-button::after {
     content: ">";
-    position: absolute;
-    translate: 8px;
+    position: relative;
+    margin-left: 8px;
     opacity: 0.4;
     transform: rotate(0);
     transition: transform 0.2s ease;
@@ -269,7 +302,7 @@ h5 {
 .task-sort-descending::after {
     opacity: 1;
     transform-origin: center;
-    
+
 }
 
 .task-sort-ascending::after {
@@ -300,11 +333,11 @@ h5 {
     background-color: white;
 }
 
-.task > div:not(:first-child) {
+.task>div:not(:first-child) {
     padding: 12px 0;
 }
 
-.task-complete-box {
+.task-container-complete {
     height: 20px;
     width: 20px;
     border: 2px solid rgb(129, 129, 129);
@@ -315,11 +348,11 @@ h5 {
     transition: transform 0.1s ease;
 }
 
-.task-complete-box:active {
+.task-container-complete:active {
     background-color: white;
 }
 
-.task-complete-box:hover {
+.task-container-complete:hover {
     cursor: pointer;
     background-color: white;
     border-color: black;
@@ -327,7 +360,7 @@ h5 {
     transition: transform 0.1s ease;
 }
 
-.task-complete-box:hover::after {
+.task-container-complete:hover::after {
     content: "✓";
     font-size: 2.5rem;
     font-weight: 800;
@@ -335,7 +368,7 @@ h5 {
     padding: 0 0 8px 8px;
 }
 
-.task-complete-box:active::after {
+.task-container-complete:active::after {
     color: black;
 }
 
@@ -356,32 +389,34 @@ h5 {
     padding: 0 0 8px 8px;
 }
 
-.task-completed ~ * {
+.task-completed~* {
     color: grey;
-    text-decoration:line-through;
+    text-decoration: line-through;
 }
 
 .task-date-na {
     opacity: 0.5;
 }
 
-.task-priority {
+.task-container-priority {
     display: flex;
     align-items: center;
     justify-content: center;
     border: 1px solid black;
     border-radius: 2px;
-    height: 32px;
-    transform-origin: left;
-    transform: scale(0.8);
+    height: 26px;
+    width: 85%;
+    font-size: 0.8rem;
 }
 
-.task-edit, .task-delete {
+.task-container-edit,
+.task-container-delete {
     color: grey;
     transition: transform 0.1s ease;
 }
 
-.task-edit:hover, .task-delete:hover {
+.task-container-edit:hover,
+.task-container-delete:hover {
     cursor: pointer;
     color: black;
     transform: scale(1.4);
@@ -489,11 +524,11 @@ h5 {
     width: 100%;
 }
 
-.input-container > *:first-child {
+.input-container>*:first-child {
     font-weight: 600;
 }
 
-.input-container > *:nth-child(2):not(.input-radio-container) {
+.input-container>*:nth-child(2):not(.input-radio-container) {
     font-family: "Roboto Mono", monospace;
 }
 
@@ -526,35 +561,35 @@ h5 {
     position: relative;
 }
 
-.input-radio:checked + label {
+.input-radio:checked+label {
     border: 2px solid black;
     font-weight: 600;
 }
 
-.input-radio#task-priority-low + label,
-.task-priority-low  {
+.input-radio#task-priority-low+label,
+.task-priority-low {
     background-color: rgb(206, 240, 206);
 }
 
-.input-radio#task-priority-medium + label,
-.task-priority-medium  {
+.input-radio#task-priority-medium+label,
+.task-priority-medium {
     background-color: rgb(241, 228, 204);
 }
 
-.input-radio#task-priority-high + label,
-.task-priority-high  {
+.input-radio#task-priority-high+label,
+.task-priority-high {
     background-color: rgb(241, 207, 207);
 }
 
-.input-radio#task-priority-low:checked + label{
+.input-radio#task-priority-low:checked+label {
     background-color: rgb(146, 209, 146);
 }
 
-.input-radio#task-priority-medium:checked + label {
+.input-radio#task-priority-medium:checked+label {
     background-color: rgb(235, 208, 160);
 }
 
-.input-radio#task-priority-high:checked + label {
+.input-radio#task-priority-high:checked+label {
     background-color: rgb(241, 149, 149);
 }
 
@@ -568,7 +603,164 @@ h5 {
     0% {
         transform: scale(0);
     }
+
     100% {
         transform: scale(1);
+    }
+}
+
+@media screen and (max-width: 1100px) {
+
+    .task-container {
+        gap: 12px;
+    }
+
+    .task-sorter,
+    .task {
+        display: grid;
+        grid-template-columns: 40px auto 55px 32px 24px 24px;
+        align-items: center;
+        gap: 12px;
+        max-width: 100%;
+        padding-left: 18px;
+        padding-right: 12px;
+    }
+
+    .task-container-title {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .task-container-description,
+    .task-sorter-description {
+        display: none;
+    }
+
+    .task-container-due {
+        font-size: 0.8rem;
+    }
+
+    .task-container-priority p {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 868px) {
+    :root {
+        --header-height: 80px;
+    }
+
+    #dropdown {
+        display: flex;
+        transform: scale(0.9);
+    }
+
+    .title-text {
+        font-size: 2.5rem;
+    }
+
+    #sidebar {
+        position: absolute;
+        padding-bottom: 32px;
+        box-shadow: 0 0px 12px grey;
+        animation-name: sidebar-dropdown;
+        animation-duration: 0.3s;
+        animation-timing-function: ease;
+        animation-fill-mode: forwards;
+        transform-origin: top;
+        z-index: 15;
+    }
+
+    .sidebar-hidden {
+        display: none;
+        transform: scaleY(0);
+    }
+
+    @keyframes sidebar-dropdown {
+        0% {
+            transform: scaleY(0);
+        }
+
+        100% {
+            transform: scaleY(1)
+        }
+    }
+
+    #main {
+        padding: 24px;
+    }
+
+    .task-container-header {
+        display: flex;
+        flex-wrap: wrap;
+        row-gap: 4px;
+    }
+
+    h2 {
+        display: block;
+        width: 100%;
+        font-size: 1.8rem;
+    }
+
+}
+
+@media screen and (max-width: 580px) {
+    :root {
+        --header-height: 60px;
+    }
+
+    #dropdown {
+        margin-left: 12px;
+        transform: scale(0.7);
+    }
+
+    .title-text {
+        font-size: 2rem;
+    }
+
+    #sidebar {
+        width: 100%;
+    }
+
+    .nav-button {
+        height: auto;
+        padding: 8px 16px;
+    }
+
+    h3 {
+        padding: 0;
+        margin: 0;
+    }
+
+    #main {
+        padding: 16px;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    .task-sorter,
+    .task {
+        display: grid;
+        grid-template-columns: 40px auto 55px 32px;
+        align-items: center;
+        gap: 12px;
+        max-width: 100%;
+        padding-left: 18px;
+        padding-right: 12px;
+    }
+    .task-sorter-priority {
+        display: none;
+    }
+    .task-container-priority {
+        transform: scale(0.8)
+    }
+    .task-sorter-edit, .task-container-edit {
+        display: none;
+    }
+    .task-sorter-delete, .task-container-delete {
+        display: none;
     }
 }
