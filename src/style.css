@@ -76,13 +76,13 @@ h5 {
 #body-container {
     display: flex;
     width: 100%;
-    height: calc(100vh - var(--ehader-height));
+    height: calc(100vh - var(--header-height));
     background-color: rgb(230, 245, 244);
 }
 
 #sidebar {
     background-color: var(--blue-light);
-    height: 100%;
+    height: calc(100vh - var(--header-height));
     width: 320px;
     flex-shrink: 0;
     flex-grow: 0;
@@ -429,6 +429,11 @@ h5 {
     text-overflow: ellipsis;
 }
 
+.task-expanded.task>.task-container-title {
+    font-weight: 600;
+}
+
+
 /* Popup containers */
 .popup-screen {
     display: flex;
@@ -644,6 +649,65 @@ h5 {
     .task-container-priority p {
         display: none;
     }
+
+    .task-expanded.task {
+        display: grid;
+        grid-template-columns: 40px auto 55px 48px 48px;
+        grid-template-rows: 32px auto;
+    }
+
+    .task-expanded.task>.task-container-complete {
+        grid-column: 1 / 2;
+        grid-row: 1 / -1;
+        align-self: start;
+        margin-top: 14px;
+    }
+
+    .task-expanded.task>.task-container-title {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+        align-self: start;
+    }
+
+    .task-expanded.task>.task-container-description {
+        display: flex;
+        grid-column: 2 / 3;
+        grid-row: 2 / 3;
+        align-self: start;
+    }
+
+    .task-expanded.task>.task-container-due {
+        grid-column: -4 / -3;
+        justify-self: center;
+        margin-top: 14px;
+    }
+
+    .task-expanded.task>.task-container-priority {
+        grid-column: -3 / -1;
+        justify-self: center;
+        margin-top: 20px;
+    }
+
+    .task-expanded.task>.task-container-priority p {
+        display: flex;
+    }
+
+    .task-expanded.task>.task-container-edit {
+        grid-column: -2 / -1;
+        grid-row: -2 / -1;
+        justify-self: center;
+        align-self: end;
+        margin-bottom: 16px;
+    }
+
+    .task-expanded.task>.task-container-delete {
+        grid-column: -3 / -2;
+        grid-row: -2 / -1;
+        justify-self: center;
+        align-self: end;
+        margin-bottom: 16px;
+    }
+
 }
 
 @media screen and (max-width: 868px) {
@@ -751,17 +815,80 @@ h5 {
         padding-left: 18px;
         padding-right: 12px;
     }
+
     .task-sorter-priority {
         display: none;
     }
+
     .task-container-priority {
-        transform: scale(0.8)
+        transform: scale(0.8);
     }
-    .task-sorter-edit, .task-container-edit {
+
+    .task-sorter-edit,
+    .task-container-edit {
         display: none;
     }
-    .task-sorter-delete, .task-container-delete {
+
+    .task-sorter-delete,
+    .task-container-delete {
         display: none;
+    }
+
+    .task-expanded.task.task {
+        display: grid;
+        grid-template-columns: 32px auto 30px 30px;
+        grid-template-rows: 32px 32px auto;
+    }
+
+    .task-expanded.task>.task-container-complete {
+        grid-column: 1 / 2;
+        grid-row: 1 / -1;
+        align-self: start;
+        margin-top: 14px;
+    }
+
+    .task-expanded.task>.task-container-title {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+        align-self: start;
+        font-weight: 600;
+    }
+
+    .task-expanded.task>.task-container-description {
+        grid-column: 2 / 3;
+        grid-row: 2 / -1;
+        align-self: start;
+    }
+
+    .task-expanded.task>.task-container-due {
+        grid-column: -3 / -1;
+        justify-self: start;
+        margin-top: 14px;
+        margin-left: 6px;
+    }
+
+    .task-expanded.task>.task-container-priority {
+        grid-column: -3 / -1;
+        justify-self: start;
+        align-self: end;
+        margin-bottom: 6px;
+        transform: scale(1);
+    }
+
+    .task-expanded.task>.task-container-edit {
+        display: flex;
+        justify-self: start;
+        grid-column: -3 / -2;
+        grid-row: -2 / -1;
+        margin-left: 4px;
+    }
+
+    .task-expanded.task>.task-container-delete {
+        display: flex;
+        justify-self: start;
+        grid-column: -2 / -1;
+        grid-row: -2 / -1;
+
     }
 }
 
@@ -777,3 +904,4 @@ h5 {
         font-size: 1.2rem;
     }
 }
+
