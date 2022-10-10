@@ -109,12 +109,14 @@ h5 {
     transition: transform 0.1s ease, background-color 0.1s ease, color 0.1s ease;
 }
 
-.nav-button:hover {
-    cursor: pointer;
-    transform: scale(1.07);
-    transition: transform 0.1s ease, background-color 0.1s ease, color 0.1s ease;
-    background-color: var(--blue-main);
-    color: white;
+@media (hover: hover) {
+    .nav-button:hover {
+        cursor: pointer;
+        transform: scale(1.07);
+        transition: transform 0.1s ease, background-color 0.1s ease, color 0.1s ease;
+        background-color: var(--blue-main);
+        color: white;
+    }
 }
 
 .nav-button:active {
@@ -138,15 +140,21 @@ h5 {
     z-index: 5;
 }
 
-.nav-button:hover .nav-project-delete {
-    display: flex;
+@media (hover: hover) {
+    .nav-button:hover {
+        display: flex;
+    }
+
+    .nav-project-delete:hover {
+        background-color: rgb(240, 185, 185);
+        color: rgb(109, 44, 44);
+        border: 3px solid rgb(109, 44, 44);
+        opacity: 1;
+    }
 }
 
-.nav-project-delete:hover {
-    background-color: rgb(240, 185, 185);
-    color: rgb(109, 44, 44);
-    border: 3px solid rgb(109, 44, 44);
-    opacity: 1;
+.nav-project-delete {
+    display: flex;
 }
 
 .nav-add-project-container {
@@ -157,8 +165,10 @@ h5 {
     opacity: 0.4
 }
 
-#add-project:hover {
-    opacity: 1;
+@media (hover: hover) {
+    #add-project:hover {
+        opacity: 1;
+    }
 }
 
 .nav-adding-project {
@@ -213,9 +223,11 @@ h5 {
     font-weight: 600;
 }
 
-.nav-adding-project button:hover {
-    cursor: pointer;
-    background-color: rgb(140, 228, 206);
+@media (hover: hover) {
+    .nav-adding-project button:hover {
+        cursor: pointer;
+        background-color: rgb(140, 228, 206);
+    }
 }
 
 .nav-adding-project button:active {
@@ -259,11 +271,13 @@ h5 {
     background-color: rgb(223, 243, 223);
 }
 
-.add-task:hover {
-    cursor: pointer;
-    border: 2px solid black;
-    color: black;
-    background-color: rgb(201, 241, 201);
+@media (hover: hover) {
+    .add-task:hover {
+        cursor: pointer;
+        border: 2px solid black;
+        color: black;
+        background-color: rgb(201, 241, 201);
+    }
 }
 
 .add-task:active {
@@ -329,8 +343,10 @@ h5 {
     box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.task:hover {
-    background-color: white;
+@media (hover: hover) {
+    .task:hover {
+        background-color: white;
+    }
 }
 
 .task>div:not(:first-child) {
@@ -352,20 +368,22 @@ h5 {
     background-color: white;
 }
 
-.task-container-complete:hover {
-    cursor: pointer;
-    background-color: white;
-    border-color: black;
-    transform: scale(1.2);
-    transition: transform 0.1s ease;
-}
+@media (hover: hover) {
+    .task-container-complete:hover {
+        cursor: pointer;
+        background-color: white;
+        border-color: black;
+        transform: scale(1.2);
+        transition: transform 0.1s ease;
+    }
 
-.task-container-complete:hover::after {
-    content: "✓";
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: rgb(110, 110, 110);
-    padding: 0 0 8px 8px;
+    .task-container-complete:hover::after {
+        content: "✓";
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: rgb(110, 110, 110);
+        padding: 0 0 8px 8px;
+    }
 }
 
 .task-container-complete:active::after {
@@ -415,12 +433,15 @@ h5 {
     transition: transform 0.1s ease;
 }
 
-.task-container-edit:hover,
-.task-container-delete:hover {
-    cursor: pointer;
-    color: black;
-    transform: scale(1.4);
-    transition: transform 0.1s ease;
+@media (hover: hover) {
+
+    .task-container-edit:hover,
+    .task-container-delete:hover {
+        cursor: pointer;
+        color: black;
+        transform: scale(1.4);
+        transition: transform 0.1s ease;
+    }
 }
 
 .hide-overflow {
@@ -490,8 +511,10 @@ h5 {
     height: 40px;
 }
 
-.popup-button:hover {
-    opacity: 1;
+@media (hover: hover) {
+    .popup-button:hover {
+        opacity: 1;
+    }
 }
 
 .popup-button:active {
@@ -904,4 +927,3 @@ h5 {
         font-size: 1.2rem;
     }
 }
-
