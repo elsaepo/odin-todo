@@ -239,11 +239,13 @@ addProjectInputContainer.classList.add("nav-adding-project");
 addProjectButtonContainer.insertBefore(addProjectInputContainer, addProjectButtonContainer.firstChild);
 
 const toggleAddProjectContainer = function () {
-
     sidebar.classList.remove("sidebar-hidden");
     addProjectInputContainer.classList.toggle("nav-hidden");
     addProjectButton.firstChild.classList.toggle("fa-plus");
     addProjectButton.firstChild.classList.toggle("fa-minus");
+    // addProjectButton.scrollIntoView();
+    addProjectButton.scrollHeight();
+    addProjectInputContainer.scrollHeight();
 }
 
 addProjectInputContainer.addEventListener("submit", function (event) {

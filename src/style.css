@@ -157,10 +157,6 @@ h5 {
     display: flex;
 }
 
-.nav-add-project-container {
-    padding: 0 32px;
-}
-
 #add-project {
     opacity: 0.4
 }
