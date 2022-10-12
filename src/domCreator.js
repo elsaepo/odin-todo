@@ -54,7 +54,6 @@ const drawProjectHeader = function (project) {
     taskContainerHeader.classList.add("task-container-header");
     const taskContainerTitle = document.createElement("h2");
     taskContainerTitle.textContent = project.title;
-    taskContainerHeader.appendChild(taskContainerTitle);
     if (project.label) {
         const taskContainerLabel = document.createElement("p");
         taskContainerLabel.textContent = project.label;
@@ -63,11 +62,24 @@ const drawProjectHeader = function (project) {
     const taskContainerAddButton = document.createElement("button");
     taskContainerAddButton.classList.add("add-task")
     taskContainerAddButton.textContent = "+ Task";
-    taskContainerHeader.appendChild(taskContainerAddButton);
-    main.insertBefore(taskContainerHeader, main.firstChild);
     taskContainerAddButton.addEventListener("mousedown", function (event) {
         eventEmitter.emit("taskAddPopup", project);
+    });
+    const projectEditBox = document.createElement("i");
+    projectEditBox.classList.add("fa-solid", "fa-pen-to-square", "project-header-edit");
+    projectEditBox.addEventListener("mousedown", function (event) {
+        eventEmitter.emit("projectEditPopup", project, event.target.parentElement);
     })
+    const projectDeleteBox = document.createElement("i");
+    projectDeleteBox.classList.add("fa-solid", "fa-trash", "project-header-delete");
+    projectDeleteBox.addEventListener("mousedown", function () {
+        drawDeleteProjectContainer(project, document.getElementById(`${project.id}`));
+    });
+    taskContainerHeader.appendChild(taskContainerTitle);
+    taskContainerHeader.appendChild(taskContainerAddButton);
+    taskContainerHeader.appendChild(projectEditBox);
+    taskContainerHeader.appendChild(projectDeleteBox);
+    main.insertBefore(taskContainerHeader, main.firstChild);
     return taskContainerHeader;
 }
 
@@ -159,7 +171,7 @@ const dropdownIcon = document.createElement("i");
 dropdownIcon.classList.add("fa-solid", "fa-bars", "fa-xl");
 dropdownButton.appendChild(dropdownIcon);
 
-dropdownButton.addEventListener("mousedown", function(){
+dropdownButton.addEventListener("mousedown", function () {
     sidebar.classList.toggle("sidebar-hidden");
 })
 header.appendChild(dropdownButton);
@@ -243,9 +255,15 @@ const toggleAddProjectContainer = function () {
     addProjectInputContainer.classList.toggle("nav-hidden");
     addProjectButton.firstChild.classList.toggle("fa-plus");
     addProjectButton.firstChild.classList.toggle("fa-minus");
-    // addProjectButton.scrollIntoView();
-    addProjectButton.scrollHeight();
-    addProjectInputContainer.scrollHeight();
+    const smoothScrollToBottom = function () {
+        sidebar.scrollTo({ top: sidebar.scrollHeight });
+    }
+    const stopSmoothScrollToBottom = function () {
+        clearInterval(scrollInterval);
+    }
+    const scrollInterval = setInterval(smoothScrollToBottom, 20);
+    setInterval(scrollInterval);
+    setTimeout(stopSmoothScrollToBottom, 100);
 }
 
 addProjectInputContainer.addEventListener("submit", function (event) {
@@ -394,7 +412,7 @@ const drawDeleteProjectContainer = function (project, projectBox) {
     const projectDeleteContainer = document.createElement("div");
     projectDeleteContainer.classList.add("project-delete-container");
     const projectDeleteScreen = createPopup(projectDeleteContainer);
-    const projectDeletePrompt = createPopupPrompt("Are you sure you want to delete this project? This will also delete any associated tasks!");
+    const projectDeletePrompt = createPopupPrompt(`Are you sure you want to delete this project? This will also delete any associated tasks!`);
     const projectDeleteYes = createButton("delete");
     const projectDeleteCancel = createButton("cancel");
     projectDeleteYes.addEventListener("mousedown", function () {
@@ -413,7 +431,6 @@ const drawDeleteProjectContainer = function (project, projectBox) {
 
 // Add Task popup
 const drawAddTaskContainer = function (project, projectList, task, taskBox) {
-
     const createInputContainer = function () {
         const inputContainer = document.createElement("div");
         inputContainer.classList.add("input-container");
@@ -595,6 +612,94 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
     body.appendChild(taskAddScreen);
 }
 
+// Edit Project popup
+const drawEditProjectContainer = function (project, projectList, projectBox) {
+    const createInputContainer = function () {
+        const inputContainer = document.createElement("div");
+        inputContainer.classList.add("input-container");
+        return inputContainer;
+    }
+    const projectEditContainer = document.createElement("div");
+    projectEditContainer.classList.add("project-edit-container");
+    const projectEditScreen = createPopup(projectEditContainer);
+    const projectEditPrompt = createPopupPrompt("Editing project");
+    const projectEditCancel = createButton("cancel");
+
+    const projectEditInputContainer = document.createElement("form");
+    projectEditInputContainer.id = "edit-project-form";
+
+    const projectNameInputContainer = createInputContainer();
+    const projectNameInputLabel = document.createElement("label");
+    projectNameInputLabel.for = "project-title";
+    projectNameInputLabel.textContent = "Title:"
+    const projectNameInputText = document.createElement("input");
+    projectNameInputText.id = "project-title"
+    projectNameInputText.name = "title"
+    projectNameInputText.type = "text";
+    projectNameInputText.maxLength = 30;
+    projectNameInputText.required = true;
+    projectNameInputContainer.appendChild(projectNameInputLabel);
+    projectNameInputContainer.appendChild(projectNameInputText);
+
+    const projectLabelInputContainer = createInputContainer();
+    const projectLabelInputLabel = document.createElement("label");
+    projectLabelInputLabel.for = "project-label";
+    projectLabelInputLabel.textContent = "Label:"
+    const projectLabelInputText = document.createElement("input");
+    projectLabelInputText.id = "project-label";
+    projectLabelInputText.name = "label";
+    projectLabelInputText.type = "text";
+    projectLabelInputText.maxLength = 12;
+    projectLabelInputContainer.appendChild(projectLabelInputLabel);
+    projectLabelInputContainer.appendChild(projectLabelInputText);
+
+    if (project) {
+        projectNameInputText.value = project.title;
+        projectLabelInputText.value = project.label;
+    }
+
+    const projectSubmitInputContainer = document.createElement("div");
+    projectSubmitInputContainer.classList.add("project-edit-submit");
+    const projectSubmitInputButton = document.createElement("button");
+    projectSubmitInputButton.classList.add("popup-button", "popup-button-add");
+    projectSubmitInputButton.id = "project-submit";
+    projectSubmitInputButton.textContent = "CONFIRM EDIT";
+    projectSubmitInputContainer.appendChild(projectSubmitInputButton);
+    projectSubmitInputContainer.appendChild(projectEditCancel);
+
+    projectEditInputContainer.appendChild(projectNameInputContainer);
+    projectEditInputContainer.appendChild(projectLabelInputContainer);
+    projectEditInputContainer.appendChild(projectSubmitInputContainer);
+    projectEditContainer.appendChild(projectEditPrompt);
+    projectEditContainer.appendChild(projectEditInputContainer);
+
+    const projectEditSubmit = function (event) {
+        event.preventDefault();
+        const projectForm = document.forms["edit-project-form"];
+        const formData = new FormData(projectForm);
+        const projectTitle = formData.get("title");
+        const projectLabel = formData.get("label");
+        let validProject = true;
+        if (validProject) {
+            console.log(projectTitle);
+            console.log(projectLabel)
+            eventEmitter.emit("editProject", projectTitle, projectLabel, project);
+            projectForm.reset();
+            projectEditScreen.remove();
+            console.log(projectBox)
+            projectBox.querySelector("h2").textContent = projectTitle;
+            document.getElementById(`${project.id}`).querySelector("h3").textContent = projectTitle;
+        }
+    };
+
+
+    projectEditInputContainer.addEventListener("submit", projectEditSubmit);
+    projectEditCancel.addEventListener("mousedown", function () {
+        projectEditScreen.remove();
+    });
+    body.appendChild(projectEditScreen);
+}
+
 // Appending to main and body
 main.appendChild(taskSorter);
 main.appendChild(taskContainer);
@@ -603,4 +708,4 @@ body.appendChild(main);
 content.appendChild(header);
 content.appendChild(body);
 
-export default { eventEmitter, drawProjectNav, drawProjectHeader, drawTaskList, drawTask, drawAddTaskContainer, navContainer, projectContainer, taskContainer, addProjectButton };
+export default { eventEmitter, drawProjectNav, drawProjectHeader, drawTaskList, drawTask, drawAddTaskContainer, drawEditProjectContainer, navContainer, projectContainer, taskContainer, addProjectButton };

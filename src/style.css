@@ -141,7 +141,7 @@ h5 {
 }
 
 @media (hover: hover) {
-    .nav-button:hover {
+    .nav-button:hover .nav-project-delete {
         display: flex;
     }
 
@@ -151,10 +151,6 @@ h5 {
         border: 3px solid rgb(109, 44, 44);
         opacity: 1;
     }
-}
-
-.nav-project-delete {
-    display: flex;
 }
 
 #add-project {
@@ -424,15 +420,23 @@ h5 {
 }
 
 .task-container-edit,
-.task-container-delete {
+.task-container-delete,
+.project-header-edit,
+.project-header-delete {
     color: grey;
     transition: transform 0.1s ease;
 }
 
-@media (hover: hover) {
+.project-header-edit,
+.project-header-delete {
+    transform: scale(1.2);
+}
 
+@media (hover: hover) {
     .task-container-edit:hover,
-    .task-container-delete:hover {
+    .task-container-delete:hover,
+    .project-header-edit:hover,
+    .project-header-delete:hover {
         cursor: pointer;
         color: black;
         transform: scale(1.4);

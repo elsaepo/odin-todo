@@ -11,7 +11,7 @@ import {
 import { Task } from "./task.js";
 import "./style.css";
 import domCreator from "./domCreator.js";
-const { format, parseISO, addDays, isBefore, isToday, isSameWeek } = require("date-fns");
+const { addDays, isBefore, isToday } = require("date-fns");
 
 const saveToLocal = function () {
     let projList = getProjectList().map(proj => {
@@ -184,6 +184,12 @@ domCreator.eventEmitter.on("editTask", (projectID, taskTitle, taskDesc, taskDueD
     saveToLocal();
 });
 
+domCreator.eventEmitter.on("editProject", (projectTitle, projectLabel, project) => {
+    project.title = projectTitle;
+    project.label = projectLabel;
+    saveToLocal();
+});
+
 domCreator.eventEmitter.on("taskAddPopup", (project) => {
     const projectList = getProjectList();
     domCreator.drawAddTaskContainer(project, projectList);
@@ -193,6 +199,11 @@ domCreator.eventEmitter.on("taskEditPopup", (task, project, taskBox) => {
     const projectList = getProjectList();
     domCreator.drawAddTaskContainer(project, projectList, task, taskBox);
 });
+
+domCreator.eventEmitter.on("projectEditPopup", (project, projectBox) => {
+    const projectList = getProjectList();
+    domCreator.drawEditProjectContainer(project, projectList, projectBox);
+})
 
 
 // Default projects for testing purposes
