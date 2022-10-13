@@ -1,5 +1,6 @@
 import "./style.css";
 import { EventEmitter } from "events";
+import { getProjectByID } from "./project.js";
 const { format } = require("date-fns");
 const eventEmitter = new EventEmitter();
 const content = document.querySelector("#content");
@@ -63,9 +64,13 @@ const drawProjectHeader = function (project) {
     taskContainerHeaderLeft.appendChild(taskContainerTitle);
     if (project.label) {
         const taskContainerLabelBox = document.createElement("div");
-        taskContainerLabelBox.classList.add("project-header-label")
+        taskContainerLabelBox.classList.add("project-header-label");
+        const taskContainerLabelColor = document.createElement("div");
+        taskContainerLabelColor.classList.add("project-header-label-color");
+        taskContainerLabelColor.style.backgroundColor = project.label.color;
         const taskContainerLabel = document.createElement("p");
-        taskContainerLabel.textContent = project.label;
+        taskContainerLabel.textContent = project.label.label;
+        taskContainerLabelBox.appendChild(taskContainerLabelColor);
         taskContainerLabelBox.appendChild(taskContainerLabel);
         taskContainerHeaderLeft.appendChild(taskContainerLabelBox);
     };
@@ -109,6 +114,12 @@ const drawTask = function (task, project) {
     const taskBox = document.createElement("div");
     taskBox.id = task.id;
     taskBox.classList.add("task");
+    const parentProjectLabel = getProjectByID(task.parentProjectID).label;
+    if (parentProjectLabel){
+        taskBox.style.border = `1px solid ${parentProjectLabel.color}`;
+        taskBox.style.borderLeft = `6px solid ${parentProjectLabel.color}`;
+        taskBox.style.paddingLeft = `12px`
+    };
     const taskCompleteBox = document.createElement("div");
     taskCompleteBox.classList.add("task-container-complete");
     taskBox.appendChild(taskCompleteBox);
@@ -226,72 +237,89 @@ const addProjectButton = drawSidebarLink(
 addProjectButtonContainer.appendChild(addProjectButton);
 
 // Add Project container
-const addProjectInputContainer = document.createElement("form");
-addProjectInputContainer.id = "add-project-form";
-addProjectInputContainer.classList.add("nav-hidden");
-const projectNameInputContainer = document.createElement("div");
-const projectNameInputLabel = document.createElement("label");
-projectNameInputLabel.for = "title";
-projectNameInputLabel.textContent = "Title:"
-const projectNameInputText = document.createElement("input");
-projectNameInputText.id = "project-title"
-projectNameInputText.name = "title"
-projectNameInputText.type = "text";
-projectNameInputText.maxLength = 15;
-projectNameInputText.required = true;
-projectNameInputContainer.appendChild(projectNameInputLabel);
-projectNameInputContainer.appendChild(projectNameInputText);
-const projectLabelInputContainer = document.createElement("div");
-const projectLabelInputLabel = document.createElement("label");
-projectLabelInputLabel.for = "label";
-projectLabelInputLabel.textContent = "Label:"
-const projectLabelInputText = document.createElement("input");
-projectLabelInputText.id = "project-label"
-projectLabelInputText.name = "label"
-projectLabelInputText.type = "text";
-projectLabelInputText.maxLength = 80;
-projectLabelInputContainer.appendChild(projectLabelInputLabel);
-projectLabelInputContainer.appendChild(projectLabelInputText);
-const projectSubmitInputContainer = document.createElement("div");
-const projectSubmitInputButton = document.createElement("button");
-projectSubmitInputButton.id = "project-submit";
-projectSubmitInputButton.textContent = "ADD NEW PROJECT";
-projectSubmitInputContainer.appendChild(projectSubmitInputButton);
-addProjectInputContainer.appendChild(projectNameInputContainer);
-addProjectInputContainer.appendChild(projectLabelInputContainer);
-addProjectInputContainer.appendChild(projectSubmitInputContainer);
-addProjectInputContainer.classList.add("nav-adding-project");
-addProjectButtonContainer.insertBefore(addProjectInputContainer, addProjectButtonContainer.firstChild);
+const drawAddProjectContainer = function(labelList){
+    const addProjectInputContainer = document.createElement("form");
+    addProjectInputContainer.id = "add-project-form";
+    // addProjectInputContainer.classList.add("nav-hidden");
+    const projectNameInputContainer = document.createElement("div");
+    const projectNameInputLabel = document.createElement("label");
+    projectNameInputLabel.for = "title";
+    projectNameInputLabel.textContent = "Title:";
+    const projectNameInputText = document.createElement("input");
+    projectNameInputText.id = "project-title";
+    projectNameInputText.name = "title";
+    projectNameInputText.type = "text";
+    projectNameInputText.maxLength = 20;
+    projectNameInputText.required = true;
+    projectNameInputContainer.appendChild(projectNameInputLabel);
+    projectNameInputContainer.appendChild(projectNameInputText);
+    const projectLabelInputContainer = document.createElement("div");
+    const projectLabelInputLabel = document.createElement("label");
+    projectLabelInputLabel.for = "label";
+    projectLabelInputLabel.textContent = "Label:";
+    const projectLabelInputSelect = document.createElement("select");
+    projectLabelInputSelect.id = "project-label";
+    projectLabelInputSelect.name = "label";
+    labelList.forEach(label => {
+        const labelOption = document.createElement("option");
+        labelOption.value = label.label;
+        labelOption.textContent = label.label;
+        projectLabelInputSelect.appendChild(labelOption);
+    });
+    projectLabelInputContainer.appendChild(projectLabelInputLabel);
+    projectLabelInputContainer.appendChild(projectLabelInputSelect);
+    const projectSubmitInputContainer = document.createElement("div");
+    const projectSubmitInputButton = document.createElement("button");
+    projectSubmitInputButton.id = "project-submit";
+    projectSubmitInputButton.textContent = "ADD NEW PROJECT";
+    projectSubmitInputContainer.appendChild(projectSubmitInputButton);
+    addProjectInputContainer.appendChild(projectNameInputContainer);
+    addProjectInputContainer.appendChild(projectLabelInputContainer);
+    addProjectInputContainer.appendChild(projectSubmitInputContainer);
+    addProjectInputContainer.classList.add("nav-adding-project");
+    addProjectButtonContainer.insertBefore(addProjectInputContainer, addProjectButtonContainer.firstChild);
+
+    addProjectInputContainer.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const projectForm = document.forms["add-project-form"];
+        const formData = new FormData(projectForm);
+        const projectTitle = formData.get("title");
+        const projectLabelText = formData.get("label");
+        let validProject = true;
+        if (validProject) {
+            eventEmitter.emit("newProject", projectTitle, projectLabelText);
+            toggleAddProjectContainer();
+            projectForm.reset();
+        }
+    }, false);
+}
+
+
 
 const toggleAddProjectContainer = function () {
+    const currentAddProjectContainer = document.querySelector(".nav-adding-project");
+    if (currentAddProjectContainer) { 
+        currentAddProjectContainer.remove();
+    } else {
+        eventEmitter.emit("newProjectButton");
+    }
+    //what does this do? removing hidden form the sidebar?
     sidebar.classList.remove("sidebar-hidden");
-    addProjectInputContainer.classList.toggle("nav-hidden");
     addProjectButton.firstChild.classList.toggle("fa-plus");
     addProjectButton.firstChild.classList.toggle("fa-minus");
+    // Automatically scrolls smoothly to the bottom of the sidebar to accommodate add project container
     const smoothScrollToBottom = function () {
         sidebar.scrollTo({ top: sidebar.scrollHeight });
-    }
+    };
     const stopSmoothScrollToBottom = function () {
         clearInterval(scrollInterval);
-    }
+    };
     const scrollInterval = setInterval(smoothScrollToBottom, 20);
     setInterval(scrollInterval);
     setTimeout(stopSmoothScrollToBottom, 100);
 }
 
-addProjectInputContainer.addEventListener("submit", function (event) {
-    event.preventDefault();
-    const projectForm = document.forms["add-project-form"];
-    const formData = new FormData(projectForm);
-    const projectTitle = formData.get("title");
-    const projectLabel = formData.get("label");
-    let validProject = true;
-    if (validProject) {
-        eventEmitter.emit("newProject", projectTitle, projectLabel);
-        toggleAddProjectContainer();
-        projectForm.reset();
-    }
-}, false);
+
 addProjectButton.addEventListener("mousedown", toggleAddProjectContainer);
 
 sidebar.appendChild(navContainer);
@@ -626,7 +654,7 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
 }
 
 // Edit Project popup
-const drawEditProjectContainer = function (project, projectList, projectBox) {
+const drawEditProjectContainer = function (project, labelList, projectBox) {
     const createInputContainer = function () {
         const inputContainer = document.createElement("div");
         inputContainer.classList.add("input-container");
@@ -658,16 +686,28 @@ const drawEditProjectContainer = function (project, projectList, projectBox) {
     const projectLabelInputLabel = document.createElement("label");
     projectLabelInputLabel.for = "project-label";
     projectLabelInputLabel.textContent = "Label:"
-    const projectLabelInputText = document.createElement("input");
-    projectLabelInputText.id = "project-label";
-    projectLabelInputText.name = "label";
-    projectLabelInputText.type = "text";
-    projectLabelInputText.maxLength = 12;
+    const projectLabelInputSelect = document.createElement("select");
+    projectLabelInputSelect.id = "project-label";
+    projectLabelInputSelect.name = "label";
+    
+    labelList.forEach(label => {
+        const labelOption = document.createElement("option");
+        labelOption.value = label.label;
+        labelOption.textContent = label.label;
+
+        console.log(project.label.label);
+
+        if (project.label.label === label.label){
+            labelOption.selected = "selected";
+        };
+        projectLabelInputSelect.appendChild(labelOption);
+    });
+    
     projectLabelInputContainer.appendChild(projectLabelInputLabel);
-    projectLabelInputContainer.appendChild(projectLabelInputText);
+    projectLabelInputContainer.appendChild(projectLabelInputSelect);
 
     projectNameInputText.value = project.title;
-    projectLabelInputText.value = project.label;
+    // projectLabelInputSelect.value = project.label.label;
 
     const projectSubmitInputContainer = document.createElement("div");
     projectSubmitInputContainer.classList.add("task-add-submit");
@@ -701,7 +741,6 @@ const drawEditProjectContainer = function (project, projectList, projectBox) {
         }
     };
 
-
     projectEditInputContainer.addEventListener("submit", projectEditSubmit);
     projectEditCancel.addEventListener("mousedown", function () {
         projectEditScreen.remove();
@@ -717,4 +756,4 @@ body.appendChild(main);
 content.appendChild(header);
 content.appendChild(body);
 
-export default { eventEmitter, drawProjectNav, drawProjectHeader, drawTaskList, drawTask, drawAddTaskContainer, drawEditProjectContainer, navContainer, projectContainer, taskContainer, addProjectButton };
+export default { eventEmitter, drawProjectNav, drawProjectHeader, drawTaskList, drawTask, drawAddTaskContainer, drawEditProjectContainer, drawAddProjectContainer, navContainer, projectContainer, taskContainer, addProjectButton };

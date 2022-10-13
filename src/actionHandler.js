@@ -6,13 +6,15 @@ import {
     getCurrentProject,
     setCurrentProject,
     getProjectList,
-    getFullTaskList
+    getFullTaskList,
+    getLabelList
 } from "./project.js";
 import { Task } from "./task.js";
 import "./style.css";
 import domCreator from "./domCreator.js";
 const { addDays, isBefore, isToday } = require("date-fns");
 
+// localStorage - saves the project list, the current ID from idController.js, and the current project
 const saveToLocal = function () {
     let projList = getProjectList().map(proj => {
         return {
@@ -49,10 +51,17 @@ domCreator.eventEmitter.on("deleteProject", (project) => {
     saveToLocal();
 });
 
-domCreator.eventEmitter.on("newProject", (projectName, projectLabel) => {
-    let newProject = new Project(projectName, projectLabel);
+domCreator.eventEmitter.on("newProjectButton", () => {
+    domCreator.drawAddProjectContainer(getLabelList());
+})
+
+domCreator.eventEmitter.on("newProject", (projectName, projectLabelText) => {
+    const projectLabel = getLabelList().filter(label => label.label === projectLabelText)[0];
+    const newProject = new Project(projectName, projectLabel);
     setCurrentProject(newProject.id);
     domCreator.drawProjectNav(newProject);
+    domCreator.drawProjectHeader(newProject);
+    domCreator.drawTaskList(newProject.taskList, newProject);
     saveToLocal();
 });
 
@@ -69,7 +78,8 @@ domCreator.eventEmitter.on("taskListAll", function () {
     };
     domCreator.drawProjectHeader(projectTitle);
     domCreator.drawTaskList(getFullTaskList());
-    localStorage.setItem("currentProjectID", "taskListAll");
+   setCurrentProject("taskListAll");
+   saveToLocal();
 });
 
 domCreator.eventEmitter.on("taskListToday", function () {
@@ -79,7 +89,8 @@ domCreator.eventEmitter.on("taskListToday", function () {
     const todayTasks = getFullTaskList().filter(task => isToday(task.dueDate));
     domCreator.drawProjectHeader(projectTitle);
     domCreator.drawTaskList(todayTasks);
-    localStorage.setItem("currentProjectID", "taskListToday");
+   setCurrentProject("taskListToday");
+   saveToLocal();
 });
 
 domCreator.eventEmitter.on("taskListWeek", function () {
@@ -89,7 +100,8 @@ domCreator.eventEmitter.on("taskListWeek", function () {
     const todayTasks = getFullTaskList().filter(task => isBefore(task.dueDate, addDays(new Date(), 7)));
     domCreator.drawProjectHeader(projectTitle);
     domCreator.drawTaskList(todayTasks);
-    localStorage.setItem("currentProjectID", "taskListWeek");
+   setCurrentProject("taskListWeek");
+   saveToLocal();
 });
 
 domCreator.eventEmitter.on("taskListImportant", function () {
@@ -99,7 +111,8 @@ domCreator.eventEmitter.on("taskListImportant", function () {
     const highPrioTasks = getFullTaskList().filter(task => task.priority === "high");
     domCreator.drawProjectHeader(projectTitle);
     domCreator.drawTaskList(highPrioTasks);
-    localStorage.setItem("currentProjectID", "taskListImportant");
+   setCurrentProject("taskListImportant");
+   saveToLocal();
 });
 
 domCreator.eventEmitter.on("taskListCompleted", function () {
@@ -109,7 +122,8 @@ domCreator.eventEmitter.on("taskListCompleted", function () {
     const completedTasks = getFullTaskList().filter(task => task.completed);
     domCreator.drawProjectHeader(projectTitle);
     domCreator.drawTaskList(completedTasks);
-    localStorage.setItem("currentProjectID", "taskListCompleted");
+   setCurrentProject("taskListCompleted");
+   saveToLocal();
 });
 
 domCreator.eventEmitter.on("taskComplete", (task) => {
@@ -184,7 +198,8 @@ domCreator.eventEmitter.on("editTask", (projectID, taskTitle, taskDesc, taskDueD
     saveToLocal();
 });
 
-domCreator.eventEmitter.on("editProject", (projectTitle, projectLabel, project) => {
+domCreator.eventEmitter.on("editProject", (projectTitle, projectLabelText, project) => {
+    const projectLabel = getLabelList().filter(label => label.label === projectLabelText)[0];
     project.title = projectTitle;
     project.label = projectLabel;
     saveToLocal();
@@ -201,8 +216,8 @@ domCreator.eventEmitter.on("taskEditPopup", (task, project, taskBox) => {
 });
 
 domCreator.eventEmitter.on("projectEditPopup", (project, projectBox) => {
-    const projectList = getProjectList();
-    domCreator.drawEditProjectContainer(project, projectList, projectBox);
+    const labelList = getLabelList();
+    domCreator.drawEditProjectContainer(project, labelList, projectBox);
 })
 
 

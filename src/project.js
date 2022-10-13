@@ -4,6 +4,14 @@ let currentProjectID = 1;
 
 const projectList = [];
 
+const labelList = [
+    {label: "Work", color: "blue"},
+    {label: "Study", color: "purple"},
+    {label: "Admin", color: "orange"},
+    {label: "Play", color: "green"},
+    
+]
+
 class Project {
     constructor(title, label, id) {
         this._id = id || getNewID();
@@ -93,4 +101,8 @@ const getFullTaskList = function(){
     return fullTaskList;
 }
 
-export { Project, getProjectByID, getTaskByID, getCurrentProject, setCurrentProject, getProjectList, getFullTaskList };
+const getLabelList = function(){
+    return labelList;
+}
+
+export { Project, getProjectByID, getTaskByID, getCurrentProject, setCurrentProject, getProjectList, getFullTaskList, getLabelList };

@@ -205,6 +205,10 @@ h5 {
     font-size: 1.2rem;
 }
 
+.nav-adding-project select {
+    width: 100%;
+}
+
 .nav-adding-project button {
     width: 100%;
     border: 2px solid black;
@@ -261,26 +265,33 @@ h5 {
     display: inline-block;
 }
 
-.project-header-label {
-    display: inline-block;
-}
-
 .project-header-label,
 .add-task {
+    display: flex;
+    gap: 8px;
+    align-items: center;
     height: 32px;
     border: 2px solid grey;
     border-radius: 4px;
-    font-size: 1.1rem;
     padding: 4px 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: rgb(82, 82, 82);
 }
 
-.project-header-label p {
-    display: flex;
-    line-height: 0;
-    align-items: center;
+.project-header-label {
+    background-color: white;
+}
+
+.project-header-label div {
+    width: 16px;
+    height: 16px;
+    border: 1px solid black;
+    border-radius: 3px;
 }
 
 .add-task {
+    font-size: 1.1rem;
     font-weight: 600;
     color: rgb(82, 82, 82);
     background-color: rgb(223, 243, 223);
