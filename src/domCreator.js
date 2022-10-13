@@ -47,38 +47,51 @@ const drawProjectNav = function (project) {
 }
 
 const drawProjectHeader = function (project) {
-    // this method of removing header could be cleaned up quite a bit?
+    // this method of removing header could be cleaned up a bit?
     const currentHeader = document.querySelector(".task-container-header");
     if (currentHeader) { currentHeader.remove() };
     const taskContainerHeader = document.createElement("div");
     taskContainerHeader.classList.add("task-container-header");
+    const taskContainerHeaderLeft = document.createElement("div");
+    taskContainerHeaderLeft.classList.add("task-container-header-left");
+    const taskContainerHeaderRight = document.createElement("div");
+    taskContainerHeaderRight.classList.add("task-container-header-right");
+
     const taskContainerTitle = document.createElement("h2");
+    taskContainerTitle.classList.add("project-header-title");
     taskContainerTitle.textContent = project.title;
+    taskContainerHeaderLeft.appendChild(taskContainerTitle);
     if (project.label) {
+        const taskContainerLabelBox = document.createElement("div");
+        taskContainerLabelBox.classList.add("project-header-label")
         const taskContainerLabel = document.createElement("p");
         taskContainerLabel.textContent = project.label;
-        taskContainerHeader.appendChild(taskContainerLabel);
-    }
+        taskContainerLabelBox.appendChild(taskContainerLabel);
+        taskContainerHeaderLeft.appendChild(taskContainerLabelBox);
+    };
     const taskContainerAddButton = document.createElement("button");
-    taskContainerAddButton.classList.add("add-task")
+    taskContainerAddButton.classList.add("add-task");
     taskContainerAddButton.textContent = "+ Task";
     taskContainerAddButton.addEventListener("mousedown", function (event) {
         eventEmitter.emit("taskAddPopup", project);
     });
-    const projectEditBox = document.createElement("i");
-    projectEditBox.classList.add("fa-solid", "fa-pen-to-square", "project-header-edit");
-    projectEditBox.addEventListener("mousedown", function (event) {
-        eventEmitter.emit("projectEditPopup", project, event.target.parentElement);
-    })
-    const projectDeleteBox = document.createElement("i");
-    projectDeleteBox.classList.add("fa-solid", "fa-trash", "project-header-delete");
-    projectDeleteBox.addEventListener("mousedown", function () {
-        drawDeleteProjectContainer(project, document.getElementById(`${project.id}`));
-    });
-    taskContainerHeader.appendChild(taskContainerTitle);
-    taskContainerHeader.appendChild(taskContainerAddButton);
-    taskContainerHeader.appendChild(projectEditBox);
-    taskContainerHeader.appendChild(projectDeleteBox);
+    taskContainerHeaderRight.appendChild(taskContainerAddButton);
+    if (project.id && project.id !== 1) {
+        const projectEditBox = document.createElement("i");
+        projectEditBox.classList.add("fa-solid", "fa-pen-to-square", "project-header-edit");
+        projectEditBox.addEventListener("mousedown", function (event) {
+            eventEmitter.emit("projectEditPopup", project, event.target.parentElement);
+        });
+        const projectDeleteBox = document.createElement("i");
+        projectDeleteBox.classList.add("fa-solid", "fa-trash", "project-header-delete");
+        projectDeleteBox.addEventListener("mousedown", function () {
+            drawDeleteProjectContainer(project, document.getElementById(`${project.id}`));
+        });
+        taskContainerHeaderRight.appendChild(projectEditBox);
+        taskContainerHeaderRight.appendChild(projectDeleteBox);
+    };
+    taskContainerHeader.appendChild(taskContainerHeaderLeft);
+    taskContainerHeader.appendChild(taskContainerHeaderRight);
     main.insertBefore(taskContainerHeader, main.firstChild);
     return taskContainerHeader;
 }
@@ -620,7 +633,7 @@ const drawEditProjectContainer = function (project, projectList, projectBox) {
         return inputContainer;
     }
     const projectEditContainer = document.createElement("div");
-    projectEditContainer.classList.add("project-edit-container");
+    projectEditContainer.classList.add("task-add-container");
     const projectEditScreen = createPopup(projectEditContainer);
     const projectEditPrompt = createPopupPrompt("Editing project");
     const projectEditCancel = createButton("cancel");
@@ -653,13 +666,11 @@ const drawEditProjectContainer = function (project, projectList, projectBox) {
     projectLabelInputContainer.appendChild(projectLabelInputLabel);
     projectLabelInputContainer.appendChild(projectLabelInputText);
 
-    if (project) {
-        projectNameInputText.value = project.title;
-        projectLabelInputText.value = project.label;
-    }
+    projectNameInputText.value = project.title;
+    projectLabelInputText.value = project.label;
 
     const projectSubmitInputContainer = document.createElement("div");
-    projectSubmitInputContainer.classList.add("project-edit-submit");
+    projectSubmitInputContainer.classList.add("task-add-submit");
     const projectSubmitInputButton = document.createElement("button");
     projectSubmitInputButton.classList.add("popup-button", "popup-button-add");
     projectSubmitInputButton.id = "project-submit";
@@ -681,8 +692,6 @@ const drawEditProjectContainer = function (project, projectList, projectBox) {
         const projectLabel = formData.get("label");
         let validProject = true;
         if (validProject) {
-            console.log(projectTitle);
-            console.log(projectLabel)
             eventEmitter.emit("editProject", projectTitle, projectLabel, project);
             projectForm.reset();
             projectEditScreen.remove();
