@@ -5,11 +5,10 @@ let currentProjectID = 1;
 const projectList = [];
 
 const labelList = [
-    {label: "Work", color: "blue"},
-    {label: "Study", color: "purple"},
-    {label: "Admin", color: "orange"},
-    {label: "Play", color: "green"},
-    
+    {label: "Work", color: "#3c89d0"},
+    {label: "Study", color: "#ca5cdd"},
+    {label: "Admin", color: "#ff8b3d"},
+    {label: "Play", color: "7ab97a"}
 ]
 
 class Project {

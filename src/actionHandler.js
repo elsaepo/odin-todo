@@ -218,6 +218,11 @@ domCreator.eventEmitter.on("taskEditPopup", (task, project, taskBox) => {
 domCreator.eventEmitter.on("projectEditPopup", (project, projectBox) => {
     const labelList = getLabelList();
     domCreator.drawEditProjectContainer(project, labelList, projectBox);
+});
+
+domCreator.eventEmitter.on("labelsEditPopup", () => {
+    const labelList = getLabelList();
+    domCreator.drawEditLabelsContainer(labelList);
 })
 
 

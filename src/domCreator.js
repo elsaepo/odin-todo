@@ -115,7 +115,7 @@ const drawTask = function (task, project) {
     taskBox.id = task.id;
     taskBox.classList.add("task");
     const parentProjectLabel = getProjectByID(task.parentProjectID).label;
-    if (parentProjectLabel){
+    if (parentProjectLabel) {
         taskBox.style.border = `1px solid ${parentProjectLabel.color}`;
         taskBox.style.borderLeft = `6px solid ${parentProjectLabel.color}`;
         taskBox.style.paddingLeft = `12px`
@@ -237,7 +237,7 @@ const addProjectButton = drawSidebarLink(
 addProjectButtonContainer.appendChild(addProjectButton);
 
 // Add Project container
-const drawAddProjectContainer = function(labelList){
+const drawAddProjectContainer = function (labelList) {
     const addProjectInputContainer = document.createElement("form");
     addProjectInputContainer.id = "add-project-form";
     // addProjectInputContainer.classList.add("nav-hidden");
@@ -266,8 +266,29 @@ const drawAddProjectContainer = function(labelList){
         labelOption.textContent = label.label;
         projectLabelInputSelect.appendChild(labelOption);
     });
+
+
+
+
+
+    // THIS IS DUPLICATED IN THE EDIT PROJECT POPUP, DRY DRY DRY
+    const labelEditButton = document.createElement("div");
+    labelEditButton.classList.add("label-edit-button");
+    const labelEditIcon = document.createElement("i");
+    labelEditIcon.classList.add("fa-solid", "fa-ellipsis-vertical");
+    labelEditButton.appendChild(labelEditIcon);
+    labelEditButton.addEventListener("mousedown", () => {
+        eventEmitter.emit("labelsEditPopup");
+    });
+
+
+
+
+
     projectLabelInputContainer.appendChild(projectLabelInputLabel);
     projectLabelInputContainer.appendChild(projectLabelInputSelect);
+    projectLabelInputContainer.appendChild(labelEditButton);
+
     const projectSubmitInputContainer = document.createElement("div");
     const projectSubmitInputButton = document.createElement("button");
     projectSubmitInputButton.id = "project-submit";
@@ -298,7 +319,7 @@ const drawAddProjectContainer = function(labelList){
 
 const toggleAddProjectContainer = function () {
     const currentAddProjectContainer = document.querySelector(".nav-adding-project");
-    if (currentAddProjectContainer) { 
+    if (currentAddProjectContainer) {
         currentAddProjectContainer.remove();
     } else {
         eventEmitter.emit("newProjectButton");
@@ -689,22 +710,28 @@ const drawEditProjectContainer = function (project, labelList, projectBox) {
     const projectLabelInputSelect = document.createElement("select");
     projectLabelInputSelect.id = "project-label";
     projectLabelInputSelect.name = "label";
-    
+
     labelList.forEach(label => {
         const labelOption = document.createElement("option");
         labelOption.value = label.label;
         labelOption.textContent = label.label;
-
-        console.log(project.label.label);
-
-        if (project.label.label === label.label){
+        if (project.label.label === label.label) {
             labelOption.selected = "selected";
         };
         projectLabelInputSelect.appendChild(labelOption);
     });
-    
+    const labelEditButton = document.createElement("div");
+    labelEditButton.classList.add("label-edit-button");
+    const labelEditIcon = document.createElement("i");
+    labelEditIcon.classList.add("fa-solid", "fa-ellipsis-vertical");
+    labelEditButton.appendChild(labelEditIcon);
+    labelEditButton.addEventListener("mousedown", () => {
+        eventEmitter.emit("labelsEditPopup");
+    });
+
     projectLabelInputContainer.appendChild(projectLabelInputLabel);
     projectLabelInputContainer.appendChild(projectLabelInputSelect);
+    projectLabelInputContainer.appendChild(labelEditButton)
 
     projectNameInputText.value = project.title;
     // projectLabelInputSelect.value = project.label.label;
@@ -748,6 +775,149 @@ const drawEditProjectContainer = function (project, labelList, projectBox) {
     body.appendChild(projectEditScreen);
 }
 
+// Edit labels popup
+const drawEditLabelsContainer = function (labelList) {
+    const createInputContainer = function () {
+        const inputContainer = document.createElement("div");
+        inputContainer.classList.add("input-container");
+        return inputContainer;
+    }
+    const labelsEditContainer = document.createElement("div");
+    labelsEditContainer.classList.add("task-add-container");
+    const labelsEditScreen = createPopup(labelsEditContainer);
+    const labelsEditPrompt = createPopupPrompt("Editing labels");
+    const labelsEditCancel = createButton("cancel");
+
+
+
+    const labelsEditInputContainer = document.createElement("form");
+    labelsEditInputContainer.id = "edit-labels-form";
+
+    // const projectNameInputContainer = createInputContainer();
+    // const projectNameInputLabel = document.createElement("label");
+    // projectNameInputLabel.for = "project-title";
+    // projectNameInputLabel.textContent = "Title:"
+    // const projectNameInputText = document.createElement("input");
+    // projectNameInputText.id = "project-title"
+    // projectNameInputText.name = "title"
+    // projectNameInputText.type = "text";
+    // projectNameInputText.maxLength = 30;
+    // projectNameInputText.required = true;
+    // projectNameInputContainer.appendChild(projectNameInputLabel);
+    // projectNameInputContainer.appendChild(projectNameInputText);
+
+    // const projectLabelInputContainer = createInputContainer();
+    // const projectLabelInputLabel = document.createElement("label");
+    // projectLabelInputLabel.for = "project-label";
+    // projectLabelInputLabel.textContent = "Label:"
+    // const projectLabelInputSelect = document.createElement("select");
+    // projectLabelInputSelect.id = "project-label";
+    // projectLabelInputSelect.name = "label";
+
+    const createLabelInput = function (label) {
+        const labelBox = document.createElement("div");
+        labelBox.classList.add("edit-label-box");
+        const labelColor = document.createElement("input");
+        labelColor.type = "color";
+        labelColor.name = "color";
+        const labelLabel = document.createElement("input");
+        labelLabel.type = "text";
+        labelLabel.name = "label";
+        labelLabel.maxLength = 12;
+        if (label) {
+            // labelColor.id = `label-${label.color}`;
+            labelColor.value = `${label.color}`;
+            labelLabel.id = `label-${label.label}`;
+            labelLabel.value = label.label;
+        };
+        const labelDelete = document.createElement("i");
+        labelDelete.classList.add("fa-solid", "fa-trash", "task-container-delete");
+        labelDelete.addEventListener("mousedown", function (event) {
+            event.target.parentElement.remove();
+        });
+        labelBox.appendChild(labelColor);
+        labelBox.appendChild(labelLabel);
+        labelBox.appendChild(labelDelete);
+        return labelBox;
+    };
+    labelList.forEach(label => {
+        labelsEditInputContainer.appendChild(createLabelInput(label));
+        console.log(labelsEditInputContainer)
+    });
+    const addLabelButton = document.createElement("button");
+    addLabelButton.classList.add("add-label-button");
+    addLabelButton.textContent = "+ Label";
+    labelsEditInputContainer.appendChild(addLabelButton);
+
+    addLabelButton.addEventListener("mousedown", function(event){
+        labelsEditInputContainer.insertBefore(createLabelInput(), event.target);
+    });
+
+
+    // projectLabelInputContainer.appendChild(projectLabelInputLabel);
+    // projectLabelInputContainer.appendChild(projectLabelInputSelect);
+
+    // projectNameInputText.value = project.title;
+    // projectLabelInputSelect.value = project.label.label;
+
+    const labelsSubmitInputContainer = document.createElement("div");
+    labelsSubmitInputContainer.classList.add("task-add-submit");
+    const labelsSubmitInputButton = document.createElement("button");
+    labelsSubmitInputButton.classList.add("popup-button", "popup-button-add");
+    labelsSubmitInputButton.id = "labels-submit";
+    labelsSubmitInputButton.textContent = "CONFIRM EDIT";
+    labelsSubmitInputContainer.appendChild(labelsSubmitInputButton);
+    labelsSubmitInputContainer.appendChild(labelsEditCancel);
+
+    // labelsEditInputContainer.appendChild(labelsNameInputContainer);
+    // labelsEditInputContainer.appendChild(labelsLabelInputContainer);
+    labelsEditInputContainer.appendChild(labelsSubmitInputContainer);
+    labelsEditContainer.appendChild(labelsEditPrompt);
+    labelsEditContainer.appendChild(labelsEditInputContainer);
+
+
+    //WORKING ON THIS
+    const labelsEditSubmit = function (event) {
+        event.preventDefault();
+        const labelsForm = document.forms["edit-labels-form"];
+        const formData = new FormData(labelsForm);
+        const labelColor = formData.get("color");
+        const labelLabel = formData.get("label");
+        const thisData = document.getElementById("edit-labels-form")
+        console.log(thisData.elements);
+        // console.log(thisData.color);
+        // console.log(thisData.label);
+        const labelArray = thisData.label;
+        const colorArray = thisData.color;
+        console.log(labelArray)
+        console.log(colorArray)
+        const labelObjectsArray = [];
+        for (let i = 0; i < labelArray.length; i++){
+            labelObjectsArray.push({
+                label: labelArray[i].value,
+                color: colorArray[i].value,
+                id: labelArray[i].id
+            })
+        };
+        console.log(labelObjectsArray)
+        // let validLabels = true;
+        // if (validLabels) {
+        //     eventEmitter.emit("editLabels", projectTitle, projectLabel, project);
+        //     labelsForm.reset();
+        //     labelsEditScreen.remove();
+        //     console.log(labelsBox);
+        //     labelsBox.querySelector("h2").textContent = labelsTitle;
+        //     document.getElementById(`${labels.id}`).querySelector("h3").textContent = labelsTitle;
+        // }
+    };
+
+    labelsEditInputContainer.addEventListener("submit", labelsEditSubmit);
+    labelsEditCancel.addEventListener("mousedown", function () {
+        labelsEditScreen.remove();
+    });
+    body.appendChild(labelsEditScreen);
+}
+
 // Appending to main and body
 main.appendChild(taskSorter);
 main.appendChild(taskContainer);
@@ -756,4 +926,4 @@ body.appendChild(main);
 content.appendChild(header);
 content.appendChild(body);
 
-export default { eventEmitter, drawProjectNav, drawProjectHeader, drawTaskList, drawTask, drawAddTaskContainer, drawEditProjectContainer, drawAddProjectContainer, navContainer, projectContainer, taskContainer, addProjectButton };
+export default { eventEmitter, drawProjectNav, drawProjectHeader, drawTaskList, drawTask, drawAddTaskContainer, drawEditProjectContainer, drawAddProjectContainer, drawEditLabelsContainer, navContainer, projectContainer, taskContainer, addProjectButton };
