@@ -269,7 +269,7 @@ const drawAddProjectContainer = function (labelList) {
 
 
 
-
+    //
 
     // THIS IS DUPLICATED IN THE EDIT PROJECT POPUP, DRY DRY DRY
     const labelEditButton = document.createElement("div");
@@ -281,7 +281,7 @@ const drawAddProjectContainer = function (labelList) {
         eventEmitter.emit("labelsEditPopup");
     });
 
-
+    //
 
 
 
@@ -704,6 +704,7 @@ const drawEditProjectContainer = function (project, labelList, projectBox) {
     projectNameInputContainer.appendChild(projectNameInputText);
 
     const projectLabelInputContainer = createInputContainer();
+    projectLabelInputContainer.classList.add("input-project-label-container")
     const projectLabelInputLabel = document.createElement("label");
     projectLabelInputLabel.for = "project-label";
     projectLabelInputLabel.textContent = "Label:"
@@ -849,7 +850,7 @@ const drawEditLabelsContainer = function (labelList) {
     addLabelButton.textContent = "+ Label";
     labelsEditInputContainer.appendChild(addLabelButton);
 
-    addLabelButton.addEventListener("mousedown", function(event){
+    addLabelButton.addEventListener("mousedown", function (event) {
         labelsEditInputContainer.insertBefore(createLabelInput(), event.target);
     });
 
@@ -892,7 +893,7 @@ const drawEditLabelsContainer = function (labelList) {
         console.log(labelArray)
         console.log(colorArray)
         const labelObjectsArray = [];
-        for (let i = 0; i < labelArray.length; i++){
+        for (let i = 0; i < labelArray.length; i++) {
             labelObjectsArray.push({
                 label: labelArray[i].value,
                 color: colorArray[i].value,
