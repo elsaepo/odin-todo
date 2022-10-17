@@ -1,6 +1,6 @@
 import "./style.css";
 import { EventEmitter } from "events";
-import { getProjectByID } from "./project.js";
+import { getProjectByID, getLabelByID } from "./project.js";
 const { format } = require("date-fns");
 const eventEmitter = new EventEmitter();
 const content = document.querySelector("#content");
@@ -85,7 +85,7 @@ const drawProjectHeader = function (project) {
         const projectEditBox = document.createElement("i");
         projectEditBox.classList.add("fa-solid", "fa-pen-to-square", "project-header-edit");
         projectEditBox.addEventListener("mousedown", function (event) {
-            eventEmitter.emit("projectEditPopup", project, event.target.parentElement);
+            eventEmitter.emit("projectEditPopup", project, event.target.parentElement.parentElement);
         });
         const projectDeleteBox = document.createElement("i");
         projectDeleteBox.classList.add("fa-solid", "fa-trash", "project-header-delete");
@@ -237,6 +237,18 @@ const addProjectButton = drawSidebarLink(
 addProjectButtonContainer.appendChild(addProjectButton);
 
 // Add Project container
+
+const createLabelsEditButton = function (selectInputContainer) {
+    const labelEditButton = document.createElement("div");
+    labelEditButton.classList.add("label-edit-button");
+    const labelEditIcon = document.createElement("i");
+    labelEditIcon.classList.add("fa-solid", "fa-ellipsis-vertical");
+    labelEditButton.appendChild(labelEditIcon);
+    labelEditButton.addEventListener("mousedown", () => {
+        eventEmitter.emit("labelsEditPopup", selectInputContainer);
+    });
+    return labelEditButton;
+}
 const drawAddProjectContainer = function (labelList) {
     const addProjectInputContainer = document.createElement("form");
     addProjectInputContainer.id = "add-project-form";
@@ -253,35 +265,35 @@ const drawAddProjectContainer = function (labelList) {
     projectNameInputText.required = true;
     projectNameInputContainer.appendChild(projectNameInputLabel);
     projectNameInputContainer.appendChild(projectNameInputText);
+
+
+    //PROJECT NAV LABEL EDIT CODE
+
     const projectLabelInputContainer = document.createElement("div");
     const projectLabelInputLabel = document.createElement("label");
     projectLabelInputLabel.for = "label";
     projectLabelInputLabel.textContent = "Label:";
-    const projectLabelInputSelect = document.createElement("select");
-    projectLabelInputSelect.id = "project-label";
-    projectLabelInputSelect.name = "label";
-    labelList.forEach(label => {
-        const labelOption = document.createElement("option");
-        labelOption.value = label.label;
-        labelOption.textContent = label.label;
-        projectLabelInputSelect.appendChild(labelOption);
-    });
 
 
+    // const projectLabelInputSelect = document.createElement("select");
+    // projectLabelInputSelect.id = "project-label";
+    // projectLabelInputSelect.name = "label";
+    // labelList.forEach(label => {
+    //     const labelOption = document.createElement("option");
+    //     labelOption.value = label.label;
+    //     labelOption.textContent = label.label;
+    //     projectLabelInputSelect.appendChild(labelOption);
+    // });
 
-    //
-
-    // THIS IS DUPLICATED IN THE EDIT PROJECT POPUP, DRY DRY DRY
-    const labelEditButton = document.createElement("div");
-    labelEditButton.classList.add("label-edit-button");
-    const labelEditIcon = document.createElement("i");
-    labelEditIcon.classList.add("fa-solid", "fa-ellipsis-vertical");
-    labelEditButton.appendChild(labelEditIcon);
-    labelEditButton.addEventListener("mousedown", () => {
-        eventEmitter.emit("labelsEditPopup");
-    });
+    const projectLabelInputSelect = createLabelListSelect(labelList);
 
     //
+    //
+    //
+    const selectInputContainer = 0;
+    const labelEditButton = createLabelsEditButton();
+
+
 
 
 
@@ -674,6 +686,31 @@ const drawAddTaskContainer = function (project, projectList, task, taskBox) {
     body.appendChild(taskAddScreen);
 }
 
+
+// REFACTORED FUNC - MOVE
+const createLabelListSelect = function (labelList, project) {
+    const labelInputSelect = document.createElement("select");
+    labelInputSelect.id = "project-label";
+    labelInputSelect.name = "label";
+
+    labelList.forEach(label => {
+        const labelOption = document.createElement("option");
+        labelOption.value = label.label;
+        labelOption.textContent = label.label;
+        if (project !== undefined) {
+            console.log(project)
+console.log(getLabelByID(project.labelID))
+
+            if (getLabelByID(project.labelID).label === label.label) {
+                labelOption.selected = "selected";
+            };
+        }
+        labelInputSelect.appendChild(labelOption);
+    });
+    return labelInputSelect;
+}
+
+
 // Edit Project popup
 const drawEditProjectContainer = function (project, labelList, projectBox) {
     const createInputContainer = function () {
@@ -703,32 +740,61 @@ const drawEditProjectContainer = function (project, labelList, projectBox) {
     projectNameInputContainer.appendChild(projectNameInputLabel);
     projectNameInputContainer.appendChild(projectNameInputText);
 
+
+    // const projectLabelInputContainer = document.createElement("div");
+    // const projectLabelInputLabel = document.createElement("label");
+    // projectLabelInputLabel.for = "label";
+    // projectLabelInputLabel.textContent = "Label:";
+
+
+    // const projectLabelInputSelect = document.createElement("select");
+    // projectLabelInputSelect.id = "project-label";
+    // projectLabelInputSelect.name = "label";
+    // labelList.forEach(label => {
+    //     const labelOption = document.createElement("option");
+    //     labelOption.value = label.label;
+    //     labelOption.textContent = label.label;
+    //     projectLabelInputSelect.appendChild(labelOption);
+    // });
+
+    // const labelEditButton = createLabelsEditButton();
+
+
+
     const projectLabelInputContainer = createInputContainer();
     projectLabelInputContainer.classList.add("input-project-label-container")
     const projectLabelInputLabel = document.createElement("label");
     projectLabelInputLabel.for = "project-label";
-    projectLabelInputLabel.textContent = "Label:"
-    const projectLabelInputSelect = document.createElement("select");
-    projectLabelInputSelect.id = "project-label";
-    projectLabelInputSelect.name = "label";
+    projectLabelInputLabel.textContent = "Label:";
 
-    labelList.forEach(label => {
-        const labelOption = document.createElement("option");
-        labelOption.value = label.label;
-        labelOption.textContent = label.label;
-        if (project.label.label === label.label) {
-            labelOption.selected = "selected";
-        };
-        projectLabelInputSelect.appendChild(labelOption);
-    });
-    const labelEditButton = document.createElement("div");
-    labelEditButton.classList.add("label-edit-button");
-    const labelEditIcon = document.createElement("i");
-    labelEditIcon.classList.add("fa-solid", "fa-ellipsis-vertical");
-    labelEditButton.appendChild(labelEditIcon);
-    labelEditButton.addEventListener("mousedown", () => {
-        eventEmitter.emit("labelsEditPopup");
-    });
+    // const projectLabelInputSelect = document.createElement("select");
+    // projectLabelInputSelect.id = "project-label";
+    // projectLabelInputSelect.name = "label";
+
+    // labelList.forEach(label => {
+    //     const labelOption = document.createElement("option");
+    //     labelOption.value = label.label;
+    //     labelOption.textContent = label.label;
+    //     if (project.label.label === label.label) {
+    //         labelOption.selected = "selected";
+    //     };
+    //     projectLabelInputSelect.appendChild(labelOption);
+    // });
+
+    const projectLabelInputSelect = createLabelListSelect(labelList, project);
+
+    // const labelEditButton = document.createElement("div");
+    // labelEditButton.classList.add("label-edit-button");
+    // const labelEditIcon = document.createElement("i");
+    // labelEditIcon.classList.add("fa-solid", "fa-ellipsis-vertical");
+    // labelEditButton.appendChild(labelEditIcon);
+    // labelEditButton.addEventListener("mousedown", () => {
+    //     eventEmitter.emit("labelsEditPopup");
+    // });
+
+    const selectInputContainer = projectLabelInputContainer;
+
+    const labelEditButton = createLabelsEditButton(selectInputContainer);
 
     projectLabelInputContainer.appendChild(projectLabelInputLabel);
     projectLabelInputContainer.appendChild(projectLabelInputSelect);
@@ -763,8 +829,8 @@ const drawEditProjectContainer = function (project, labelList, projectBox) {
             eventEmitter.emit("editProject", projectTitle, projectLabel, project);
             projectForm.reset();
             projectEditScreen.remove();
-            console.log(projectBox)
             projectBox.querySelector("h2").textContent = projectTitle;
+
             document.getElementById(`${project.id}`).querySelector("h3").textContent = projectTitle;
         }
     };
@@ -777,7 +843,8 @@ const drawEditProjectContainer = function (project, labelList, projectBox) {
 }
 
 // Edit labels popup
-const drawEditLabelsContainer = function (labelList) {
+const drawEditLabelsContainer = function (labelList, selectInputContainer) {
+    console.log(selectInputContainer)
     const createInputContainer = function () {
         const inputContainer = document.createElement("div");
         inputContainer.classList.add("input-container");
@@ -794,26 +861,7 @@ const drawEditLabelsContainer = function (labelList) {
     const labelsEditInputContainer = document.createElement("form");
     labelsEditInputContainer.id = "edit-labels-form";
 
-    // const projectNameInputContainer = createInputContainer();
-    // const projectNameInputLabel = document.createElement("label");
-    // projectNameInputLabel.for = "project-title";
-    // projectNameInputLabel.textContent = "Title:"
-    // const projectNameInputText = document.createElement("input");
-    // projectNameInputText.id = "project-title"
-    // projectNameInputText.name = "title"
-    // projectNameInputText.type = "text";
-    // projectNameInputText.maxLength = 30;
-    // projectNameInputText.required = true;
-    // projectNameInputContainer.appendChild(projectNameInputLabel);
-    // projectNameInputContainer.appendChild(projectNameInputText);
 
-    // const projectLabelInputContainer = createInputContainer();
-    // const projectLabelInputLabel = document.createElement("label");
-    // projectLabelInputLabel.for = "project-label";
-    // projectLabelInputLabel.textContent = "Label:"
-    // const projectLabelInputSelect = document.createElement("select");
-    // projectLabelInputSelect.id = "project-label";
-    // projectLabelInputSelect.name = "label";
 
     const createLabelInput = function (label) {
         const labelBox = document.createElement("div");
@@ -826,9 +874,8 @@ const drawEditLabelsContainer = function (labelList) {
         labelLabel.name = "label";
         labelLabel.maxLength = 12;
         if (label) {
-            // labelColor.id = `label-${label.color}`;
             labelColor.value = `${label.color}`;
-            labelLabel.id = `label-${label.label}`;
+            labelLabel.id = `label-${label.id}`;
             labelLabel.value = label.label;
         };
         const labelDelete = document.createElement("i");
@@ -843,7 +890,6 @@ const drawEditLabelsContainer = function (labelList) {
     };
     labelList.forEach(label => {
         labelsEditInputContainer.appendChild(createLabelInput(label));
-        console.log(labelsEditInputContainer)
     });
     const addLabelButton = document.createElement("button");
     addLabelButton.classList.add("add-label-button");
@@ -880,36 +926,35 @@ const drawEditLabelsContainer = function (labelList) {
     //WORKING ON THIS
     const labelsEditSubmit = function (event) {
         event.preventDefault();
-        const labelsForm = document.forms["edit-labels-form"];
-        const formData = new FormData(labelsForm);
-        const labelColor = formData.get("color");
-        const labelLabel = formData.get("label");
-        const thisData = document.getElementById("edit-labels-form")
-        console.log(thisData.elements);
-        // console.log(thisData.color);
-        // console.log(thisData.label);
-        const labelArray = thisData.label;
-        const colorArray = thisData.color;
-        console.log(labelArray)
-        console.log(colorArray)
+        // Creating an array of label objects out of the form data submitted
+        const formData = document.getElementById("edit-labels-form");
+        const labelArray = formData.label;
+        const colorArray = formData.color;
+        const idArray = [];
+        labelArray.forEach(label => {
+            idArray.push(label.id ? label.id.match(/\d+/)[0] : "");
+        });
         const labelObjectsArray = [];
         for (let i = 0; i < labelArray.length; i++) {
             labelObjectsArray.push({
                 label: labelArray[i].value,
                 color: colorArray[i].value,
-                id: labelArray[i].id
-            })
-        };
-        console.log(labelObjectsArray)
-        // let validLabels = true;
-        // if (validLabels) {
-        //     eventEmitter.emit("editLabels", projectTitle, projectLabel, project);
-        //     labelsForm.reset();
-        //     labelsEditScreen.remove();
-        //     console.log(labelsBox);
-        //     labelsBox.querySelector("h2").textContent = labelsTitle;
-        //     document.getElementById(`${labels.id}`).querySelector("h3").textContent = labelsTitle;
-        // }
+                id: idArray[i]
+            });
+        }
+        let validLabels = true;
+        if (validLabels) {
+            eventEmitter.emit("editLabels", labelObjectsArray);
+            labelsEditScreen.remove();
+
+            // projectLabelInputContainer.appendChild(projectLabelInputSelect);
+            // GET LABEL SELECT CONTAINER
+            // REFACTOR BUILDING LABEL SELECT OPTIONS INTO FUNCTION
+            // REPLACE BOX WITH NEW BOX WITH NEW LABELS
+
+            //     labelsBox.querySelector("h2").textContent = labelsTitle;
+            //     document.getElementById(`${labels.id}`).querySelector("h3").textContent = labelsTitle;
+        }
     };
 
     labelsEditInputContainer.addEventListener("submit", labelsEditSubmit);

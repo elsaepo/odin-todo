@@ -1,21 +1,21 @@
-import { getNewID } from "./idController.js"
+import { getNewID, getNewLabelID } from "./idController.js"
 
 let currentProjectID = 1;
 
 const projectList = [];
 
-const labelList = [
-    {label: "Work", color: "#3c89d0"},
-    {label: "Study", color: "#ca5cdd"},
-    {label: "Admin", color: "#ff8b3d"},
-    {label: "Play", color: "7ab97a"}
+let labelList = [
+    {label: "Work", color: "#3c89d0", id: 1},
+    {label: "Study", color: "#ca5cdd", id: 2},
+    {label: "Admin", color: "#ff8b3d", id: 3},
+    {label: "Play", color: "7ab97a", id: 4}
 ]
 
 class Project {
-    constructor(title, label, id) {
+    constructor(title, labelID, id) {
         this._id = id || getNewID();
         this._title = title;
-        this._label = label;
+        this._labelID = labelID;
         this._iconClasses = ["fa-solid", "fa-folder"];
         this._taskList = [];
         projectList.push(this);
@@ -30,11 +30,11 @@ class Project {
     set title(newTitle) {
         this._title = newTitle;
     }
-    get label() {
-        return this._label;
+    get labelID() {
+        return this._labelID;
     }
-    set label(newLabel) {
-        this._label = newLabel;
+    set labelID(newLabelID) {
+        this._labelID = newLabelID;
     }
     get iconClasses() {
         return this._iconClasses;
@@ -104,4 +104,18 @@ const getLabelList = function(){
     return labelList;
 }
 
-export { Project, getProjectByID, getTaskByID, getCurrentProject, setCurrentProject, getProjectList, getFullTaskList, getLabelList };
+const getLabelByID = function(id){
+    let labelIndex = labelList.findIndex(label => Number(id) === Number(label.id));
+    return labelList[labelIndex];
+}
+
+const setLabelList = function(labelObjectList){
+    labelObjectList.forEach(labelObject => {
+        if (labelObject.id === ""){
+            labelObject.id = getNewLabelID();
+        }
+    });
+    labelList = labelObjectList;
+}
+
+export { Project, getProjectByID, getTaskByID, getCurrentProject, setCurrentProject, getProjectList, getFullTaskList, getLabelList, getLabelByID, setLabelList };
