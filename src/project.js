@@ -15,7 +15,7 @@ class Project {
     constructor(title, labelID, id) {
         this._id = id || getNewID();
         this._title = title;
-        this._labelID = labelID;
+        this._labelID = labelID || 0;
         this._iconClasses = ["fa-solid", "fa-folder"];
         this._taskList = [];
         projectList.push(this);
@@ -35,6 +35,9 @@ class Project {
     }
     set labelID(newLabelID) {
         this._labelID = newLabelID;
+    }
+    get labelObject() {
+        return getLabelByID(this._labelID);
     }
     get iconClasses() {
         return this._iconClasses;
@@ -105,6 +108,7 @@ const getLabelList = function(){
 }
 
 const getLabelByID = function(id){
+    if (id === 0) { return undefined };
     let labelIndex = labelList.findIndex(label => Number(id) === Number(label.id));
     return labelList[labelIndex];
 }

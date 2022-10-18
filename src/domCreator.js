@@ -1,6 +1,6 @@
 import "./style.css";
 import { EventEmitter } from "events";
-import { getProjectByID, getLabelByID } from "./project.js";
+import { getProjectByID } from "./project.js";
 const { format } = require("date-fns");
 const eventEmitter = new EventEmitter();
 const content = document.querySelector("#content");
@@ -60,16 +60,17 @@ const drawProjectHeader = function (project) {
 
     const taskContainerTitle = document.createElement("h2");
     taskContainerTitle.classList.add("project-header-title");
+    console.log(project)
     taskContainerTitle.textContent = project.title;
     taskContainerHeaderLeft.appendChild(taskContainerTitle);
-    if (project.label) {
+    if (project.labelObject) {
         const taskContainerLabelBox = document.createElement("div");
         taskContainerLabelBox.classList.add("project-header-label");
         const taskContainerLabelColor = document.createElement("div");
         taskContainerLabelColor.classList.add("project-header-label-color");
-        taskContainerLabelColor.style.backgroundColor = project.label.color;
+        taskContainerLabelColor.style.backgroundColor = project.labelObject.color;
         const taskContainerLabel = document.createElement("p");
-        taskContainerLabel.textContent = project.label.label;
+        taskContainerLabel.textContent = project.labelObject.label;
         taskContainerLabelBox.appendChild(taskContainerLabelColor);
         taskContainerLabelBox.appendChild(taskContainerLabel);
         taskContainerHeaderLeft.appendChild(taskContainerLabelBox);
@@ -114,7 +115,7 @@ const drawTask = function (task, project) {
     const taskBox = document.createElement("div");
     taskBox.id = task.id;
     taskBox.classList.add("task");
-    const parentProjectLabel = getProjectByID(task.parentProjectID).label;
+    const parentProjectLabel = getProjectByID(task.parentProjectID).labelObject;
     if (parentProjectLabel) {
         taskBox.style.border = `1px solid ${parentProjectLabel.color}`;
         taskBox.style.borderLeft = `6px solid ${parentProjectLabel.color}`;
@@ -698,10 +699,7 @@ const createLabelListSelect = function (labelList, project) {
         labelOption.value = label.label;
         labelOption.textContent = label.label;
         if (project !== undefined) {
-            console.log(project)
-console.log(getLabelByID(project.labelID))
-
-            if (getLabelByID(project.labelID).label === label.label) {
+            if (project.labelObject.label === label.label) {
                 labelOption.selected = "selected";
             };
         }

@@ -21,7 +21,7 @@ const saveToLocal = function () {
         return {
             id: proj.id,
             title: proj.title,
-            label: proj.label,
+            labelID: proj.labelID,
             taskList: proj.taskList.map(task => {
                 return {
                     id: task.id,
@@ -211,7 +211,7 @@ domCreator.eventEmitter.on("editProject", (projectTitle, projectLabelText, proje
 domCreator.eventEmitter.on("editLabels", (labelObjectsArray) => {
     setLabelList(labelObjectsArray);
     saveToLocal();
-})
+});
 
 domCreator.eventEmitter.on("taskAddPopup", (project) => {
     const projectList = getProjectList();
@@ -231,69 +231,29 @@ domCreator.eventEmitter.on("projectEditPopup", (project, projectBox) => {
 domCreator.eventEmitter.on("labelsEditPopup", (selectInputContainer) => {
     const labelList = getLabelList();
     domCreator.drawEditLabelsContainer(labelList, selectInputContainer);
-})
+});
 
-
-// Default projects for testing purposes
-// title, description, dueDate, status, priority
-// let defaultProject = new Project("Uncategorised");
-// let defaultProject2 = new Project("To-do list", "Study");
-// let defaultProject3 = new Project("Driving game", "Work");
-// let myTask = new Task("Gym session", "To work on these quads for the upcoming ski weekend", new Date(), "uncompleted", "low");
-// let myTask2 = new Task("Call QANTAS", "Figure out where my points are", addDays(new Date(), 1), "uncompleted", "medium");
-// let myTask3 = new Task("Make travel insurance claim", "get some money back from the Canada trip shenanigans", false, "uncompleted", "medium");
-// let myTask4 = new Task("Make tasks beautiful", "add rounded corners similar to sidebar buttons, drop shadows, nice spacing", addDays(new Date(), 4), "uncompleted", "medium");
-// let myTask5 = new Task("Add task button", "have to make a way to add tasks somehow aye", false, "uncompleted", "high");
-// let myTask6 = new Task("Move tasks between projects", "this is a bit harder - will need to remove current task from current project taskList, then add it to the new project and format appropriately", false, "uncompleted", "medium");
-// let myTask7 = new Task("Add footer", "add footer with my name and github link to source code", addDays(new Date(), 12), "uncompleted", "low");
-// let myTask8 = new Task("Add driving physics", "first things first, make the car feel amazing to drive", addDays(new Date(), 16), "uncompleted", "medium");
-// let myTask9 = new Task("Make Falls Creek road", "To work on these quads for the upcoming ski weekend", addDays(new Date(), 54), "uncompleted", "medium");
-// let myTask10 = new Task("Add smoke particle effects", "To work on these quads for the upcoming ski weekend", new Date(), "uncompleted", "low");
-// myTask.completed = true;
-// defaultProject.addTask(myTask);
-// defaultProject.addTask(myTask2);
-// defaultProject.addTask(myTask3);
-// defaultProject2.addTask(myTask4);
-// defaultProject2.addTask(myTask5);
-// defaultProject2.addTask(myTask6);
-// defaultProject2.addTask(myTask7);
-// defaultProject3.addTask(myTask8);
-// defaultProject3.addTask(myTask9);
-// defaultProject3.addTask(myTask10);
-
-// domCreator.drawProjectNav(defaultProject);
-// domCreator.drawProjectNav(defaultProject2);
-// domCreator.drawProjectNav(defaultProject3);
-
-// domCreator.drawProjectHeader(defaultProject);
-// domCreator.drawTaskList(defaultProject.taskList, defaultProject);
-// saveToLocal();
-
-
-
-const rawData = '[{"id":1,"title":"Uncategorised","taskList":[{"id":4,"title":"Gym session","description":"To work on these quads for the upcoming ski weekend","dueDate":"2022-10-07T12:49:34.712Z","priority":"low","completed":true},{"id":5,"title":"Call QANTAS","description":"Figure out where my points are","dueDate":"2022-10-08T12:49:34.712Z","priority":"medium","completed":false},{"id":6,"title":"Make travel insurance claim","description":"get some money back from the Canada trip shenanigans","dueDate":false,"priority":"medium","completed":false}]},{"id":2,"title":"To-do list","label":"Study","taskList":[{"id":7,"title":"Make tasks beautiful","description":"add rounded corners similar to sidebar buttons, drop shadows, nice spacing","dueDate":"2022-10-11T12:49:34.712Z","priority":"medium","completed":false},{"id":8,"title":"Add task button","description":"have to make a way to add tasks somehow aye","dueDate":false,"priority":"high","completed":false},{"id":9,"title":"Move tasks between projects","description":"this is a bit harder - will need to remove current task from current project taskList, then add it to the new project and format appropriately","dueDate":false,"priority":"medium","completed":false},{"id":10,"title":"Add footer","description":"add footer with my name and github link to source code","dueDate":"2022-10-19T12:49:34.712Z","priority":"low","completed":false}]},{"id":3,"title":"Driving game","label":"Work","taskList":[{"id":11,"title":"Add driving physics","description":"first things first, make the car feel amazing to drive","dueDate":"2022-10-23T12:49:34.712Z","priority":"medium","completed":false},{"id":12,"title":"Make Falls Creek road","description":"To work on these quads for the upcoming ski weekend","dueDate":"2022-11-30T12:49:34.712Z","priority":"medium","completed":false},{"id":13,"title":"Add smoke particle effects","description":"To work on these quads for the upcoming ski weekend","dueDate":"2022-10-07T12:49:34.712Z","priority":"low","completed":false}]}]';
-let parsedData = JSON.parse(rawData);
 if (!localStorage.getItem("projectList")) {
-    // localStorage.setItem("projectList", rawData);
-    // localStorage.setItem("currentID", 16);
-    // // localStorage.setItem("currentLabelID", 4);
-    // localStorage.setItem("currentProjectID", 1);
-    // setCurrentID(16);
-    // Default projects for testing purposes
-    // title, description, dueDate, status, priority
-    let defaultProject = new Project("Uncategorised");
-    let defaultProject2 = new Project("To-do list", "Study");
-    let defaultProject3 = new Project("Driving game", "Work");
-    let myTask = new Task("Gym session", "To work on these quads for the upcoming ski weekend", new Date(), "uncompleted", "low");
-    let myTask2 = new Task("Call QANTAS", "Figure out where my points are", addDays(new Date(), 1), "uncompleted", "medium");
-    let myTask3 = new Task("Make travel insurance claim", "get some money back from the Canada trip shenanigans", false, "uncompleted", "medium");
-    let myTask4 = new Task("Make tasks beautiful", "add rounded corners similar to sidebar buttons, drop shadows, nice spacing", addDays(new Date(), 4), "uncompleted", "medium");
-    let myTask5 = new Task("Add task button", "have to make a way to add tasks somehow aye", false, "uncompleted", "high");
-    let myTask6 = new Task("Move tasks between projects", "this is a bit harder - will need to remove current task from current project taskList, then add it to the new project and format appropriately", false, "uncompleted", "medium");
-    let myTask7 = new Task("Add footer", "add footer with my name and github link to source code", addDays(new Date(), 12), "uncompleted", "low");
-    let myTask8 = new Task("Add driving physics", "first things first, make the car feel amazing to drive", addDays(new Date(), 16), "uncompleted", "medium");
-    let myTask9 = new Task("Make Falls Creek road", "To work on these quads for the upcoming ski weekend", addDays(new Date(), 54), "uncompleted", "medium");
-    let myTask10 = new Task("Add smoke particle effects", "To work on these quads for the upcoming ski weekend", new Date(), "uncompleted", "low");
+    // Default projects and tasks
+    localStorage.removeItem("currentID");
+    localStorage.removeItem("currentLabelID");
+    localStorage.removeItem("currentProjectID");
+    const taskObjectCreator = function (title, description, dueDate, completed, priority) {
+        return { title, description, dueDate, completed, priority }
+    }
+    let defaultProject = new Project("Uncategorised", 0);
+    let defaultProject2 = new Project("To-do list", 1);
+    let defaultProject3 = new Project("Driving game", 2);
+    let myTask = new Task(taskObjectCreator("Gym session", "To work on these quads for the upcoming ski weekend", new Date(), false, "low"));
+    let myTask2 = new Task(taskObjectCreator("Call QANTAS", "Figure out where my points are", addDays(new Date(), 1), false, "medium"));
+    let myTask3 = new Task(taskObjectCreator("Make travel insurance claim", "get some money back from the Canada trip shenanigans", false, false, "medium"));
+    let myTask4 = new Task(taskObjectCreator("Make tasks beautiful", "add rounded corners similar to sidebar buttons, drop shadows, nice spacing", addDays(new Date(), 4), false, "medium"));
+    let myTask5 = new Task(taskObjectCreator("Add task button", "have to make a way to add tasks somehow aye", false, false, "high"));
+    let myTask6 = new Task(taskObjectCreator("Move tasks between projects", "this is a bit harder - will need to remove current task from current project taskList, then add it to the new project and format appropriately", false, false, "medium"));
+    let myTask7 = new Task(taskObjectCreator("Add footer", "add footer with my name and github link to source code", addDays(new Date(), 12), false, "low"));
+    let myTask8 = new Task(taskObjectCreator("Add driving physics", "first things first, make the car feel amazing to drive", addDays(new Date(), 16), false, "medium"));
+    let myTask9 = new Task(taskObjectCreator("Make Falls Creek road", "To work on these quads for the upcoming ski weekend", addDays(new Date(), 54), false, "medium"));
+    let myTask10 = new Task(taskObjectCreator("Add smoke particle effects", "To work on these quads for the upcoming ski weekend", new Date(), false, "low"));
     myTask.completed = true;
     defaultProject.addTask(myTask);
     defaultProject.addTask(myTask2);
@@ -305,39 +265,39 @@ if (!localStorage.getItem("projectList")) {
     defaultProject3.addTask(myTask8);
     defaultProject3.addTask(myTask9);
     defaultProject3.addTask(myTask10);
+    domCreator.drawProjectNav(defaultProject);
+    domCreator.drawProjectNav(defaultProject2);
+    domCreator.drawProjectNav(defaultProject3);
+    domCreator.drawProjectHeader(defaultProject);
+    domCreator.drawTaskList(defaultProject.taskList, defaultProject);
+    saveToLocal();
 } else {
-    parsedData = JSON.parse(localStorage.getItem("projectList"));
     setLabelList(JSON.parse(localStorage.getItem("labelList")));
     setCurrentID(Number(localStorage.getItem("currentID")));
     setCurrentProject(Number(localStorage.getItem("currentProjectID")));
-};
-
-parsedData.forEach(proj => {
-    let newProj = new Project(proj.title, proj.label, proj.id);
-    proj.taskList.forEach(task => {
-        const newTaskObj = {
-            id: Number(task.id),
-            title: task.title,
-            description: task.description,
-            dueDate: new Date(task.dueDate),
-            status: task.status,
-            priority: task.priority,
-            completed: task.completed,
-            parentProjectID: task.parentProjectID
-        }
-        let newTask = new Task(newTaskObj);
-        newTask.completed = task.completed;
-        newProj.addTask(newTask);
+    const storedProjectList = JSON.parse(localStorage.getItem("projectList"));
+    console.log(storedProjectList)
+    storedProjectList.forEach(proj => {
+        let newProj = new Project(proj.title, proj.labelID, proj.id);
+        proj.taskList.forEach(task => {
+            const newTaskObj = {
+                id: Number(task.id),
+                title: task.title,
+                description: task.description,
+                dueDate: new Date(task.dueDate),
+                status: task.status,
+                priority: task.priority,
+                completed: task.completed,
+                parentProjectID: task.parentProjectID
+            }
+            let newTask = new Task(newTaskObj);
+            newTask.completed = task.completed;
+            newProj.addTask(newTask);
+        });
+        domCreator.drawProjectNav(newProj);
     });
-    domCreator.drawProjectNav(newProj);
-    domCreator.drawProjectHeader(newProj);
-});
-const lastProject = getProjectByID(Number(localStorage.getItem("currentProjectID")))
-if (lastProject) {
-    domCreator.drawProjectHeader(getProjectByID(getCurrentProject()));
-    domCreator.drawTaskList(getProjectByID(getCurrentProject()).taskList, getProjectByID(getCurrentProject()));
-} else {
-    const taskListToDraw = localStorage.getItem("currentProjectID")
-    domCreator.eventEmitter.emit(taskListToDraw);
 };
 
+const lastOpenProject = getProjectByID(getCurrentProject());
+domCreator.drawProjectHeader(lastOpenProject);
+domCreator.drawTaskList(lastOpenProject.taskList, lastOpenProject);
