@@ -60,7 +60,6 @@ const drawProjectHeader = function (project) {
 
     const taskContainerTitle = document.createElement("h2");
     taskContainerTitle.classList.add("project-header-title");
-    console.log(project)
     taskContainerTitle.textContent = project.title;
     taskContainerHeaderLeft.appendChild(taskContainerTitle);
     if (project.labelObject) {
@@ -315,15 +314,17 @@ const drawAddProjectContainer = function (labelList) {
 
     addProjectInputContainer.addEventListener("submit", function (event) {
         event.preventDefault();
-        const projectForm = document.forms["add-project-form"];
-        const formData = new FormData(projectForm);
-        const projectTitle = formData.get("title");
-        const projectLabelText = formData.get("label");
+
+        const formData = document.getElementById("add-project-form");
+        const projectTitle = formData.title.value;
+        const projectLabelOptions = formData.label.options;
+        const projectLabelSelected = projectLabelOptions[projectLabelOptions.selectedIndex];
+        const projectLabelID = projectLabelSelected.id.match(/\d+/)[0];
         let validProject = true;
         if (validProject) {
-            eventEmitter.emit("newProject", projectTitle, projectLabelText);
+            eventEmitter.emit("newProject", projectTitle, projectLabelID);
             toggleAddProjectContainer();
-            projectForm.reset();
+            // projectForm.reset();
         }
     }, false);
 }
@@ -694,11 +695,19 @@ const createLabelListSelect = function (labelList, project) {
     labelInputSelect.id = "project-label";
     labelInputSelect.name = "label";
 
+    const noLabelOption = document.createElement("option");
+    noLabelOption.id = "label-0";
+    noLabelOption.value = "None";
+    noLabelOption.textContent = "None";
+    labelInputSelect.appendChild(noLabelOption);
+
     labelList.forEach(label => {
         const labelOption = document.createElement("option");
+        labelOption.id = `label-${label.id}`;
         labelOption.value = label.label;
         labelOption.textContent = label.label;
-        if (project !== undefined) {
+        if (project && Number(project.labelID) !== 0) {
+            console.log(project.labelID)
             if (project.labelObject.label === label.label) {
                 labelOption.selected = "selected";
             };
@@ -818,18 +827,17 @@ const drawEditProjectContainer = function (project, labelList, projectBox) {
 
     const projectEditSubmit = function (event) {
         event.preventDefault();
-        const projectForm = document.forms["edit-project-form"];
-        const formData = new FormData(projectForm);
-        const projectTitle = formData.get("title");
-        const projectLabel = formData.get("label");
+        const formData = document.getElementById("edit-project-form");
+        const projectTitle = formData.title.value;
+        const projectLabelOptions = formData.label.options;
+        const projectLabelSelected = projectLabelOptions[projectLabelOptions.selectedIndex];
+        const projectLabelID = projectLabelSelected.id.match(/\d+/)[0];
         let validProject = true;
         if (validProject) {
-            eventEmitter.emit("editProject", projectTitle, projectLabel, project);
-            projectForm.reset();
+            eventEmitter.emit("editProject", projectTitle, projectLabelID, project);
             projectEditScreen.remove();
-            projectBox.querySelector("h2").textContent = projectTitle;
-
-            document.getElementById(`${project.id}`).querySelector("h3").textContent = projectTitle;
+            // projectBox.querySelector("h2").textContent = projectTitle;
+            // document.getElementById(`${project.id}`).querySelector("h3").textContent = projectTitle;
         }
     };
 

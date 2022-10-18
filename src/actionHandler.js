@@ -58,9 +58,9 @@ domCreator.eventEmitter.on("newProjectButton", () => {
     domCreator.drawAddProjectContainer(getLabelList());
 })
 
-domCreator.eventEmitter.on("newProject", (projectName, projectLabelText) => {
-    const projectLabel = getLabelList().filter(label => label.label === projectLabelText)[0];
-    const newProject = new Project(projectName, projectLabel);
+domCreator.eventEmitter.on("newProject", (projectName, projectLabelID) => {
+    const projectLabel = getLabelList().filter(label => label.id === projectLabelID)[0];
+    const newProject = new Project(projectName, projectLabelID);
     setCurrentProject(newProject.id);
     domCreator.drawProjectNav(newProject);
     domCreator.drawProjectHeader(newProject);
@@ -201,10 +201,11 @@ domCreator.eventEmitter.on("editTask", (projectID, taskTitle, taskDesc, taskDueD
     saveToLocal();
 });
 
-domCreator.eventEmitter.on("editProject", (projectTitle, projectLabelText, project) => {
-    const projectLabel = getLabelList().filter(label => label.label === projectLabelText)[0];
+domCreator.eventEmitter.on("editProject", (projectTitle, projectLabelID, project) => {
     project.title = projectTitle;
-    project.label = projectLabel;
+    project.labelID = projectLabelID;
+    domCreator.drawProjectHeader(project);
+    domCreator.drawTaskList(project.taskList, project);
     saveToLocal();
 });
 
@@ -236,7 +237,7 @@ domCreator.eventEmitter.on("labelsEditPopup", (selectInputContainer) => {
 if (!localStorage.getItem("projectList")) {
     // Default projects and tasks
     localStorage.removeItem("currentID");
-    localStorage.removeItem("currentLabelID");
+    localStorage.setItem("currentLabelID", 4);
     localStorage.removeItem("currentProjectID");
     const taskObjectCreator = function (title, description, dueDate, completed, priority) {
         return { title, description, dueDate, completed, priority }
@@ -274,6 +275,7 @@ if (!localStorage.getItem("projectList")) {
 } else {
     setLabelList(JSON.parse(localStorage.getItem("labelList")));
     setCurrentID(Number(localStorage.getItem("currentID")));
+    setLabelID(Number(localStorage.getItem("currentLabelID")));
     setCurrentProject(Number(localStorage.getItem("currentProjectID")));
     const storedProjectList = JSON.parse(localStorage.getItem("projectList"));
     console.log(storedProjectList)

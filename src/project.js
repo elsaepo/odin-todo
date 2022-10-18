@@ -115,7 +115,7 @@ const getLabelByID = function(id){
 
 const setLabelList = function(labelObjectList){
     labelObjectList.forEach(labelObject => {
-        if (labelObject.id === ""){
+        if (!labelObject.id){
             labelObject.id = getNewLabelID();
         }
     });
