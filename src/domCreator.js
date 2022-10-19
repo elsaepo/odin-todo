@@ -1,6 +1,6 @@
 import "./style.css";
 import { EventEmitter } from "events";
-import { getProjectByID } from "./project.js";
+import { getProjectByID, getLabelList } from "./project.js";
 const { format } = require("date-fns");
 const eventEmitter = new EventEmitter();
 const content = document.querySelector("#content");
@@ -238,14 +238,14 @@ addProjectButtonContainer.appendChild(addProjectButton);
 
 // Add Project container
 
-const createLabelsEditButton = function (selectInputContainer) {
+const createLabelsEditButton = function (selectInputContainer, project) {
     const labelEditButton = document.createElement("div");
     labelEditButton.classList.add("label-edit-button");
     const labelEditIcon = document.createElement("i");
     labelEditIcon.classList.add("fa-solid", "fa-ellipsis-vertical");
     labelEditButton.appendChild(labelEditIcon);
     labelEditButton.addEventListener("mousedown", () => {
-        eventEmitter.emit("labelsEditPopup", selectInputContainer);
+        eventEmitter.emit("labelsEditPopup", selectInputContainer, project);
     });
     return labelEditButton;
 }
@@ -290,8 +290,8 @@ const drawAddProjectContainer = function (labelList) {
     //
     //
     //
-    const selectInputContainer = 0;
-    const labelEditButton = createLabelsEditButton();
+    
+    const labelEditButton = createLabelsEditButton(projectLabelInputSelect);
 
 
 
@@ -764,7 +764,7 @@ const drawEditProjectContainer = function (project, labelList, projectBox) {
     //     projectLabelInputSelect.appendChild(labelOption);
     // });
 
-    // const labelEditButton = createLabelsEditButton();
+   
 
 
 
@@ -799,9 +799,8 @@ const drawEditProjectContainer = function (project, labelList, projectBox) {
     //     eventEmitter.emit("labelsEditPopup");
     // });
 
-    const selectInputContainer = projectLabelInputContainer;
 
-    const labelEditButton = createLabelsEditButton(selectInputContainer);
+    const labelEditButton = createLabelsEditButton(projectLabelInputSelect, project);
 
     projectLabelInputContainer.appendChild(projectLabelInputLabel);
     projectLabelInputContainer.appendChild(projectLabelInputSelect);
@@ -849,8 +848,8 @@ const drawEditProjectContainer = function (project, labelList, projectBox) {
 }
 
 // Edit labels popup
-const drawEditLabelsContainer = function (labelList, selectInputContainer) {
-    console.log(selectInputContainer)
+const drawEditLabelsContainer = function (labelList, selectInputContainer, project) {
+    console.log(`inputted selectInputContainer: ${selectInputContainer}`)
     const createInputContainer = function () {
         const inputContainer = document.createElement("div");
         inputContainer.classList.add("input-container");
@@ -950,9 +949,12 @@ const drawEditLabelsContainer = function (labelList, selectInputContainer) {
         }
         let validLabels = true;
         if (validLabels) {
-            eventEmitter.emit("editLabels", labelObjectsArray);
+            eventEmitter.emit("editLabels", labelObjectsArray, selectInputContainer);
             labelsEditScreen.remove();
 
+            selectInputContainer.replaceWith(createLabelListSelect(getLabelList(), project));
+            
+            // const projectLabelInputSelect = createLabelListSelect(labelList, project);
             // projectLabelInputContainer.appendChild(projectLabelInputSelect);
             // GET LABEL SELECT CONTAINER
             // REFACTOR BUILDING LABEL SELECT OPTIONS INTO FUNCTION

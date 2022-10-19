@@ -229,9 +229,9 @@ domCreator.eventEmitter.on("projectEditPopup", (project, projectBox) => {
     domCreator.drawEditProjectContainer(project, labelList, projectBox);
 });
 
-domCreator.eventEmitter.on("labelsEditPopup", (selectInputContainer) => {
+domCreator.eventEmitter.on("labelsEditPopup", (selectInputContainer, project) => {
     const labelList = getLabelList();
-    domCreator.drawEditLabelsContainer(labelList, selectInputContainer);
+    domCreator.drawEditLabelsContainer(labelList, selectInputContainer, project);
 });
 
 if (!localStorage.getItem("projectList")) {
@@ -278,7 +278,6 @@ if (!localStorage.getItem("projectList")) {
     setLabelID(Number(localStorage.getItem("currentLabelID")));
     setCurrentProject(Number(localStorage.getItem("currentProjectID")));
     const storedProjectList = JSON.parse(localStorage.getItem("projectList"));
-    console.log(storedProjectList)
     storedProjectList.forEach(proj => {
         let newProj = new Project(proj.title, proj.labelID, proj.id);
         proj.taskList.forEach(task => {
