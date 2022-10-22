@@ -217,6 +217,8 @@ const dropdownIcon = document.createElement("i");
 dropdownIcon.classList.add("fa-solid", "fa-bars", "fa-xl");
 dropdownButton.appendChild(dropdownIcon);
 
+
+
 dropdownButton.addEventListener("mousedown", function () {
     sidebar.classList.toggle("sidebar-hidden");
 })
@@ -355,25 +357,38 @@ const toggleAddProjectContainer = function () {
 addProjectButton.addEventListener("mousedown", toggleAddProjectContainer);
 
 // Footer link
-const footer = document.createElement("a");
-footer.id = "footer-link";
-footer.setAttribute("href", "https://github.com/elsaepo/odin-todo")
+
 const footerBox = document.createElement("div");
 footerBox.id = "footer";
 const authorName = document.createElement("p");
 authorName.classList.add("footer-author");
 authorName.textContent = "Carl Madsen 2022";
+const footerLink = document.createElement("a");
+footerLink.id = "footer-link";
+footerLink.setAttribute("href", "https://github.com/elsaepo/odin-todo");
 const gitHubLogo = document.createElement("i");
 gitHubLogo.classList.add("fa-brands", "fa-github", "fa-xl", "footer-logo");
+footerLink.appendChild(gitHubLogo);
+
+// DARK MODE - WIP
+const darkModeButton = document.createElement("i");
+darkModeButton.id = "footer-dark-mode";
+darkModeButton.classList.add("fa-solid", "fa-moon", "fa-xl");
+darkModeButton.addEventListener("mousedown", function(){
+    console.log("switching to dark mode");
+})
+
+
 footerBox.appendChild(authorName);
-footerBox.appendChild(gitHubLogo);
-footer.appendChild(footerBox)
+footerBox.appendChild(footerLink);
+footerBox.appendChild(darkModeButton);
+// footer.appendChild(footerBox)
 
 sidebar.appendChild(navContainer);
 sidebar.appendChild(horizontalRule);
 sidebar.appendChild(projectContainer);
 sidebar.appendChild(addProjectButtonContainer);
-sidebar.appendChild(footer);
+sidebar.appendChild(footerBox);
 
 // Creating DOM main
 const main = document.createElement("main");

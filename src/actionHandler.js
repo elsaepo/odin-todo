@@ -276,7 +276,6 @@ if (!localStorage.getItem("projectList")) {
     setLabelList(JSON.parse(localStorage.getItem("labelList")));
     setCurrentID(Number(localStorage.getItem("currentID")));
     setLabelID(Number(localStorage.getItem("currentLabelID")));
-    console.log(`loading current label id: ${localStorage.getItem("currentLabelID")}`)
     setCurrentProject(localStorage.getItem("currentProjectID"));
     const storedProjectList = JSON.parse(localStorage.getItem("projectList"));
     storedProjectList.forEach(proj => {
@@ -299,12 +298,9 @@ if (!localStorage.getItem("projectList")) {
         domCreator.drawProjectNav(newProj);
     });
 };
-console.log(`loaded current label id: ${getLabelID()}`)
 let lastOpenProject = getCurrentProject();
 if (isNaN(lastOpenProject)){
-    console.log(`emitting ${lastOpenProject}`)
     domCreator.eventEmitter.emit(lastOpenProject);
-    
 } else {
     lastOpenProject = getProjectByID(lastOpenProject);
     domCreator.drawProjectHeader(lastOpenProject);

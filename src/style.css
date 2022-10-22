@@ -763,11 +763,12 @@ h5 {
 }
 
 @media (hover: hover) {
-    #footer:hover {
+    #footer-link:hover,
+    #footer-dark-mode {
         cursor: pointer;
-        background-color:rgb(167, 183, 202);
     }
-    #footer:hover i {
+    #footer-link:hover,
+    #footer-dark-mode:hover {
         transform: scale(1.2);
         transition: transform 0.1s ease;
     }
