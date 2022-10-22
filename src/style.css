@@ -712,6 +712,25 @@ h5 {
     gap: 16px;
 }
 
+.edit-label-box {
+    display: grid;
+    grid-template-columns: 48px 1fr 24px;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+}
+
+.edit-label-box input[type="text"] {
+    height: 24px
+}
+
+@media (hover: hover) {
+    .edit-label-box input[type="color"],
+    #edit-labels-form button {
+        cursor: pointer;
+    }
+}
+
 @keyframes task-popup-box {
     0% {
         transform: scale(0);
