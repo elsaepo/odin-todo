@@ -219,6 +219,7 @@ dropdownIcon.classList.add("fa-solid", "fa-bars", "fa-xl");
 dropdownButton.appendChild(dropdownIcon);
 
 dropdownButton.addEventListener("mousedown", function () {
+    console.log("hello")
     sidebar.classList.toggle("sidebar-hidden");
 })
 header.appendChild(dropdownButton);
