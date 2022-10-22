@@ -190,6 +190,28 @@ header.id = "header";
 const titleText = document.createElement("h1");
 titleText.classList.add("title-text");
 titleText.textContent = "things to do.";
+const headerResetButton = document.createElement("div");
+headerResetButton.id = "header-reset-button";
+headerResetButton.textContent = ".";
+headerResetButton.addEventListener("mousedown", function(){
+    const resetContainer = document.createElement("div");
+    const resetScreen = createPopup(resetContainer);
+    const resetPrompt = createPopupPrompt("This will reset the To-Do List! Completely.");
+    const resetYes = createButton("reset");
+    const resetCancel = createButton("cancel");
+    resetYes.addEventListener("mousedown", function () {
+        localStorage.removeItem("projectList");
+        location.reload();
+    });
+    resetCancel.addEventListener("mousedown", function () {
+        resetScreen.remove();
+    });
+    resetContainer.appendChild(resetPrompt);
+    resetContainer.appendChild(resetYes);
+    resetContainer.appendChild(resetCancel);
+    body.appendChild(resetScreen);
+})
+titleText.appendChild(headerResetButton);
 const dropdownButton = document.createElement("div");
 dropdownButton.id = "dropdown";
 const dropdownIcon = document.createElement("i");

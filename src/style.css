@@ -66,11 +66,23 @@ h5 {
 }
 
 .title-text {
+    position: relative;
     color: white;
     text-align: center;
     font-family: "Roboto Mono", monospace;
     font-size: 3.5rem;
     flex-grow: 1;
+}
+
+#header-reset-button {
+    display: inline-block;
+}
+
+@media (hover: hover){
+    #header-reset-button:hover {
+        cursor: pointer;
+        color: rgb(134, 59, 59);
+    }
 }
 
 #body-container {
@@ -587,7 +599,8 @@ h5 {
     background-color: white;
 }
 
-.popup-button-delete {
+.popup-button-delete,
+.popup-button-reset {
     background-color: rgb(233, 110, 110);
 }
 
