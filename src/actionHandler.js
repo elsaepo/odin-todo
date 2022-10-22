@@ -276,7 +276,7 @@ if (!localStorage.getItem("projectList")) {
     setLabelList(JSON.parse(localStorage.getItem("labelList")));
     setCurrentID(Number(localStorage.getItem("currentID")));
     setLabelID(Number(localStorage.getItem("currentLabelID")));
-    setCurrentProject(Number(localStorage.getItem("currentProjectID")));
+    setCurrentProject(localStorage.getItem("currentProjectID"));
     const storedProjectList = JSON.parse(localStorage.getItem("projectList"));
     storedProjectList.forEach(proj => {
         let newProj = new Project(proj.title, proj.labelID, proj.id);
@@ -299,6 +299,14 @@ if (!localStorage.getItem("projectList")) {
     });
 };
 
-const lastOpenProject = getProjectByID(getCurrentProject());
-domCreator.drawProjectHeader(lastOpenProject);
-domCreator.drawTaskList(lastOpenProject.taskList, lastOpenProject);
+let lastOpenProject = getCurrentProject();
+if (isNaN(lastOpenProject)){
+    console.log(`emitting ${lastOpenProject}`)
+    domCreator.eventEmitter.emit(lastOpenProject);
+    
+} else {
+    console.log("emitting number proj")
+    lastOpenProject = getProjectByID(lastOpenProject);
+    domCreator.drawProjectHeader(lastOpenProject);
+    domCreator.drawTaskList(lastOpenProject.taskList, lastOpenProject);
+};

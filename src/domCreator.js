@@ -48,6 +48,7 @@ const drawProjectNav = function (project) {
 }
 
 const drawProjectHeader = function (project) {
+    console.log(project)
     // this method of removing header could be cleaned up a bit?
     const currentHeader = document.querySelector(".task-container-header");
     if (currentHeader) { currentHeader.remove() };

@@ -729,7 +729,6 @@ h5 {
 }
 
 #footer {
-    text-decoration: none;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -740,13 +739,11 @@ h5 {
 
 #footer p {
     color: black;
-    text-decoration: none;
     font-weight: 600;
     font-size: 1.1rem;
 }
 
 #footer i {
-    text-decoration: none;
     color: black;
     transition: transform 0.1s ease;
 }
