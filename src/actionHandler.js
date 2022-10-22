@@ -237,8 +237,8 @@ domCreator.eventEmitter.on("labelsEditPopup", (selectInputContainer, project) =>
 if (!localStorage.getItem("projectList")) {
     // Default projects and tasks
     localStorage.removeItem("currentID");
-    localStorage.setItem("currentLabelID", 4);
     localStorage.removeItem("currentProjectID");
+    setLabelID(4);
     const taskObjectCreator = function (title, description, dueDate, completed, priority) {
         return { title, description, dueDate, completed, priority }
     }
@@ -276,6 +276,7 @@ if (!localStorage.getItem("projectList")) {
     setLabelList(JSON.parse(localStorage.getItem("labelList")));
     setCurrentID(Number(localStorage.getItem("currentID")));
     setLabelID(Number(localStorage.getItem("currentLabelID")));
+    console.log(`loading current label id: ${localStorage.getItem("currentLabelID")}`)
     setCurrentProject(localStorage.getItem("currentProjectID"));
     const storedProjectList = JSON.parse(localStorage.getItem("projectList"));
     storedProjectList.forEach(proj => {
@@ -298,14 +299,13 @@ if (!localStorage.getItem("projectList")) {
         domCreator.drawProjectNav(newProj);
     });
 };
-
+console.log(`loaded current label id: ${getLabelID()}`)
 let lastOpenProject = getCurrentProject();
 if (isNaN(lastOpenProject)){
     console.log(`emitting ${lastOpenProject}`)
     domCreator.eventEmitter.emit(lastOpenProject);
     
 } else {
-    console.log("emitting number proj")
     lastOpenProject = getProjectByID(lastOpenProject);
     domCreator.drawProjectHeader(lastOpenProject);
     domCreator.drawTaskList(lastOpenProject.taskList, lastOpenProject);
