@@ -8,7 +8,7 @@ let labelList = [
     {label: "Work", color: "#3c89d0", id: 1},
     {label: "Study", color: "#ca5cdd", id: 2},
     {label: "Admin", color: "#ff8b3d", id: 3},
-    {label: "Play", color: "7ab97a", id: 4}
+    {label: "Shopping", color: "#7ab97a", id: 4}
 ]
 
 class Project {

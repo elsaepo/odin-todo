@@ -13,7 +13,7 @@ import {
 import { Task } from "./task.js";
 import "./style.css";
 import domCreator from "./domCreator.js";
-const { addDays, isBefore, isToday } = require("date-fns");
+const { addDays, subDays, isBefore, isToday } = require("date-fns");
 
 // localStorage - saves the project list, the current ID from idController.js, and the current project
 const saveToLocal = function () {
@@ -243,18 +243,18 @@ if (!localStorage.getItem("projectList")) {
         return { title, description, dueDate, completed, priority }
     }
     let defaultProject = new Project("Uncategorised", 0);
-    let defaultProject2 = new Project("To-do list", 1);
-    let defaultProject3 = new Project("Driving game", 2);
-    let myTask = new Task(taskObjectCreator("Gym session", "To work on these quads for the upcoming ski weekend", new Date(), false, "low"));
-    let myTask2 = new Task(taskObjectCreator("Call QANTAS", "Figure out where my points are", addDays(new Date(), 1), false, "medium"));
-    let myTask3 = new Task(taskObjectCreator("Make travel insurance claim", "get some money back from the Canada trip shenanigans", false, false, "medium"));
-    let myTask4 = new Task(taskObjectCreator("Make tasks beautiful", "add rounded corners similar to sidebar buttons, drop shadows, nice spacing", addDays(new Date(), 4), false, "medium"));
-    let myTask5 = new Task(taskObjectCreator("Add task button", "have to make a way to add tasks somehow aye", false, false, "high"));
-    let myTask6 = new Task(taskObjectCreator("Move tasks between projects", "this is a bit harder - will need to remove current task from current project taskList, then add it to the new project and format appropriately", false, false, "medium"));
-    let myTask7 = new Task(taskObjectCreator("Add footer", "add footer with my name and github link to source code", addDays(new Date(), 12), false, "low"));
-    let myTask8 = new Task(taskObjectCreator("Add driving physics", "first things first, make the car feel amazing to drive", addDays(new Date(), 16), false, "medium"));
-    let myTask9 = new Task(taskObjectCreator("Make Falls Creek road", "To work on these quads for the upcoming ski weekend", addDays(new Date(), 54), false, "medium"));
-    let myTask10 = new Task(taskObjectCreator("Add smoke particle effects", "To work on these quads for the upcoming ski weekend", new Date(), false, "low"));
+    let defaultProject2 = new Project("To-do list", 2);
+    let defaultProject3 = new Project("Groceries", 3);
+    let myTask = new Task(taskObjectCreator("Renew gym membership", "The ski season is coming, and it's coming hard", addDays(new Date(), 4), false, "low"));
+    let myTask2 = new Task(taskObjectCreator("Pay electricity bill", "It's always a doozy. Also, use less electricity", addDays(new Date(), 1), false, "high"));
+    let myTask3 = new Task(taskObjectCreator("Buy a new hat", "Thinking cyan, but also open to magenta, yellow or black", false, false, "medium"));
+    let myTask4 = new Task(taskObjectCreator("Create an example task", "To pad out the website upon a user's initial load, so they can see the options and functionality", new Date(), true, "medium"));
+    let myTask5 = new Task(taskObjectCreator("Add hidden reset button", "Need to have a way for user to reset entire list, and hide it in the header title period", false, true, "medium"));
+    let myTask6 = new Task(taskObjectCreator("Implement localStorage", "Needed in order for tasks to be saved to user's computer, and to remember their preferences in the app", subDays(new Date(), 6), true, "high"));
+    let myTask7 = new Task(taskObjectCreator("Add dark mode", "Make it toggle via a  visual button, and detect browser's default preference for initial toggle", new Date(), true, "low"));
+    let myTask8 = new Task(taskObjectCreator("Milk", "", false, false, "medium"));
+    let myTask9 = new Task(taskObjectCreator("Bread", "", false, false, "medium"));
+    let myTask10 = new Task(taskObjectCreator("Pistachio Nuts", "", new Date(), false, "high"));
     myTask.completed = true;
     defaultProject.addTask(myTask);
     defaultProject.addTask(myTask2);
