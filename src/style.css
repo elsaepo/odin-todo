@@ -1,10 +1,55 @@
 @import url('https://fonts.googleapis.com/css2?family=Carter+One&family=Poppins:wght@200;300;400;500;600&family=Roboto+Mono:wght@200;400;700&display=swap');
 
 :root {
-    --blue-main: rgb(114, 144, 184);
-    --blue-light: rgb(215, 225, 238);
     --header-height: 100px;
     --header-height-small: 60px;
+    --header-text-color: rgb(255, 255, 255);
+    --header-background: rgb(114, 144, 184);
+    --sidebar-background: rgb(215, 225, 238);
+    --body-background: rgb(230, 245, 244);
+    --text-color-main: rgb(0, 0, 0);
+    --text-color-main-grey: rgb(99, 99, 99);
+    --nav-button-background: rgb(255, 255, 255);
+    --nav-button-hover: rgb(255, 255, 255);
+    --nav-button-active: rgb(189, 192, 230);
+    --header-button-border: grey;
+    --label-background: white;
+    --task-background: rgb(228, 228, 228);
+    --task-background-hover: rgb(255, 255, 255);
+    --input-background: rgb(255, 255, 255);
+    --faded: rgb(205, 205, 205);
+
+    --priority-low: rgb(206, 240, 206);
+    --priority-medium: rgb(241, 228, 204);
+    --priority-high: rgb(241, 207, 207);
+    --priority-low-checked: rgb(146, 209, 146);
+    --priority-medium-checked: rgb(235, 208, 160);
+    --priority-high-checked: rgb(241, 149, 149);
+}
+
+:root.dark {
+    --header-text-color: rgb(255, 255, 255);
+    --header-background: #171010;
+    --sidebar-background: #2B2B2B;
+    --body-background: #333130;
+    --text-color-main: rgb(226, 226, 226);
+    --text-color-main-grey: rgb(204, 204, 204);
+    --nav-button-background: #454b52;
+    --nav-button-hover: #c4a993;
+    --nav-button-active: #A27B5C;
+    --header-button-border: rgb(145, 145, 145);
+    --label-background: rgb(99, 99, 99);
+    --task-background: #2f333a;
+    --task-background-hover: #292b31;
+    --input-background: rgb(85, 85, 85);
+    --faded: rgb(205, 205, 205);
+
+    --priority-low: rgb(60, 90, 60);
+    --priority-medium: rgb(99, 86, 63);
+    --priority-high: rgb(99, 53, 53);
+    --priority-low-checked: rgb(19, 138, 19);
+    --priority-medium-checked: rgb(167, 110, 5);
+    --priority-high-checked: rgb(161, 25, 25);
 }
 
 *,
@@ -17,6 +62,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: Poppins, sans-serif;
+    color: var(--text-color-main)
 }
 
 h2,
@@ -37,6 +83,11 @@ h5 {
     font-size: 1rem;
 }
 
+input, textarea, select {
+    background-color: var(--input-background);
+    color: var(--text-color-main);
+}
+
 #content {
     width: 100%;
 }
@@ -46,7 +97,7 @@ h5 {
     top: 0;
     height: var(--header-height);
     width: 100vw;
-    background-color: var(--blue-main);
+    background-color: var(--header-background);
     display: flex;
     align-items: center;
     z-index: 100;
@@ -58,7 +109,7 @@ h5 {
     margin-left: 24px;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--header-text-color);
     border: 2px solid white;
     width: 40px;
     height: 40px;
@@ -68,7 +119,7 @@ h5 {
 
 .title-text {
     position: relative;
-    color: white;
+    color: var(--header-text-color);
     text-align: center;
     font-family: "Roboto Mono", monospace;
     font-size: 3.5rem;
@@ -79,7 +130,7 @@ h5 {
     display: inline-block;
 }
 
-@media (hover: hover){
+@media (hover: hover) {
     #header-reset-button:hover {
         cursor: pointer;
         color: rgb(134, 59, 59);
@@ -90,11 +141,11 @@ h5 {
     display: flex;
     width: 100%;
     height: calc(100vh - var(--header-height));
-    background-color: rgb(230, 245, 244);
+    background-color: var(--body-background);
 }
 
 #sidebar {
-    background-color: var(--blue-light);
+    background-color: var(--sidebar-background);
     height: calc(100vh - var(--header-height));
     width: 320px;
     flex-shrink: 0;
@@ -116,7 +167,7 @@ h5 {
     align-items: center;
     gap: 16px;
     padding: 16px;
-    background-color: rgb(255, 255, 255);
+    background-color: var(--nav-button-background);
     border-radius: 12px;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.1s ease, background-color 0.1s ease, color 0.1s ease;
@@ -127,13 +178,13 @@ h5 {
         cursor: pointer;
         transform: scale(1.07);
         transition: transform 0.1s ease, background-color 0.1s ease, color 0.1s ease;
-        background-color: var(--blue-main);
-        color: white;
+        background-color: var(--header-background);
+        color: var(--nav-button-hover);
     }
 }
 
 .nav-button:active {
-    background-color: rgb(189, 192, 230);
+    background-color: var(--nav-button-active);
 }
 
 .nav-button h3 {
@@ -223,6 +274,8 @@ h5 {
     height: calc(100% + 4px);
     width: 100px;
     font-size: 1.1rem;
+    background-color: var(--input-background);
+    color: var(--text-color-main);
 }
 
 .nav-adding-project select {
@@ -237,17 +290,17 @@ h5 {
     width: 48px;
     height: 24px;
     border-radius: 50%;
-    background-color: rgb(204, 204, 204);
+    background-color: var(--faded);
     border: 1px solid grey;
 }
 
-@media (hover: hover){
+@media (hover: hover) {
     .label-edit-button:hover {
         cursor: pointer;
-        background-color: rgb(209, 209, 209);
+        background-color: var(--faded);
         border: 1px solid black;
         box-shadow: 0 0 6px grey;
-    } 
+    }
 }
 
 .label-edit-button i {
@@ -258,7 +311,8 @@ h5 {
     width: 100%;
     border: 2px solid black;
     border-radius: 12px;
-    background-color: rgb(158, 206, 194);
+    background-color: var(--priority-low);
+    color: var(--text-color-main);
     height: 32px;
     font-size: 1rem;
     font-weight: 600;
@@ -267,12 +321,12 @@ h5 {
 @media (hover: hover) {
     .nav-adding-project button:hover {
         cursor: pointer;
-        background-color: rgb(140, 228, 206);
+        background-color: var(--priority-low-checked);
     }
 }
 
 .nav-adding-project button:active {
-    background-color: white;
+    background-color: var(--nav-button-active);
 }
 
 #sidebar hr {
@@ -316,16 +370,16 @@ h5 {
     gap: 8px;
     align-items: center;
     height: 32px;
-    border: 2px solid grey;
+    border: 2px solid var(--header-button-border);
     border-radius: 4px;
     padding: 4px 8px;
     font-size: 1.1rem;
     font-weight: 600;
-    color: rgb(82, 82, 82);
+    color: var(--text-color-main-grey);
 }
 
 .project-header-label {
-    background-color: white;
+    background-color: var(--label-background);
 }
 
 .project-header-label div {
@@ -338,8 +392,8 @@ h5 {
 .add-task {
     font-size: 1.1rem;
     font-weight: 600;
-    color: rgb(82, 82, 82);
-    background-color: rgb(223, 243, 223);
+    /* color: rgb(82, 82, 82); */
+    background-color: var(--priority-low);
 }
 
 @media (hover: hover) {
@@ -408,7 +462,7 @@ h5 {
 .task {
     cursor: pointer;
     min-height: 40px;
-    background-color: rgb(222, 229, 248);
+    background-color: var(--task-background);
     border: 1px solid grey;
     border-radius: 12px;
     box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
@@ -416,7 +470,7 @@ h5 {
 
 @media (hover: hover) {
     .task:hover {
-        background-color: white;
+        background-color: var(--task-background-hover);
     }
 }
 
@@ -491,7 +545,7 @@ h5 {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid black;
+    border: 1px solid grey;
     border-radius: 2px;
     height: 26px;
     width: 85%;
@@ -512,12 +566,13 @@ h5 {
 }
 
 @media (hover: hover) {
+
     .task-container-edit:hover,
     .task-container-delete:hover,
     .project-header-edit:hover,
     .project-header-delete:hover {
         cursor: pointer;
-        color: black;
+        color: var(--text-color-main);
         transform: scale(1.4);
         transition: transform 0.1s ease;
     }
@@ -562,7 +617,7 @@ h5 {
     padding: 16px;
     width: 400px;
     border: 4px solid black;
-    background-color: white;
+    background-color: var(--sidebar-background);
     border-radius: 24px;
     z-index: 10;
     transition: transform 0.2s ease;
@@ -676,29 +731,35 @@ h5 {
 
 .input-radio#task-priority-low+label,
 .task-priority-low {
-    background-color: rgb(206, 240, 206);
+    background-color: var(--priority-low);
+    /* background-color: rgb(206, 240, 206); */
 }
 
 .input-radio#task-priority-medium+label,
 .task-priority-medium {
-    background-color: rgb(241, 228, 204);
+    background-color: var(--priority-medium);
+    /* background-color: rgb(241, 228, 204); */
 }
 
 .input-radio#task-priority-high+label,
 .task-priority-high {
-    background-color: rgb(241, 207, 207);
+    background-color: var(--priority-high);
+    /* background-color: rgb(241, 207, 207); */
 }
 
 .input-radio#task-priority-low:checked+label {
-    background-color: rgb(146, 209, 146);
+    background-color: var(--priority-low-checked);
+    /* background-color: rgb(146, 209, 146); */
 }
 
 .input-radio#task-priority-medium:checked+label {
-    background-color: rgb(235, 208, 160);
+    background-color: var(--priority-medium-checked);
+    /* background-color: rgb(235, 208, 160); */
 }
 
 .input-radio#task-priority-high:checked+label {
-    background-color: rgb(241, 149, 149);
+    background-color: var(--priority-high-checked);
+    /* background-color: rgb(241, 149, 149); */
 }
 
 .input-project-label-container {
@@ -752,26 +813,24 @@ h5 {
 }
 
 #footer p {
-    color: black;
     font-weight: 600;
     font-size: 1.1rem;
 }
 
 #footer i {
-    color: black;
+    color: var(--text-color-main);
     transition: transform 0.1s ease;
 }
 
 @media (hover: hover) {
-    #footer-link:hover,
-    #footer-dark-mode {
-        cursor: pointer;
-    }
+
     #footer-link:hover,
     #footer-dark-mode:hover {
+        cursor: pointer;
         transform: scale(1.2);
         transition: transform 0.1s ease;
     }
+
     .edit-label-box input[type="color"]:hover,
     #edit-labels-form button:hover {
         cursor: pointer;
@@ -794,7 +853,7 @@ h5 {
         gap: 24px;
         padding-right: 12px;
     }
-    
+
     .task-container-header-left {
         display: grid;
         grid-template-rows: auto auto;
@@ -808,11 +867,11 @@ h5 {
         gap: 12px;
         justify-content: center;
     }
-    
+
     .project-header-label {
         width: min-content;
     }
-    
+
     .add-task {
         grid-column: 1 / -1;
     }

@@ -376,6 +376,9 @@ darkModeButton.id = "footer-dark-mode";
 darkModeButton.classList.add("fa-solid", "fa-moon", "fa-xl");
 darkModeButton.addEventListener("mousedown", function(){
     console.log("switching to dark mode");
+    document.querySelector(":root").classList.toggle("dark");
+    darkModeButton.classList.toggle("fa-moon");
+    darkModeButton.classList.toggle("fa-sun");
 })
 
 
