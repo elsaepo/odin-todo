@@ -235,7 +235,7 @@ domCreator.eventEmitter.on("labelsEditPopup", (selectInputContainer, project) =>
 });
 
 if (!localStorage.getItem("projectList")) {
-    // Default projects and tasks
+    // Creates default project and task objects if no storage exists
     localStorage.removeItem("currentID");
     localStorage.removeItem("currentProjectID");
     setLabelID(4);
@@ -273,6 +273,7 @@ if (!localStorage.getItem("projectList")) {
     domCreator.drawTaskList(defaultProject.taskList, defaultProject);
     saveToLocal();
 } else {
+    // Creates project and task objects from simplified storage objects, and implements the stored label list
     setLabelList(JSON.parse(localStorage.getItem("labelList")));
     setCurrentID(Number(localStorage.getItem("currentID")));
     setLabelID(Number(localStorage.getItem("currentLabelID")));

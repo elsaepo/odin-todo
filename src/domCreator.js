@@ -356,8 +356,7 @@ const toggleAddProjectContainer = function () {
 
 addProjectButton.addEventListener("mousedown", toggleAddProjectContainer);
 
-// Footer link
-
+// Footer link and light/dark mode functionality
 const footerBox = document.createElement("div");
 footerBox.id = "footer";
 const authorName = document.createElement("p");
@@ -370,22 +369,43 @@ const gitHubLogo = document.createElement("i");
 gitHubLogo.classList.add("fa-brands", "fa-github", "fa-xl", "footer-logo");
 footerLink.appendChild(gitHubLogo);
 
-// DARK MODE - WIP
+function getTheme() {
+    return localStorage.getItem("theme");
+};
+
+function toggleDarkMode() {
+    document.querySelector(":root").classList.toggle("dark");
+    darkModeButton.classList.toggle("fa-moon");
+    darkModeButton.classList.toggle("fa-sun");
+};
+
+function toggleDarkStorage() {
+    if (getTheme() === "dark"){
+        localStorage.setItem("theme", "light");
+    } else {
+        localStorage.setItem("theme", "dark");
+    }
+};
+
+function isBrowserDarkMode(){
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
 const darkModeButton = document.createElement("i");
 darkModeButton.id = "footer-dark-mode";
 darkModeButton.classList.add("fa-solid", "fa-moon", "fa-xl");
 darkModeButton.addEventListener("mousedown", function(){
-    console.log("switching to dark mode");
-    document.querySelector(":root").classList.toggle("dark");
-    darkModeButton.classList.toggle("fa-moon");
-    darkModeButton.classList.toggle("fa-sun");
-})
+    toggleDarkMode();
+    toggleDarkStorage();
+});
 
+if (getTheme() === "dark" || !getTheme() && isBrowserDarkMode()) {
+    toggleDarkMode();
+};
 
 footerBox.appendChild(authorName);
 footerBox.appendChild(footerLink);
 footerBox.appendChild(darkModeButton);
-// footer.appendChild(footerBox)
 
 sidebar.appendChild(navContainer);
 sidebar.appendChild(horizontalRule);
