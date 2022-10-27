@@ -2,29 +2,36 @@ let currentID = 0;
 let currentLabelID = 0;
 
 const getNewID = () => {
-    currentID++;
-    return currentID;
-}
+  currentID++;
+  return currentID;
+};
 
 const getCurrentID = () => {
-    return currentID;
-}
+  return currentID;
+};
 
 const setCurrentID = (id) => {
-    currentID = id;
-}
+  currentID = id;
+};
 
 const getNewLabelID = () => {
-    currentLabelID++;
-    return currentLabelID;
-}
+  currentLabelID++;
+  return currentLabelID;
+};
 
 const getLabelID = () => {
-    return currentLabelID;
-}
+  return currentLabelID;
+};
 
 const setLabelID = (id) => {
-    currentLabelID = id;
-}
+  currentLabelID = id;
+};
 
-export { getNewID, getCurrentID, setCurrentID, getNewLabelID, getLabelID, setLabelID };
+export {
+  getNewID,
+  getCurrentID,
+  setCurrentID,
+  getNewLabelID,
+  getLabelID,
+  setLabelID,
+};
